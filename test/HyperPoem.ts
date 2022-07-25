@@ -33,37 +33,32 @@ describe("Storage", () => {
     it("Adds english dictionary words", async () => {
       const words = readFileSync("popular.txt", "utf-8").split("\n");
 
-      const bytesPerChunk = 6000;
-      let chunks: string[][] = [];
-
-      let j = 0;
-      while (j < words.length) {
-        let bytes = 0;
-        let currentChunk = [];
-        for (; j < words.length && bytes < bytesPerChunk; j++) {
-          currentChunk.push(words[j]);
-          bytes += words[j].length;
-        }
-        console.log(bytes);
-        chunks.push(currentChunk);
+      let chunks = 28;
+      for (let i = 0; i < chunks; i++) {
+        await hyperPoem.addWords(
+          words.slice(
+            i * words.length,
+            i * words.length + words.length / chunks
+          )
+        );
       }
-
-      await Promise.all(
-        chunks.map(async (chunk) => {
-          await hyperPoem.addWords(chunk);
-          console.log(chunk.length);
-        })
-      );
-      expect(true).eq(true);
     });
 
-    it.only("Adds english dictionary words, optimized", async () => {
+    it("Adds english dictionary words, optimized", async () => {
       const words = readFileSync("popular.txt", "utf-8").split("\n");
 
       const wordsInt = words
         .map((x) => ethers.utils.solidityPack(["string"], [x]))
         .map((x) => ethers.utils.solidityPack(["uint256"], [x]));
-      await hyperPoem.addOpt(wordsInt.slice(0, wordsInt.length / 25));
+      let chunks = 25;
+      for (let i = 0; i < chunks; i++) {
+        await hyperPoem.addOpt(
+          wordsInt.slice(
+            i * wordsInt.length,
+            i * wordsInt.length + wordsInt.length / chunks
+          )
+        );
+      }
       console.log(await hyperPoem.getWord(42));
       expect(true).eq(true);
     });
