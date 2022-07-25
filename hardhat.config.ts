@@ -21,6 +21,14 @@ const KOVAN_PRIVATE_KEY =
   "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const COINMARKETCAP_KEY = process.env.COINMARKETCAP_KEY || "";
+const TOKEN = process.env.TOKEN || "MATIC";
+const GASPRICE_API = {
+  MATIC: "https://api.polygonscan.com/api?module=proxy&action=eth_gasPrice",
+  ETH: "https://api.etherscan.io/api?module=proxy&action=eth_gasPrice",
+}[TOKEN];
+const GAS_PRICE = process.env.GAS_PRICE
+  ? (process.env.GAS_PRICE as unknown as number)
+  : undefined;
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -55,10 +63,12 @@ const config: HardhatUserConfig = {
     apiKey: ETHERSCAN_API_KEY,
   },
   gasReporter: {
-    enabled: !!process.env.GAS_REPORTER,
-    currency: "USD",
-    gasPrice: 100,
+    currency: "EUR",
     coinmarketcap: COINMARKETCAP_KEY,
+    enabled: process.env.REPORT_GAS ? true : false,
+    gasPriceApi: GASPRICE_API,
+    token: TOKEN,
+    gasPrice: GAS_PRICE,
   },
   typechain: {
     outDir: "./typechain",
