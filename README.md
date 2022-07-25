@@ -1,4 +1,4 @@
-![Test workflow](https://github.com/vrde/hardhat-typescript-template/actions/workflows/node.yml/badge.svg)
+![Test workflow](https://github.com/vrde/hyperpoem/actions/workflows/node.yml/badge.svg)
 
 # HardHat TypeScript Template
 
