@@ -50,7 +50,7 @@ describe("Storage", () => {
 
       await Promise.all(
         chunks.map(async (chunk) => {
-          // await hyperPoem.addWords(chunk);
+          await hyperPoem.addWords(chunk);
           console.log(chunk.length);
         })
       );
@@ -63,7 +63,7 @@ describe("Storage", () => {
       const wordsInt = words
         .map((x) => ethers.utils.solidityPack(["string"], [x]))
         .map((x) => ethers.utils.solidityPack(["uint256"], [x]));
-      await hyperPoem.addOpt(wordsInt.slice(0, wordsInt.length / 15));
+      await hyperPoem.addOpt(wordsInt.slice(0, wordsInt.length / 25));
       console.log(await hyperPoem.getWord(42));
       expect(true).eq(true);
     });
