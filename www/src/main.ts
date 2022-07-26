@@ -1,4 +1,6 @@
-import "./main.css";
+//import "./main.css";
+import "carbon-components-svelte/css/g10.css";
+
 import App from "./App.svelte";
 
 const target = document.getElementById("app");

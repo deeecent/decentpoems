@@ -1,8 +1,15 @@
 <script lang="ts">
-  import Compose from "./Compose.svelte";
-  import Header from "./Header.svelte";
+  import Home from "./Home.svelte";
   import { Route } from "tinro";
   import { init } from "./stores/wallet";
+  import {
+    Header,
+    HeaderNav,
+    HeaderNavItem,
+    Content,
+  } from "carbon-components-svelte";
+  import Auctions from "./Auctions.svelte";
+  import MintedList from "./MintedList.svelte";
 
   const initializing = init();
 </script>
@@ -10,25 +17,28 @@
 {#await initializing}
   <p>Loading please wait…</p>
 {:then}
-  <header>
-    <Header />
-  </header>
-  <Route path="/">
-    <main>HyperPoem</main>
-  </Route>
-  <Compose />
+  <Header>
+    <HeaderNav>
+      <HeaderNavItem href="/" text="Home" />
+      <HeaderNavItem href="/auctions" text="Auctions" />
+      <HeaderNavItem href="/minted" text="Minted" />
+      <HeaderNavItem href="/about" text="About" />
+    </HeaderNav>
+  </Header>
+  <Content>
+    <Route path="/">
+      <Home />
+    </Route>
+    <Route path="/auctions">
+      <Auctions />
+    </Route>
+    <Route path="/minted"><MintedList /></Route>
+  </Content>
 {:catch}
   <p>There was an error loading the page.</p>
 {/await}
 
 <style>
-  main {
-    max-width: 1024px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   p {
     height: 100%;
     display: flex;

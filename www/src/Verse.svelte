@@ -1,7 +1,22 @@
 <script lang="ts">
+  import { Column, Row, Grid } from "carbon-components-svelte";
+
+  export let author: string;
   export let text: string;
-  export let index: number;
-  export let length: number;
+  export let title = false;
 </script>
 
-<p>{index}/{length} {text}</p>
+<Grid padding={false}>
+  <Row>
+    <Column>
+      {#if title}
+        <h3>{text}</h3>
+      {:else}
+        <p>{text}</p>
+      {/if}
+    </Column>
+    <Column>
+      <p>{author}</p>
+    </Column>
+  </Row>
+</Grid>
