@@ -16,15 +16,21 @@
     <div class="separator" />
   </Row>
   <Row>
-    <Column><Auction {poem} /></Column>
-    <Column><Minted {poem} /></Column>
+    <Column>
+      <h4>Oldest Auction</h4>
+      <Auction {poem} />
+    </Column>
+    <Column>
+      <h4>Last Minted</h4>
+      <Minted {poem} />
+    </Column>
   </Row>
 </Grid>
 
 <style>
   .separator {
     width: 100%;
-    border-top: 2px;
+    border-top: 1px;
     border-color: black;
     border-style: dashed;
   }
