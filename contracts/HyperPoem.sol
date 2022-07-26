@@ -5,9 +5,10 @@ pragma solidity >=0.7.0 <0.9.0;
 contract HyperPoem {
     uint256 number;
     address private _owner;
+    uint256 constant _wordCount = 25322;
 
-    uint256[] _wordsInt;
-    string[] _wordsStr;
+    uint256[_wordCount] _wordsInt;
+    string[_wordCount] _wordsStr;
 
     event Store(address indexed from, uint256 num);
 
@@ -15,17 +16,17 @@ contract HyperPoem {
         _owner = msg.sender;
     }
 
-    function addWords(string[] memory words) public {
+    function addWords(string[] memory words, uint256 fromIndex) public {
         uint256 length = words.length;
-        for (uint i = 0; i < length; i++) {
-            _wordsStr.push(words[i]);
+        for (uint256 i = 0; i < length; i++) {
+            _wordsStr[fromIndex + i] = words[i];
         }
     }
 
-    function addOpt(uint256[] memory words) public {
+    function addOpt(uint256[] memory words, uint256 fromIndex) public {
         uint256 length = words.length;
-        for (uint i = 0; i < length; i++) {
-            _wordsInt.push(words[i]);
+        for (uint256 i = 0; i < length; i++) {
+            _wordsInt[fromIndex + i] = words[i];
         }
     }
 
