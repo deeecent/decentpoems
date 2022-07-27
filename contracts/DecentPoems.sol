@@ -13,25 +13,6 @@ import "./DecentWords.sol";
 contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     using Strings for uint256;
 
-    address private _owner;
-    uint256 constant _wordCount = 3;
-
-    string[_wordCount] public words;
-
-    function addWords(string[] memory _words, uint256 fromIndex)
-        public
-        onlyOwner
-    {
-        uint256 length = _words.length;
-        for (uint256 i = 0; i < length; i++) {
-            words[fromIndex + i] = _words[i];
-        }
-    }
-
-    function total() public view returns (uint256) {
-        return words.length;
-    }
-
     uint256 constant expiration = 1 days;
 
     DecentWords public _decentWords;
@@ -55,8 +36,10 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
 
-    constructor(uint256 maxVerses) ERC721("Decent Poems", "POEMS") {
-        //_decentWords = decentWords;
+    constructor(address decentWords, uint256 maxVerses)
+        ERC721("Decent Poems", "POEMS")
+    {
+        _decentWords = DecentWords(decentWords);
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
         _poems.push();
@@ -67,8 +50,8 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         returns (uint256 index, string memory word)
     {
-        index = _currentRandomSeed % total();
-        word = words[index];
+        index = _currentRandomSeed % _decentWords.total();
+        word = _decentWords.words(index);
     }
 
     function safeMint(address to, uint256 poemIndex) public payable {
@@ -177,7 +160,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         Poem storage poem = _poems[_minted[tokenId]];
         string[] memory poemWords = new string[](_maxVerses);
         for (uint256 i = 0; i < _maxVerses; i++) {
-            poemWords[i] = words[poem.wordIndexes[i]];
+            poemWords[i] = _decentWords.words(poem.wordIndexes[i]);
         }
 
         return string(_getJSON(poem.verses, poemWords, poem.authors));
