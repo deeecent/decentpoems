@@ -1,31 +1,28 @@
 <script lang="ts">
-  import ConnectWallet from "./ConnectWallet.svelte";
-  import {
-    signer,
-    address,
-    balance,
-    network,
-    networkError,
-  } from "./stores/wallet";
-  import { formatEther } from "ethers/lib/utils";
+  import { Header, HeaderNav, HeaderNavItem } from "carbon-components-svelte";
+  import { signer, connect, disconnect, shortAddress } from "./stores/wallet";
 </script>
 
-<ConnectWallet />
-
-{#if $networkError}
-  <p>
-    To use this app, connect your wallet to <strong>
-      {$networkError.want}
-    </strong>
-  </p>
-{/if}
-
-{#if $signer}
-  <ul>
-    <li>Address: {$address}</li>
-    <li>Network: {$network}</li>
-    {#if $balance}
-      <li>Balance: {formatEther($balance)} Eth</li>
+<Header>
+  <HeaderNav>
+    <HeaderNavItem href="/" text="Home" />
+    <HeaderNavItem href="/auctions" text="Auctions" />
+    <HeaderNavItem href="/minted" text="Minted" />
+    <HeaderNavItem href="/about" text="About" />
+    {#if $signer}
+      <HeaderNavItem
+        class="wallet"
+        on:click={disconnect}
+        href="#"
+        text={`Disconnect ${$shortAddress}`}
+      />
+    {:else}
+      <HeaderNavItem
+        class="wallet"
+        on:click={connect}
+        href="#"
+        text="Connect Wallet"
+      />
     {/if}
-  </ul>
-{/if}
+  </HeaderNav>
+</Header>
