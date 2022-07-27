@@ -3,6 +3,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 contract DecentWords is Ownable {
     address private _owner;
@@ -14,10 +15,13 @@ contract DecentWords is Ownable {
         public
         onlyOwner
     {
-        uint256 length = words.length;
+        uint256 length = _words.length;
+        console.log(length);
         for (uint256 i = 0; i < length; i++) {
             words[fromIndex + i] = _words[i];
         }
+        console.log(length);
+        console.log("-----");
     }
 
     function total() public view returns (uint256) {
