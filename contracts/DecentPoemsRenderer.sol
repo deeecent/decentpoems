@@ -28,12 +28,20 @@ contract DecentPoemsRenderer {
         return svgBytes;
     }
 
-    function _getDescription(string[] memory verses, string[] memory authors)
+    function _getDescription(string[] memory verses, address[] memory authors)
         internal
-        view
-        returns (bytes memory)
+        pure
+        returns (bytes memory description)
     {
-        string memory description;
+        for (uint256 i = 1; i < verses.length; i++) {
+            description = abi.encodePacked(description, verses[i], "\\n\\n");
+        }
+
+        description = abi.encodePacked(description, "Authors:\\n\\n");
+
+        for (uint256 i = 0; i < authors.length; i++) {
+            description = abi.encodePacked(description, "- ", verses[i], "\\n");
+        }
     }
 
     function _getJSON(
@@ -50,7 +58,9 @@ contract DecentPoemsRenderer {
                         '{"name":"Decent poem #',
                         tokenId.toString(),
                         '",',
-                        unicode'"description":"Decent Poems ',
+                        unicode'"description":',
+                        _getDescription(verses, authors),
+                        '",',
                         unicode'License: CC BY-NC-ND 4.0",',
                         '"image":"data:image/svg+xml;base64,',
                         Base64.encode(_getSVG(words)),
