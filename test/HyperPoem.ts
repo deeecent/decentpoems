@@ -6,6 +6,7 @@ import { DecentPoems, DecentPoems__factory } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { readFileSync, readSync } from "fs";
 import { BigNumber, wordlists } from "ethers";
+import { getEVMTimestamp, mineEVMBlock } from "./evm";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
@@ -32,8 +33,8 @@ describe("Storage", () => {
   describe("DecentPoems", async () => {
     beforeEach(async () => {
       await decentPoems.addWords(["foo", "bar", "baz"], 0);
-      console.log(await decentPoems.total());
     });
+
     it("returns the current auctions", async () => {
       let [id] = await decentPoems.getCurrentWord();
 

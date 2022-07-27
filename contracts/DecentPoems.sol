@@ -4,9 +4,15 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
-contract DecentPoems is ERC721, Ownable {
+contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
+    using Strings for uint256;
+
     address private _owner;
     uint256 constant _wordCount = 3;
 
@@ -26,7 +32,7 @@ contract DecentPoems is ERC721, Ownable {
         return words.length;
     }
 
-    uint256 number;
+    uint256 constant expiration = 1 days;
 
     DecentWords public _decentWords;
 
@@ -36,14 +42,13 @@ contract DecentPoems is ERC721, Ownable {
         uint256[] wordIndexes;
         uint256 createdAt;
         uint256 mintedAt;
+        uint256 tokenId;
     }
 
     Poem[] public _poems;
-    /*
-    Poem[] public _poemsMinted;
-    Poem[] public _poemsAuction;
-    */
+    uint[] public _minted;
 
+    uint256 constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
 
@@ -51,10 +56,6 @@ contract DecentPoems is ERC721, Ownable {
         //_decentWords = decentWords;
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
-        /*
-        Poem memory currentPoem;
-        poems.push(currentPoem);
-        */
         _poems.push();
     }
 
@@ -65,6 +66,14 @@ contract DecentPoems is ERC721, Ownable {
     {
         index = _currentRandomSeed % total();
         word = words[index];
+    }
+
+    function safeMint(address to, uint256 poemIndex) public payable {
+        uint tokenId = _minted.length + 1;
+        _poems[poemIndex].mintedAt = block.timestamp;
+        _poems[poemIndex].tokenId = tokenId;
+        _minted.push(poemIndex);
+        _safeMint(to, tokenId);
     }
 
     function submitVerse(
@@ -86,14 +95,65 @@ contract DecentPoems is ERC721, Ownable {
 
         if (poem.verses.length == _maxVerses) {
             poem.createdAt = block.timestamp;
-            // Update first valid index
             _poems.push();
         }
 
         _currentRandomSeed = uint256(blockhash(block.number - 1));
     }
 
-    function getAuctions() public view returns (Poem[] memory) {
-        return _poems;
+    function getMinted(uint256 page)
+        public
+        view
+        returns (Poem[PAGE_SIZE] memory poems)
+    {
+        uint256 startingIndex = (_minted.length / PAGE_SIZE) * PAGE_SIZE;
+        for (uint i = 0; i < PAGE_SIZE; i++) {
+            poems[i] = _poems[_minted[i + startingIndex]];
+        }
     }
+
+    function getAuctions() public view returns (Poem[] memory) {
+        // Cannot be zero because it's initialized in the constructor
+        if (_poems.length == 1) {
+            Poem[] memory empty;
+            return empty;
+        }
+
+        uint256 poemsLeft = _poems.length - 2;
+        uint256 auctionCount;
+        for (
+            ;
+            _poems[poemsLeft].createdAt > block.timestamp - expiration;
+            poemsLeft--
+        ) {
+            if (_poems[poemsLeft].mintedAt == 0) {
+                auctionCount++;
+            }
+
+            if (poemsLeft == 0) {
+                break;
+            }
+        }
+
+        Poem[] memory _poemAuctions = new Poem[](auctionCount);
+        poemsLeft = _poems.length - 2;
+        for (uint256 i = 0; i < auctionCount; poemsLeft--) {
+            if (_poems[poemsLeft].mintedAt == 0) {
+                _poemAuctions[i++] = _poems[poemsLeft];
+            }
+
+            if (poemsLeft == 0) {
+                break;
+            }
+        }
+
+        return _poemAuctions;
+    }
+
+    function tokenURI(uint tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {}
 }
