@@ -25,16 +25,16 @@ task("deploy-words", "Deploy Decent Words")
       address,
       deployer
     ) as DecentWords;
-
-    /*const decentWordsFactory = await hre.ethers.getContractFactory(
+    /*
+    const decentWordsFactory = await hre.ethers.getContractFactory(
       "DecentWords"
     );
     const decentWordsContract = await decentWordsFactory.deploy();
-    await decentWordsContract.deployed();*/
+    await decentWordsContract.deployed();
 
-    //const { chainId } = await hre.ethers.provider.getNetwork();
+    const { chainId } = await hre.ethers.provider.getNetwork();
 
-    /*const config = {
+    const config = {
       [chainId]: {
         DecentWords: decentWordsContract.address,
       },
@@ -46,10 +46,11 @@ task("deploy-words", "Deploy Decent Words")
       JSON.stringify(config, null, 2)
     );*/
 
-    const bytesPerChunk = 3000; //6000;
+    const bytesPerChunk = 60; //3000; //6000;
     let lastIndex = 0;
 
-    while (lastIndex < words.length) {
+    while (lastIndex < 20) {
+      //words.length) {
       console.log(lastIndex);
       let bytes = 0;
       let end = lastIndex;
