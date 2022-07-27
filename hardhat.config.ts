@@ -4,28 +4,51 @@ dotEnvConfig();
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 
+import "solidity-coverage";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/types";
 
 import "@nomiclabs/hardhat-etherscan";
-import "solidity-coverage";
 
 import("./tasks").catch((e) => console.log("Cannot load tasks", e.toString()));
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
+const BLAST_API_KEY = process.env.BLAST_API_KEY || "";
 const RINKEBY_PRIVATE_KEY =
   process.env.RINKEBY_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const MUMBAI_PRIVATE_KEY =
+  process.env.RINKEBY_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const POLYGON_PRIVATE_KEY =
+  process.env.POLYGON_PRIVATE_KEY! ||
   "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
 const KOVAN_PRIVATE_KEY =
   process.env.KOVAN_PRIVATE_KEY! ||
   "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const TEVMOS_PRIVATE_KEY =
+  process.env.TEVMOS_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const EVMOS_PRIVATE_KEY =
+  process.env.EVMOS_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const CRONOS_PRIVATE_KEY =
+  process.env.CRONOS_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const TCRONOS_PRIVATE_KEY =
+  process.env.TCRONOS_PRIVATE_KEY! ||
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const CRONOSCAN_API_KEY = process.env.CRONOSCAN_API_KEY;
 const COINMARKETCAP_KEY = process.env.COINMARKETCAP_KEY || "";
 const TOKEN = process.env.TOKEN || "MATIC";
 const GASPRICE_API = {
   MATIC: "https://api.polygonscan.com/api?module=proxy&action=eth_gasPrice",
   ETH: "https://api.etherscan.io/api?module=proxy&action=eth_gasPrice",
+  CRO: `https://api.cronoscan.com/api?module=proxy&action=eth_gasPrice&apiKey=${CRONOSCAN_API_KEY}`,
 }[TOKEN];
+const GASREPORT_FILE = process.env.GASREPORT_FILE || "";
+const NO_COLORS = process.env.NO_COLORS == "false" || GASREPORT_FILE != "";
 const GAS_PRICE = process.env.GAS_PRICE
   ? (process.env.GAS_PRICE as unknown as number)
   : undefined;
@@ -56,10 +79,32 @@ const config: HardhatUserConfig = {
       url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
       accounts: [RINKEBY_PRIVATE_KEY],
     },
+    mumbai: {
+      url: `https://polygon-testnet.blastapi.io/${BLAST_API_KEY}`,
+      accounts: [MUMBAI_PRIVATE_KEY],
+    },
+    polygon: {
+      url: "https://polygon-rpc.com/",
+      accounts: [POLYGON_PRIVATE_KEY],
+    },
+    tevmos: {
+      url: "https://eth.bd.evmos.dev:8545",
+      accounts: [TEVMOS_PRIVATE_KEY],
+    },
+    evmos: {
+      url: "https://jsonrpc-evmos-ia.notional.ventures/",
+      accounts: [EVMOS_PRIVATE_KEY],
+    },
+    "cronostestnet_338-3": {
+      url: "https://evm-t3.cronos.org/",
+      accounts: [TCRONOS_PRIVATE_KEY],
+    },
+    "cronosmainnet_25-1": {
+      url: "https://cronosrpc-1.xstaking.sg/",
+      accounts: [CRONOS_PRIVATE_KEY],
+    },
   },
   etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
     apiKey: ETHERSCAN_API_KEY,
   },
   gasReporter: {
@@ -69,6 +114,8 @@ const config: HardhatUserConfig = {
     gasPriceApi: GASPRICE_API,
     token: TOKEN,
     gasPrice: GAS_PRICE,
+    outputFile: GASREPORT_FILE,
+    noColors: NO_COLORS,
   },
   typechain: {
     outDir: "./typechain",
