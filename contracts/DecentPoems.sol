@@ -46,11 +46,14 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     }
 
     Poem[] public _poems;
-    uint[] public _minted;
+    uint256[] public _minted;
 
     uint256 constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
+
+    event VerseSubmitted(address author, uint256 id);
+    event PoemCreated(address author, uint256 id);
 
     constructor(uint256 maxVerses) ERC721("Decent Poems", "POEMS") {
         //_decentWords = decentWords;
@@ -69,7 +72,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     }
 
     function safeMint(address to, uint256 poemIndex) public payable {
-        uint tokenId = _minted.length + 1;
+        uint256 tokenId = _minted.length + 1;
         _poems[poemIndex].mintedAt = block.timestamp;
         _poems[poemIndex].tokenId = tokenId;
         _minted.push(poemIndex);
@@ -95,10 +98,25 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
 
         if (poem.verses.length == _maxVerses) {
             poem.createdAt = block.timestamp;
+            emit PoemCreated(_msgSender(), _poems.length);
             _poems.push();
+        } else {
+            emit VerseSubmitted(_msgSender(), _poems.length - 1);
         }
 
         _currentRandomSeed = uint256(blockhash(block.number - 1));
+    }
+
+    function getCurrentPoem() public view returns (Poem memory) {
+        return _poems[_poems.length];
+    }
+
+    function getPoem(uint256 id) public view returns (Poem memory) {
+        return _poems[id];
+    }
+
+    function getPoemFromTokenId(uint256 id) public view returns (Poem memory) {
+        return _poems[_minted[id]];
     }
 
     function getMinted(uint256 page)
@@ -107,8 +125,8 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         returns (Poem[PAGE_SIZE] memory poems)
     {
         uint256 startingIndex = (_minted.length / PAGE_SIZE) * PAGE_SIZE;
-        for (uint i = 0; i < PAGE_SIZE; i++) {
-            poems[i] = _poems[_minted[i + startingIndex]];
+        for (uint256 i = 0; i < PAGE_SIZE; i++) {
+            poems[i] = _poems[_minted[page * PAGE_SIZE + i + startingIndex]];
         }
     }
 
@@ -150,7 +168,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         return _poemAuctions;
     }
 
-    function tokenURI(uint tokenId)
+    function tokenURI(uint256 tokenId)
         public
         view
         override
