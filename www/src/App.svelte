@@ -1,15 +1,13 @@
 <script lang="ts">
-  import Home from "./Home.svelte";
   import { Route } from "tinro";
   import { init } from "./stores/wallet";
-  import {
-    Header,
-    HeaderNav,
-    HeaderNavItem,
-    Content,
-  } from "carbon-components-svelte";
+  import { Content } from "carbon-components-svelte";
+
+  import Header from "./Header.svelte";
+  import Home from "./Home.svelte";
   import Auctions from "./Auctions.svelte";
   import MintedList from "./MintedList.svelte";
+  import NetworkError from "./NetworkError.svelte";
 
   const initializing = init();
 </script>
@@ -17,15 +15,9 @@
 {#await initializing}
   <p>Loading please wait…</p>
 {:then}
-  <Header>
-    <HeaderNav>
-      <HeaderNavItem href="/" text="Home" />
-      <HeaderNavItem href="/auctions" text="Auctions" />
-      <HeaderNavItem href="/minted" text="Minted" />
-      <HeaderNavItem href="/about" text="About" />
-    </HeaderNav>
-  </Header>
+  <Header />
   <Content>
+    <NetworkError />
     <Route path="/">
       <Home />
     </Route>
