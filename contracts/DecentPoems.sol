@@ -106,7 +106,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         returns (Poem[PAGE_SIZE] memory poems)
     {
-        uint256 startingIndex = (_minted.length / PAGE_SIZE) * PAGE_SIZE;
+        uint256 startingIndex = (_minted.length / page) * PAGE_SIZE;
         for (uint i = 0; i < PAGE_SIZE; i++) {
             poems[i] = _poems[_minted[i + startingIndex]];
         }
@@ -155,5 +155,13 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         override
         returns (string memory)
-    {}
+    {
+        Poem storage poem = _poems[_minted[tokenId]];
+        string[] memory poemWords = new string[](_maxVerses);
+        for (uint i = 0; i < _maxVerses; i++) {
+            poemWords[i] = words[poem.wordIndexes[i]];
+        }
+
+        return string(_getJSON(poem.verses, poemWords, poem.authors));
+    }
 }

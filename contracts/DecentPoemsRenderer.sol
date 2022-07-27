@@ -7,10 +7,10 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract DecentPoemsRenderer {
     using Strings for uint256;
-    uint256[7] wordPositions = [236, 284, 332, 380, 428, 476, 524];
+    uint256[7] wordPositions = [309, 357, 405, 453, 501, 549, 597];
 
     string constant svg =
-        "<svg width='600' height='600'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>                    </text><text x='50' y='180'>                    </text><text x='50' y='250'>                    </text><text x='50' y='320'>                    </text><text x='50' y='390'>                    </text><text x='50' y='460'>                    </text><text x='50' y='530'>                    </text></svg>";
+        "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>                    </text><text x='50' y='180'>                    </text><text x='50' y='250'>                    </text><text x='50' y='320'>                    </text><text x='50' y='390'>                    </text><text x='50' y='460'>                    </text><text x='50' y='530'>                    </text></svg>";
 
     function _getSVG(string[] memory words)
         internal
@@ -21,7 +21,7 @@ contract DecentPoemsRenderer {
         for (uint256 w = 0; w < words.length; w++) {
             bytes memory wordBytes = bytes(words[w]);
             for (uint256 i = 0; i < wordBytes.length; i++) {
-                svgBytes[wordPositions[i]] = wordBytes[i];
+                svgBytes[wordPositions[w] + i] = wordBytes[i];
             }
         }
 
@@ -40,12 +40,16 @@ contract DecentPoemsRenderer {
         description = abi.encodePacked(description, "Authors:\\n\\n");
 
         for (uint256 i = 0; i < authors.length; i++) {
-            description = abi.encodePacked(description, "- ", verses[i], "\\n");
+            description = abi.encodePacked(
+                description,
+                "- ",
+                Strings.toHexString(uint160(authors[i]), 20),
+                "\\n"
+            );
         }
     }
 
     function _getJSON(
-        uint256 tokenId,
         string[] memory verses,
         string[] memory words,
         address[] memory authors
@@ -55,13 +59,12 @@ contract DecentPoemsRenderer {
                 "data:application/json;base64,",
                 Base64.encode(
                     abi.encodePacked(
-                        '{"name":"Decent poem #',
-                        tokenId.toString(),
+                        '{"name":"',
+                        verses[0],
                         '",',
-                        unicode'"description":',
+                        unicode'"description":"',
                         _getDescription(verses, authors),
-                        '",',
-                        unicode'License: CC BY-NC-ND 4.0",',
+                        unicode'\\n\\nLicense: CC BY-NC-ND 4.0",',
                         '"image":"data:image/svg+xml;base64,',
                         Base64.encode(_getSVG(words)),
                         '"}'
