@@ -1,13 +1,8 @@
-import { ContractFactory } from "ethers";
 import { readFile, writeFile } from "fs/promises";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import {
-  DecentPoems__factory,
-  DecentWords__factory,
-  factories,
-} from "../typechain";
+import { DecentPoems__factory, DecentWords__factory } from "../typechain";
 
-const CONFIG_FILE_PATH = "./artifacts/network.json";
+const CONFIG_FILE_PATH = "./deployment/networks.json";
 
 const FACTORIES: Record<string, any> = {
   DecentWords: DecentWords__factory,
@@ -22,7 +17,11 @@ export async function storeContractAddress(
 ) {
   const networks: any = JSON.parse(await readFile(configPath, "utf8"));
   const { chainId } = await hre.ethers.provider.getNetwork();
-  const addresses = networks[chainId];
+
+  let addresses: any = {};
+  if (chainId in networks) addresses = networks[chainId];
+  else networks[chainId] = addresses;
+
   addresses[contractName] = address;
 
   await writeFile(configPath, JSON.stringify(networks, null, 2));

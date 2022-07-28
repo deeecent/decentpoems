@@ -6,19 +6,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DecentWords is Ownable {
     address private _owner;
-    uint256 _lastIndex = 0;
 
     string[] public words;
 
     function addWords(string[] memory _words) public onlyOwner {
         uint256 length = _words.length;
         for (uint256 i = 0; i < length; i++) {
-            words[_lastIndex + i] = _words[i];
+            words.push(_words[i]);
         }
-        _lastIndex = _lastIndex + length;
     }
 
     function total() public view returns (uint256) {
-        return _lastIndex;
+        return words.length;
     }
 }

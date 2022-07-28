@@ -1,13 +1,41 @@
 import { task } from "hardhat/config";
-import { readFile, writeFile } from "fs/promises";
-import {
-  DecentPoems,
-  DecentPoems__factory,
-  DecentWords,
-  DecentWords__factory,
-} from "../typechain";
+import { DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
+
+task("check", "Deploy Decent Words", async (_, hre) => {
+  let array = ["accccccccccccccccccc"];
+  const abi = hre.ethers.utils.defaultAbiCoder;
+  let params = abi.encode(
+    ["string[]"], // encode as address array
+    [array]
+  ); // array to encode
+
+  console.log(params);
+  console.log(params.length);
+
+  array = ["accccccccccccccccccc", "bccccccccccccccccccc"];
+  params = abi.encode(
+    ["string[]"], // encode as address array
+    [array]
+  ); // array to encode
+
+  console.log(params);
+  console.log(params.length);
+
+  array = [
+    "accccccccccccccccccc",
+    "bccccccccccccccccccc",
+    "bccccccccccccccccccc",
+  ];
+  params = abi.encode(
+    ["string[]"], // encode as address array
+    [array]
+  ); // array to encode
+
+  console.log(params);
+  console.log(params.length);
+});
 
 task("populate", "Deploy Decent Words")
   .addParam("wordsFile")
@@ -19,27 +47,26 @@ task("populate", "Deploy Decent Words")
     )) as DecentWords;
 
     if (decentWordsContract === undefined) {
-      console.error("Contract nod deployed yet.");
+      console.error("Contract not deployed yet.");
       return;
     }
 
-    const bytesPerChunk = 2000;
-    let lastIndex = 0;
+    const wordsPerChunk = 834;
+    let lastIndex = (await decentWordsContract.total()).toNumber();
+    if (lastIndex === words.length) {
+      console.log("Already populated.");
+      return;
+    }
+
+    console.log(`Populating from ${lastIndex}`);
 
     while (lastIndex < words.length) {
-      console.log(lastIndex);
-      let bytes = 0;
-      let end = lastIndex;
-      while (end < words.length && bytes + words[end].length < bytesPerChunk) {
-        bytes += words[end].length;
-        end++;
-      }
-      const chunk = words.slice(lastIndex, end);
-      console.log(chunk.length);
-      const tx = await decentWordsContract.addWords(chunk, lastIndex);
+      const chunk = words.slice(lastIndex, lastIndex + wordsPerChunk);
+      const tx = await decentWordsContract.addWords(chunk);
       await tx.wait(1);
 
-      lastIndex = end;
+      lastIndex = Math.min(lastIndex + wordsPerChunk, words.length);
+      console.log(`Next starting index ${lastIndex}`);
     }
   });
 
