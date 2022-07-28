@@ -88,7 +88,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         string memory suffix
     ) public {
         (uint256 currentIndex, string memory currentWord) = getCurrentWord();
-        require(wordIndex == currentIndex, "fail");
+        require(wordIndex == currentIndex, "Wrong word");
 
         Poem storage poem = _poems[_poems.length - 1];
         string memory verse = string(
