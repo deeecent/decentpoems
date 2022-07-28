@@ -33,6 +33,10 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
 
+    uint256 public _auctionDuration = 1 days;
+    uint256 public _auctionStartPrice = 1 ether;
+    uint256 public _auctionEndPrice = 0.001 ether;
+
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
 
@@ -50,11 +54,27 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         returns (uint256 index, string memory word)
     {
+        require(_decentWords.total() > 0, "DecentWords not populated");
         index = _currentRandomSeed % _decentWords.total();
         word = _decentWords.words(index);
     }
 
+    function getCurrentPrice(uint256 poemIndex) public view returns (uint256) {
+        uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
+        return
+            _auctionStartPrice -
+            (((_auctionStartPrice - _auctionEndPrice) / _auctionDuration) *
+                elapsedTime);
+    }
+
     function safeMint(address to, uint256 poemIndex) public payable {
+        require(msg.value >= getCurrentPrice(poemIndex), "Insufficient ether");
+        require(_poems[poemIndex].mintedAt == 0, "Poem already minted");
+        require(
+            block.timestamp - _poems[poemIndex].createdAt > _auctionDuration,
+            "Auction for this item is closed"
+        );
+
         uint256 tokenId = _minted.length + 1;
         _poems[poemIndex].mintedAt = block.timestamp;
         _poems[poemIndex].tokenId = tokenId;

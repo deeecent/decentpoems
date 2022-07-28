@@ -2,7 +2,7 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
 
 import "solidity-coverage";
 import "hardhat-gas-reporter";
@@ -63,6 +63,11 @@ const config: HardhatUserConfig = {
           optimizer: {
             enabled: true,
             runs: 200,
+          },
+          outputSelection: {
+            "*": {
+              "*": ["storageLayout"],
+            },
           },
         },
       },
