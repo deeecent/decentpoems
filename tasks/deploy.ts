@@ -7,50 +7,26 @@ import {
   DecentWords__factory,
 } from "../typechain";
 import { readFileSync } from "fs";
+import { loadContract, deployContract } from "./utils";
 
-task("deploy-words", "Deploy Decent Words")
+task("populate", "Deploy Decent Words")
   .addParam("wordsFile")
   .setAction(async ({ wordsFile }, hre) => {
     const words = readFileSync(wordsFile, "utf-8").split("\n");
-    console.log("Deploy contract DecentWords");
-    const configPath = "./artifacts/network.json";
-    const networks: any = JSON.parse(await readFile(configPath, "utf8"));
-    const [deployer] = await hre.ethers.getSigners();
-    const { chainId, name: networkName } =
-      await hre.ethers.provider.getNetwork();
-    const addresses = networks[chainId];
-    const address = addresses["DecentWords"]!;
-
-    const decentWordsContract = DecentWords__factory.connect(
-      address,
-      deployer
-    ) as DecentWords;
-    /*
-    const decentWordsFactory = await hre.ethers.getContractFactory(
+    const decentWordsContract = (await loadContract(
+      hre,
       "DecentWords"
-    );
-    const decentWordsContract = await decentWordsFactory.deploy();
-    await decentWordsContract.deployed();
+    )) as DecentWords;
 
-    const { chainId } = await hre.ethers.provider.getNetwork();
+    if (decentWordsContract === undefined) {
+      console.error("Contract nod deployed yet.");
+      return;
+    }
 
-    const config = {
-      [chainId]: {
-        DecentWords: decentWordsContract.address,
-      },
-    };
-
-    console.log("Configuration file in ./artifacts/network.json");
-    await writeFile(
-      "./artifacts/network.json",
-      JSON.stringify(config, null, 2)
-    );*/
-
-    const bytesPerChunk = 60; //3000; //6000;
+    const bytesPerChunk = 2000;
     let lastIndex = 0;
 
-    while (lastIndex < 20) {
-      //words.length) {
+    while (lastIndex < words.length) {
       console.log(lastIndex);
       let bytes = 0;
       let end = lastIndex;
@@ -67,54 +43,23 @@ task("deploy-words", "Deploy Decent Words")
     }
   });
 
-task("deploy", "Deploy DecentPoems")
-  .addParam("wordsAddress")
-  .setAction(async ({ wordsAddress }, hre) => {
-    console.log("Deploy contract DecentPoems");
+task("deploy-words", "Deploy DecentPoems").setAction(async (_, hre) => {
+  console.log("Deploy contract DecentWords");
+  await deployContract(hre, "DecentWords");
+});
 
-    const decentPoemsFactory = await hre.ethers.getContractFactory(
-      "DecentPoems"
-    );
-    const decentPoemsContract = await decentPoemsFactory.deploy(
-      wordsAddress,
-      7
-    );
-    console.log("  Address", decentPoemsContract.address);
-    const receipt = await decentPoemsContract.deployed();
-    console.log("  Receipt", receipt.deployTransaction.hash);
+task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
+  console.log("Load contract DecentWords");
+  const decentWordsContract = (await loadContract(
+    hre,
+    "DecentWords"
+  )) as DecentWords;
 
-    const { chainId } = await hre.ethers.provider.getNetwork();
+  if (decentWordsContract === undefined) {
+    console.error("You need to first deploy DecentWords");
+    return;
+  }
 
-    const config = {
-      [chainId]: {
-        DecentPoems: decentPoemsContract.address,
-      },
-    };
-
-    console.log("Configuration file in ./artifacts/network.json");
-    await writeFile(
-      "./artifacts/network.json",
-      JSON.stringify(config, null, 2)
-    );
-  });
-
-task("deploy-test", "Deploy Test NFT", async (_, hre) => {
-  console.log("Deploy contract Renderer");
-  const rendererFactory = await hre.ethers.getContractFactory("Renderer");
-
-  const rendererContract = await rendererFactory.deploy();
-  console.log("  Address", rendererContract.address);
-  const receipt = await rendererContract.deployed();
-  console.log("  Receipt", receipt.deployTransaction.hash);
-
-  const { chainId } = await hre.ethers.provider.getNetwork();
-
-  const config = {
-    [chainId]: {
-      Renderer: rendererContract.address,
-    },
-  };
-
-  console.log("Configuration file in ./artifacts/network.json");
-  await writeFile("./artifacts/network.json", JSON.stringify(config, null, 2));
+  console.log("Deploy contract DecentPoems");
+  await deployContract(hre, "DecentPoems", decentWordsContract.address, 7);
 });
