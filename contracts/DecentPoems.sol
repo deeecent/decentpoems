@@ -111,7 +111,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     }
 
     function getCurrentPoem() public view returns (Poem memory) {
-        return _poems[_poems.length];
+        return _poems[_poems.length - 1];
     }
 
     function getPoem(uint256 id) public view returns (Poem memory) {
