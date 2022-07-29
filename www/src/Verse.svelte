@@ -10,13 +10,26 @@
   <Row>
     <Column>
       {#if title}
-        <h3>{text}</h3>
+        <h1>{text}</h1>
       {:else}
         <p>{text}</p>
       {/if}
-    </Column>
-    <Column>
-      <p>{author}</p>
+      <p class="author">{author}</p>
     </Column>
   </Row>
 </Grid>
+
+<style>
+  h1 {
+    font-size: 4rem;
+  }
+
+  p {
+    font-size: 2rem;
+  }
+
+  .author {
+    font-size: 1rem;
+    opacity: 0.5;
+  }
+</style>

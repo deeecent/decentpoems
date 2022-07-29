@@ -62,7 +62,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         _creatorAddress = msg.sender;
     }
 
-    modifier onlyMintable(uint poemIndex) {
+    modifier onlyMintable(uint256 poemIndex) {
         require(poemIndex < _poems.length - 1, "Invalid poem");
         uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
         require(elapsedTime <= _auctionDuration, "Auction expired");
@@ -271,7 +271,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
 
         uint256 authorSplit = (value - creatorSplit) / authors.length;
 
-        for (uint i = 0; i < authors.length; i++) {
+        for (uint256 i = 0; i < authors.length; i++) {
             payable(authors[i]).transfer(authorSplit);
         }
     }

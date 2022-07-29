@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { currentPoem, currentWord, decentPoems } from "./stores/contract";
+
   import { Grid, Column, Row } from "carbon-components-svelte";
   import Auction from "./Auction.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
@@ -6,26 +8,33 @@
   import { poem } from "./types";
 </script>
 
-<Grid padding>
-  <Row>
-    <Column>
-      <CurrentPoem />
-    </Column>
-  </Row>
-  <Row>
-    <div class="separator" />
-  </Row>
-  <Row>
-    <Column>
-      <h4>Oldest Auction</h4>
-      <Auction {poem} />
-    </Column>
-    <Column>
-      <h4>Last Minted</h4>
-      <Minted {poem} />
-    </Column>
-  </Row>
-</Grid>
+{#if $currentPoem && $currentWord}
+  <Grid padding>
+    <Row>
+      <Column>
+        <CurrentPoem
+          poem={$currentPoem}
+          word={$currentWord.word}
+          wordIndex={$currentWord.index.toNumber()}
+          contract={$decentPoems}
+        />
+      </Column>
+    </Row>
+    <Row>
+      <div class="separator" />
+    </Row>
+    <Row>
+      <Column>
+        <h4>Oldest Auction</h4>
+        <Auction {poem} />
+      </Column>
+      <Column>
+        <h4>Last Minted</h4>
+        <Minted {poem} />
+      </Column>
+    </Row>
+  </Grid>
+{/if}
 
 <style>
   .separator {
