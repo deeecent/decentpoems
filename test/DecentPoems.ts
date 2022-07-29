@@ -42,6 +42,7 @@ describe("DecentPoems", () => {
       "SplitMain"
     );
     mockSplitMain = await mockSplitMainFactory.deploy();
+    mockSplitMain.createSplit.returns(deployer.address);
 
     const DecentPoemsFactory = (await ethers.getContractFactory(
       "DecentPoems",

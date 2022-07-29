@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -13,7 +13,7 @@ import "./DecentWords.sol";
 
 import "hardhat/console.sol";
 
-contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
+contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
     using Strings for uint256;
 
     uint256 constant expiration = 1 days;
@@ -201,6 +201,11 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
             _poems[poemIndex].authors,
             _creatorAddress
         );
+        _setTokenRoyalty(
+            tokenId,
+            _poems[poemIndex].split,
+            uint96(_saleRoyalty)
+        );
     }
 
     function submitVerse(
@@ -232,6 +237,10 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     }
 
     // Internal
+
+    function _feeDenominator() internal pure virtual override returns (uint96) {
+        return uint96(PERCENTAGE_SCALE);
+    }
 
     function _createSplit(address[] memory authors, address creator)
         internal
