@@ -36,7 +36,7 @@ task("populate", "Populate Decent Words")
     }
   });
 
-task("deploy-words", "Deploy DecentPoems").setAction(async (_, hre) => {
+task("deploy-words", "Deploy DecentWords").setAction(async (_, hre) => {
   console.log("Deploy contract DecentWords");
   await deployContract(hre, "DecentWords");
 });
