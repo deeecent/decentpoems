@@ -221,7 +221,7 @@ describe("DecentPoems", () => {
     });
   });
 
-  describe.only("getCurrentPrice", async () => {
+  describe("getCurrentPrice", async () => {
     it("should fail if poem does not exist", async () => {
       await expect(decentPoems.getCurrentPrice(1)).revertedWith("Invalid poem");
     });
@@ -240,7 +240,7 @@ describe("DecentPoems", () => {
       );
     });
 
-    it.only("should fail if poem is expired", async () => {
+    it("should fail if poem is expired", async () => {
       await producePoem();
       const auctionDuration = await decentPoems._auctionDuration();
       const currentTimestamp = await getEVMTimestamp();
@@ -259,7 +259,7 @@ describe("DecentPoems", () => {
       expect(await decentPoems.getCurrentPrice(0)).equal(maxPrice);
     });
 
-    it.only("should return minimum price right before auction expires", async () => {
+    it("should return minimum price right before auction expires", async () => {
       await producePoem();
       const minimumPrice = await decentPoems._auctionEndPrice();
 
@@ -273,7 +273,7 @@ describe("DecentPoems", () => {
       expect(await decentPoems.getCurrentPrice(0)).equal(minimumPrice);
     });
 
-    it.only("should return half the price half-way through the auction", async () => {
+    it("should return half the price half-way through the auction", async () => {
       await producePoem();
       const minimumPrice = await decentPoems._auctionEndPrice();
       const maxPrice = await decentPoems._auctionStartPrice();
@@ -287,6 +287,45 @@ describe("DecentPoems", () => {
       await mineEVMBlock();
 
       expect(await decentPoems.getCurrentPrice(0)).equal(halfPrice);
+    });
+  });
+
+  describe.only("getAuctions", async () => {
+    it("should return empty if no poem has been created", async () => {
+      const result = await decentPoems.getAuctions();
+
+      expect(result.length).equal(0);
+    });
+
+    it("should all poems created within the auction duration time", async () => {
+      await producePoem();
+      await producePoem();
+
+      const result = await decentPoems.getAuctions();
+
+      expect(result.length).equal(2);
+    });
+
+    it("should not return poems that have been minted", async () => {
+      await producePoem();
+      const price = await decentPoems._auctionStartPrice();
+      await decentPoems.safeMint(alice.address, 0, { value: price });
+
+      const result = await decentPoems.getAuctions();
+
+      expect(result.length).equal(0);
+    });
+
+    it("should not return expired poems", async () => {
+      await producePoem();
+      const auctionDuration = await decentPoems._auctionDuration();
+      const currentTimestamp = await getEVMTimestamp();
+      await setEVMTimestamp(currentTimestamp + auctionDuration.toNumber() + 1);
+      await mineEVMBlock();
+
+      const result = await decentPoems.getAuctions();
+
+      expect(result.length).equal(0);
     });
   });
 });
