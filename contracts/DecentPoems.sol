@@ -44,6 +44,8 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
 
     uint256 public constant PERCENTAGE_SCALE = 1e6; // 100%
     uint256 public _creatorRoyalty = 5 * 1e4; // 5%
+    uint256 public _saleRoyalty = 5 * 1e4;
+    uint32 public _distributorFee = 1e3;
     address public _creatorAddress;
 
     event VerseSubmitted(address author, uint256 id);
@@ -246,7 +248,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         uint256 accumulatedPercentage = 0;
         for (uint256 i = 0; i < totalRecipients - 1; i++) {
             uint256 percentage = (PERCENTAGE_SCALE - _creatorRoyalty) /
-                totalRecipients;
+                (totalRecipients - 1);
             percentAllocations[i] = uint32(percentage);
             accumulatedPercentage = accumulatedPercentage + percentage;
         }
@@ -259,7 +261,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
             _splitter.createSplit(
                 recipients,
                 percentAllocations,
-                1e3, /* 0.1% */
+                _distributorFee,
                 owner()
             );
     }

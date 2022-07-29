@@ -67,8 +67,6 @@ describe("DecentPoemsRender", () => {
           alice.address,
         ]
       );
-
-      console.log(result);
     });
   });
 });
