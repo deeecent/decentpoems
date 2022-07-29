@@ -3,40 +3,6 @@ import { DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 
-task("check", "Deploy Decent Words", async (_, hre) => {
-  let array = ["accccccccccccccccccc"];
-  const abi = hre.ethers.utils.defaultAbiCoder;
-  let params = abi.encode(
-    ["string[]"], // encode as address array
-    [array]
-  ); // array to encode
-
-  console.log(params);
-  console.log(params.length);
-
-  array = ["accccccccccccccccccc", "bccccccccccccccccccc"];
-  params = abi.encode(
-    ["string[]"], // encode as address array
-    [array]
-  ); // array to encode
-
-  console.log(params);
-  console.log(params.length);
-
-  array = [
-    "accccccccccccccccccc",
-    "bccccccccccccccccccc",
-    "bccccccccccccccccccc",
-  ];
-  params = abi.encode(
-    ["string[]"], // encode as address array
-    [array]
-  ); // array to encode
-
-  console.log(params);
-  console.log(params.length);
-});
-
 task("populate", "Populate Decent Words")
   .addParam("wordsFile")
   .setAction(async ({ wordsFile }, hre) => {
@@ -88,5 +54,11 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
   }
 
   console.log("Deploy contract DecentPoems");
-  await deployContract(hre, "DecentPoems", decentWordsContract.address, 7);
+  await deployContract(
+    hre,
+    "DecentPoems",
+    decentWordsContract.address,
+    process.env.SPLIT_ADDRESS,
+    7
+  );
 });

@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-import "./ISplitMain.sol";
+import "./SplitMain.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
@@ -19,7 +19,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 constant expiration = 1 days;
 
     DecentWords public _decentWords;
-    ISplitMain public _splitter;
+    SplitMain public _splitter;
 
     struct Poem {
         string[] verses;
@@ -42,7 +42,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 public _auctionStartPrice = 1 ether;
     uint256 public _auctionEndPrice = 0.001 ether;
 
-    uint256 constant PERCENTAGE_SCALE = 1e6; // 100%
+    uint256 public constant PERCENTAGE_SCALE = 1e6; // 100%
     uint256 public _creatorRoyalty = 5 * 1e4; // 5%
     address public _creatorAddress;
 
@@ -55,7 +55,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         uint256 maxVerses
     ) ERC721("Decent Poems", "POEMS") {
         _decentWords = DecentWords(decentWords);
-        _splitter = ISplitMain(splitterAddress);
+        _splitter = SplitMain(splitterAddress);
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
         _poems.push();

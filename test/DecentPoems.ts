@@ -12,6 +12,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { setEVMTimestamp, mineEVMBlock } from "./evm";
 import { parseEther } from "ethers/lib/utils";
+import { SplitMain__factory } from "../typechain";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
@@ -22,6 +23,7 @@ const AddressZero = ethers.constants.AddressZero;
 describe("DecentPoems", () => {
   let decentPoems: DecentPoems;
   let mockDecentWords: any;
+  let mockSplitMain: any;
   let deployer: SignerWithAddress,
     bob: SignerWithAddress,
     carl: SignerWithAddress,
@@ -36,11 +38,20 @@ describe("DecentPoems", () => {
     );
     mockDecentWords = await mockDecentWordsFactory.deploy();
 
+    const mockSplitMainFactory = await smock.mock<SplitMain__factory>(
+      "SplitMain"
+    );
+    mockSplitMain = await mockSplitMainFactory.deploy();
+
     const DecentPoemsFactory = (await ethers.getContractFactory(
       "DecentPoems",
       deployer
     )) as DecentPoems__factory;
-    decentPoems = await DecentPoemsFactory.deploy(mockDecentWords.address, 7);
+    decentPoems = await DecentPoemsFactory.deploy(
+      mockDecentWords.address,
+      mockSplitMain.address,
+      7
+    );
     await decentPoems.deployed();
 
     mockDecentWords.total.returns(1);
@@ -499,8 +510,9 @@ describe("DecentPoems", () => {
     it("should distribute to the creator the minting royalty", async () => {
       await producePoem();
       const price = parseEther("1");
-      const royalty = await decentPoems._creatorMintingRoyalty();
-      const creatorSplit = price.div(100).mul(royalty);
+      const royalty = await decentPoems._creatorRoyalty();
+      const scale = await decentPoems.PERCENTAGE_SCALE();
+      const creatorSplit = price.div(scale).mul(royalty);
       const aliceOldBalance = await deployer.getBalance();
 
       await decentPoems.connect(bob).safeMint(bob.address, 0, { value: price });
@@ -517,8 +529,9 @@ describe("DecentPoems", () => {
       }
 
       const price = parseEther("1");
-      const creatorRoyalty = await decentPoems._creatorMintingRoyalty();
-      const ownerSplit = price.div(100).mul(creatorRoyalty);
+      const creatorRoyalty = await decentPoems._creatorRoyalty();
+      const scale = await decentPoems.PERCENTAGE_SCALE();
+      const ownerSplit = price.div(scale).mul(creatorRoyalty);
       const authorSplit = price.sub(ownerSplit).div(7);
 
       const bobContribution = 1;
