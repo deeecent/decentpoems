@@ -290,14 +290,14 @@ describe("DecentPoems", () => {
     });
   });
 
-  describe.only("getAuctions", async () => {
+  describe("getAuctions", async () => {
     it("should return empty if no poem has been created", async () => {
       const result = await decentPoems.getAuctions();
 
       expect(result.length).equal(0);
     });
 
-    it("should all poems created within the auction duration time", async () => {
+    it("should return all poems created within the auction duration time", async () => {
       await producePoem();
       await producePoem();
 
@@ -326,6 +326,78 @@ describe("DecentPoems", () => {
       const result = await decentPoems.getAuctions();
 
       expect(result.length).equal(0);
+    });
+  });
+
+  describe.only("getMinted", async () => {
+    function getExisting(items: any) {
+      let existing = [];
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].createdAt.toNumber() > 0) {
+          existing.push(items[i]);
+        } else {
+          break;
+        }
+      }
+
+      return existing;
+    }
+
+    it("should return empty if no poem has been minted", async () => {
+      const result = await decentPoems.getMinted(0);
+
+      expect(result[0].createdAt).equal(0);
+    });
+
+    it("should return all poems minted until now", async () => {
+      await producePoem();
+      await producePoem();
+      const price = await decentPoems._auctionStartPrice();
+      await decentPoems.safeMint(alice.address, 0, { value: price });
+      await decentPoems.safeMint(alice.address, 1, { value: price });
+
+      const result = await decentPoems.getMinted(0);
+
+      let existing = getExisting(result);
+
+      expect(existing.length).equal(2);
+    });
+
+    it("should not return poems that are on auction", async () => {
+      await producePoem();
+      await producePoem();
+
+      const result = await decentPoems.getMinted(0);
+
+      expect(result[0].createdAt).equal(0);
+    });
+
+    it("should return max PAGE_SIZE minted poems for page 0 when more than PAGE_SIZE + 1 poems exist", async () => {
+      const pageSize = await decentPoems.PAGE_SIZE();
+      const price = await decentPoems._auctionStartPrice();
+      for (let i = 0; i < pageSize.toNumber() + 1; i++) {
+        await producePoem();
+        await decentPoems.safeMint(alice.address, i, { value: price });
+      }
+
+      const result = await decentPoems.getMinted(0);
+      let existing = getExisting(result);
+
+      expect(existing.length).equal(pageSize);
+    });
+
+    it("should return 1 minted poems for page 1 when PAGE_SIZE + 1 poems exist", async () => {
+      const pageSize = await decentPoems.PAGE_SIZE();
+      const price = await decentPoems._auctionStartPrice();
+      for (let i = 0; i < pageSize.toNumber() + 1; i++) {
+        await producePoem();
+        await decentPoems.safeMint(alice.address, i, { value: price });
+      }
+
+      const result = await decentPoems.getMinted(1);
+      const existing = getExisting(result);
+
+      expect(existing.length).equal(1);
     });
   });
 });

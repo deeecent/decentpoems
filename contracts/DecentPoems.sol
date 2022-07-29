@@ -29,7 +29,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     Poem[] public _poems;
     uint256[] public _minted;
 
-    uint256 constant PAGE_SIZE = 20;
+    uint256 public constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
 
@@ -138,8 +138,11 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         returns (Poem[PAGE_SIZE] memory poems)
     {
-        uint256 startingIndex = (_minted.length / page) * PAGE_SIZE;
-        for (uint256 i = 0; i < PAGE_SIZE; i++) {
+        uint256 startingIndex = PAGE_SIZE * page;
+        uint256 maxItems = _minted.length >= startingIndex + PAGE_SIZE
+            ? PAGE_SIZE
+            : _minted.length - startingIndex;
+        for (uint256 i = 0; i < maxItems; i++) {
             poems[i] = _poems[_minted[i + startingIndex]];
         }
     }
