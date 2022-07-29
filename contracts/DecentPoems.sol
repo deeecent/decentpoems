@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
+import "hardhat/console.sol";
+
 contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     using Strings for uint256;
 
@@ -37,6 +39,9 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 public _auctionStartPrice = 1 ether;
     uint256 public _auctionEndPrice = 0.001 ether;
 
+    uint256 public _creatorMintingRoyalty = 5; // %
+    address public _creatorAddress;
+
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
 
@@ -47,6 +52,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
         _poems.push();
+        _creatorAddress = msg.sender;
     }
 
     modifier onlyMintable(uint poemIndex) {
@@ -82,7 +88,8 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         view
         returns (Poem memory)
     {
-        return _poems[_minted[tokenId]];
+        require(_exists(tokenId), "Non existing token");
+        return _poems[_minted[tokenId - 1]];
     }
 
     function getCurrentPrice(uint256 poemIndex)
@@ -180,6 +187,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         _poems[poemIndex].tokenId = tokenId;
         _minted.push(poemIndex);
         _safeMint(to, tokenId);
+        _distributeValue(msg.value, _poems[poemIndex]);
     }
 
     function submitVerse(
@@ -211,6 +219,18 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     }
 
     // Internal
+
+    function _distributeValue(uint256 value, Poem storage poem) internal {
+        address[] memory authors = poem.authors;
+        uint256 creatorSplit = (value / 100) * _creatorMintingRoyalty;
+        payable(_creatorAddress).transfer(creatorSplit);
+
+        uint256 authorSplit = (value - creatorSplit) / authors.length;
+
+        for (uint i = 0; i < authors.length; i++) {
+            payable(authors[i]).transfer(authorSplit);
+        }
+    }
 
     function _calculatePrice(uint256 elapsedTime)
         internal
