@@ -8,6 +8,7 @@
   import Auctions from "./Auctions.svelte";
   import MintedList from "./MintedList.svelte";
   import NetworkError from "./NetworkError.svelte";
+  import Debug from "./Debug.svelte";
 
   const initializing = init();
 </script>
@@ -15,7 +16,7 @@
 {#await initializing}
   <p>Loading please wait…</p>
 {:then}
-  <Header />
+  <!--Header /-->
   <Content>
     <NetworkError />
     <Route path="/">
@@ -25,6 +26,9 @@
       <Auctions />
     </Route>
     <Route path="/minted"><MintedList /></Route>
+    <Route path="/__debug">
+      <Debug />
+    </Route>
   </Content>
 {:catch}
   <p>There was an error loading the page.</p>

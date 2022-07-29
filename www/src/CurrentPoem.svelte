@@ -3,47 +3,35 @@
   import { Grid, Column, Row } from "carbon-components-svelte";
 
   import Verse from "./Verse.svelte";
+  import type { DecentPoems } from "../../typechain";
+  import type { Poem } from "./types";
 
-  const verses = [
-    {
-      author: "0x4EB46ed918Ab2A037086F9073d068eF3E9496C21",
-      text: "A Decent Poem",
-    },
-    {
-      author: "0x4EB46ed918Ab2A037086F9073d068eF3E9496C21",
-      text: "A fox jumps high jumps high jumps high jumps high jumps high jumps high jumps high jumps high jumps high jumps high",
-    },
-    {
-      author: "0x4EB46ed918Ab2A037086F9073d068eF3E9496C21",
-      text: "Something something",
-    },
-    {
-      author: "0x4EB46ed918Ab2A037086F9073d068eF3E9496C21",
-      text: "I found something else",
-    },
-  ];
+  export let poem: Poem;
+  export let word: string;
+  export let wordIndex: number;
+  export let contract: DecentPoems | null;
 
   const length = 7;
-  const currentWord = "bread";
 </script>
 
 <Grid noGutter padding>
   <Row>
     <Column>
-      <h1>HyperPoem</h1>
-    </Column>
-  </Row>
-  <Row>
-    <Column>
-      <Verse title author={verses[0].author} text={verses[0].text} />
-      {#each verses.slice(1) as { author, text }}
+      <Verse title author={poem.title.author} text={poem.title.text} />
+      {#each poem.verses as { author, text }}
         <Verse {author} {text} />
       {/each}
     </Column>
   </Row>
   <Row>
     <Column>
-      <AddVerse index={verses.length + 1} {length} word={currentWord} />
+      <AddVerse
+        {contract}
+        number={poem.verses.length + 1}
+        {length}
+        {word}
+        {wordIndex}
+      />
     </Column>
   </Row>
 </Grid>

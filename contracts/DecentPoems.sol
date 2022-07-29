@@ -98,13 +98,12 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         poem.verses.push(verse);
         poem.authors.push(_msgSender());
         poem.wordIndexes.push(currentIndex);
+        emit VerseSubmitted(_msgSender(), _poems.length - 1);
 
         if (poem.verses.length == _maxVerses) {
             poem.createdAt = block.timestamp;
             emit PoemCreated(_msgSender(), _poems.length);
             _poems.push();
-        } else {
-            emit VerseSubmitted(_msgSender(), _poems.length - 1);
         }
 
         _currentRandomSeed = uint256(blockhash(block.number - 1));
