@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+import "./ISplitMain.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
@@ -18,6 +19,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 constant expiration = 1 days;
 
     DecentWords public _decentWords;
+    ISplitMain public _splitter;
 
     struct Poem {
         string[] verses;
@@ -26,6 +28,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         uint256 createdAt;
         uint256 mintedAt;
         uint256 tokenId;
+        address split;
     }
 
     Poem[] public _poems;
@@ -39,16 +42,20 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     uint256 public _auctionStartPrice = 1 ether;
     uint256 public _auctionEndPrice = 0.001 ether;
 
-    uint256 public _creatorMintingRoyalty = 5; // %
+    uint256 constant PERCENTAGE_SCALE = 1e6; // 100%
+    uint256 public _creatorRoyalty = 5 * 1e4; // 5%
     address public _creatorAddress;
 
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
 
-    constructor(address decentWords, uint256 maxVerses)
-        ERC721("Decent Poems", "POEMS")
-    {
+    constructor(
+        address decentWords,
+        address splitterAddress,
+        uint256 maxVerses
+    ) ERC721("Decent Poems", "POEMS") {
         _decentWords = DecentWords(decentWords);
+        _splitter = ISplitMain(splitterAddress);
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
         _poems.push();
@@ -188,6 +195,10 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         _minted.push(poemIndex);
         _safeMint(to, tokenId);
         _distributeValue(msg.value, _poems[poemIndex]);
+        _poems[poemIndex].split = _createSplit(
+            _poems[poemIndex].authors,
+            _creatorAddress
+        );
     }
 
     function submitVerse(
@@ -220,9 +231,42 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
 
     // Internal
 
+    function _createSplit(address[] memory authors, address creator)
+        internal
+        returns (address)
+    {
+        uint256 totalRecipients = authors.length + 1;
+        address[] memory recipients = new address[](totalRecipients);
+        for (uint256 i = 0; i < totalRecipients - 1; i++) {
+            recipients[i] = authors[i];
+        }
+        recipients[totalRecipients - 1] = creator;
+
+        uint32[] memory percentAllocations = new uint32[](totalRecipients);
+        uint256 accumulatedPercentage = 0;
+        for (uint256 i = 0; i < totalRecipients - 1; i++) {
+            uint256 percentage = (PERCENTAGE_SCALE - _creatorRoyalty) /
+                totalRecipients;
+            percentAllocations[i] = uint32(percentage);
+            accumulatedPercentage = accumulatedPercentage + percentage;
+        }
+
+        percentAllocations[totalRecipients - 1] = uint32(
+            1e6 - accumulatedPercentage
+        );
+
+        return
+            _splitter.createSplit(
+                recipients,
+                percentAllocations,
+                1e3, /* 0.1% */
+                owner()
+            );
+    }
+
     function _distributeValue(uint256 value, Poem storage poem) internal {
         address[] memory authors = poem.authors;
-        uint256 creatorSplit = (value / 100) * _creatorMintingRoyalty;
+        uint256 creatorSplit = (value / PERCENTAGE_SCALE) * _creatorRoyalty;
         payable(_creatorAddress).transfer(creatorSplit);
 
         uint256 authorSplit = (value - creatorSplit) / authors.length;
