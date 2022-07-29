@@ -10,6 +10,7 @@ import {
 } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
+import { getEVMTimestamp, setEVMTimestamp, mineEVMBlock } from "./evm";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
@@ -36,16 +37,24 @@ describe("DecentPoems", () => {
     )) as DecentPoems__factory;
     decentPoems = await DecentPoemsFactory.deploy(mockDecentWords.address, 7);
     await decentPoems.deployed();
+
+    mockDecentWords.total.returns(1);
+    mockDecentWords.words.returns("test");
   });
+
+  async function producePoem() {
+    for (let i = 0; i < 7; i++) {
+      await decentPoems.submitVerse("", 0, "");
+    }
+  }
 
   describe("getCurentWord", async () => {
     it("should get a word from the decent words", async () => {
-      mockDecentWords.total.returns(1);
-      mockDecentWords.words.returns("test");
+      mockDecentWords.words.returns("aword");
 
       const result = await decentPoems.getCurrentWord();
 
-      expect(result).eql([BigNumber.from(0), "test"]);
+      expect(result).eql([BigNumber.from(0), "aword"]);
     });
 
     it("should fail if decent words is empty", async () => {
@@ -58,11 +67,6 @@ describe("DecentPoems", () => {
   });
 
   describe("submitVerse", async () => {
-    beforeEach(async () => {
-      mockDecentWords.total.returns(1);
-      mockDecentWords.words.returns("test");
-    });
-
     it("should concatenate prefix, word and postfix", async () => {
       mockDecentWords.words.returns("2");
       await decentPoems.submitVerse("1", 0, "3");
@@ -178,9 +182,7 @@ describe("DecentPoems", () => {
     it("should set createdAt once the 7th verse is submitted", async () => {
       const createdAtBefore = (await decentPoems.getPoem(0)).createdAt;
 
-      for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse("", 0, "");
-      }
+      await producePoem();
 
       const createdAtAfter = (await decentPoems.getPoem(0)).createdAt;
 
@@ -211,13 +213,80 @@ describe("DecentPoems", () => {
     });
 
     it("should get empty poem if 7 people submitted", async () => {
-      for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse("", 0, "");
-      }
+      await producePoem();
 
       const result = await decentPoems.getCurrentPoem();
 
       expect(result.verses.length).equal(0);
+    });
+  });
+
+  describe.only("getCurrentPrice", async () => {
+    it("should fail if poem does not exist", async () => {
+      await expect(decentPoems.getCurrentPrice(1)).revertedWith("Invalid poem");
+    });
+
+    it("should fail if poem is still being created", async () => {
+      await expect(decentPoems.getCurrentPrice(0)).revertedWith("Invalid poem");
+    });
+
+    it("should fail if poem is already minted", async () => {
+      await producePoem();
+      const price = await decentPoems._auctionStartPrice();
+      await decentPoems.safeMint(alice.address, 0, { value: price });
+
+      await expect(decentPoems.getCurrentPrice(0)).revertedWith(
+        "Poem already minted"
+      );
+    });
+
+    it.only("should fail if poem is expired", async () => {
+      await producePoem();
+      const auctionDuration = await decentPoems._auctionDuration();
+      const currentTimestamp = await getEVMTimestamp();
+      await setEVMTimestamp(currentTimestamp + auctionDuration.toNumber() + 1);
+      await mineEVMBlock();
+
+      await expect(decentPoems.getCurrentPrice(0)).revertedWith(
+        "Auction expired"
+      );
+    });
+
+    it("should return maximum price right after poem is created", async () => {
+      await producePoem();
+      const maxPrice = await decentPoems._auctionStartPrice();
+
+      expect(await decentPoems.getCurrentPrice(0)).equal(maxPrice);
+    });
+
+    it.only("should return minimum price right before auction expires", async () => {
+      await producePoem();
+      const minimumPrice = await decentPoems._auctionEndPrice();
+
+      const createTimestamp = (await decentPoems.getPoem(0)).createdAt;
+      const auctionDuration = await decentPoems._auctionDuration();
+      await setEVMTimestamp(
+        createTimestamp.toNumber() + auctionDuration.toNumber()
+      );
+      await mineEVMBlock();
+
+      expect(await decentPoems.getCurrentPrice(0)).equal(minimumPrice);
+    });
+
+    it.only("should return half the price half-way through the auction", async () => {
+      await producePoem();
+      const minimumPrice = await decentPoems._auctionEndPrice();
+      const maxPrice = await decentPoems._auctionStartPrice();
+      const halfPrice = maxPrice.sub(maxPrice.sub(minimumPrice).div(2));
+
+      const createTimestamp = (await decentPoems.getPoem(0)).createdAt;
+      const auctionDuration = await decentPoems._auctionDuration();
+      await setEVMTimestamp(
+        createTimestamp.toNumber() + auctionDuration.div(2).toNumber()
+      );
+      await mineEVMBlock();
+
+      expect(await decentPoems.getCurrentPrice(0)).equal(halfPrice);
     });
   });
 });
