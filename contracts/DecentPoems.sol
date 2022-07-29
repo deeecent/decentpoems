@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
+import "hardhat/console.sol";
+
 contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     using Strings for uint256;
 
@@ -29,13 +31,16 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
     Poem[] public _poems;
     uint256[] public _minted;
 
-    uint256 constant PAGE_SIZE = 20;
+    uint256 public constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
 
     uint256 public _auctionDuration = 1 days;
     uint256 public _auctionStartPrice = 1 ether;
     uint256 public _auctionEndPrice = 0.001 ether;
+
+    uint256 public _creatorMintingRoyalty = 5; // %
+    address public _creatorAddress;
 
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
@@ -47,7 +52,18 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         _currentRandomSeed = uint256(blockhash(block.number - 1));
         _maxVerses = maxVerses;
         _poems.push();
+        _creatorAddress = msg.sender;
     }
+
+    modifier onlyMintable(uint256 poemIndex) {
+        require(poemIndex < _poems.length - 1, "Invalid poem");
+        uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
+        require(elapsedTime <= _auctionDuration, "Auction expired");
+        require(_poems[poemIndex].mintedAt == 0, "Poem already minted");
+        _;
+    }
+
+    // READ
 
     function getCurrentWord()
         public
@@ -59,77 +75,31 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         word = _decentWords.words(index);
     }
 
-    function getCurrentPrice(uint256 poemIndex) public view returns (uint256) {
-        uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
-        return
-            _auctionStartPrice -
-            (((_auctionStartPrice - _auctionEndPrice) / _auctionDuration) *
-                elapsedTime);
-    }
-
-    function safeMint(address to, uint256 poemIndex) public payable {
-        require(msg.value >= getCurrentPrice(poemIndex), "Insufficient ether");
-        require(_poems[poemIndex].mintedAt == 0, "Poem already minted");
-        require(
-            block.timestamp - _poems[poemIndex].createdAt > _auctionDuration,
-            "Auction for this item is closed"
-        );
-
-        uint256 tokenId = _minted.length + 1;
-        _poems[poemIndex].mintedAt = block.timestamp;
-        _poems[poemIndex].tokenId = tokenId;
-        _minted.push(poemIndex);
-        _safeMint(to, tokenId);
-    }
-
-    function submitVerse(
-        string memory prefix,
-        uint256 wordIndex,
-        string memory suffix
-    ) public {
-        (uint256 currentIndex, string memory currentWord) = getCurrentWord();
-        require(wordIndex == currentIndex, "Wrong word");
-
-        Poem storage poem = _poems[_poems.length - 1];
-        string memory verse = string(
-            abi.encodePacked(prefix, currentWord, suffix)
-        );
-
-        poem.verses.push(verse);
-        poem.authors.push(_msgSender());
-        poem.wordIndexes.push(currentIndex);
-        emit VerseSubmitted(_msgSender(), _poems.length - 1);
-
-        if (poem.verses.length == _maxVerses) {
-            poem.createdAt = block.timestamp;
-            emit PoemCreated(_msgSender(), _poems.length);
-            _poems.push();
-        }
-
-        _currentRandomSeed = uint256(blockhash(block.number - 1));
-    }
-
     function getCurrentPoem() public view returns (Poem memory) {
         return _poems[_poems.length - 1];
     }
 
-    function getPoem(uint256 id) public view returns (Poem memory) {
-        return _poems[id];
+    function getPoem(uint256 index) public view returns (Poem memory) {
+        return _poems[index];
     }
 
-    function getPoemFromTokenId(uint256 id) public view returns (Poem memory) {
-        return _poems[_minted[id]];
-    }
-
-    function getMinted(uint256 page)
+    function getPoemFromTokenId(uint256 tokenId)
         public
         view
-        returns (Poem[PAGE_SIZE] memory poems)
+        returns (Poem memory)
     {
-        uint256 startingIndex = (_minted.length / page) * PAGE_SIZE;
-        for (uint256 i = 0; i < PAGE_SIZE; i++) {
-            poems[i] = _poems[_minted[i + startingIndex]];
-        }
+        require(_exists(tokenId), "Non existing token");
+        return _poems[_minted[tokenId - 1]];
+    }
+
+    function getCurrentPrice(uint256 poemIndex)
+        public
+        view
+        onlyMintable(poemIndex)
+        returns (uint256)
+    {
+        uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
+        return _calculatePrice(elapsedTime);
     }
 
     function getAuctions() public view returns (Poem[] memory) {
@@ -170,6 +140,20 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         return _poemAuctions;
     }
 
+    function getMinted(uint256 page)
+        public
+        view
+        returns (Poem[PAGE_SIZE] memory poems)
+    {
+        uint256 startingIndex = PAGE_SIZE * page;
+        uint256 maxItems = _minted.length >= startingIndex + PAGE_SIZE
+            ? PAGE_SIZE
+            : _minted.length - startingIndex;
+        for (uint256 i = 0; i < maxItems; i++) {
+            poems[i] = _poems[_minted[i + startingIndex]];
+        }
+    }
+
     function tokenURI(uint256 tokenId)
         public
         view
@@ -183,5 +167,79 @@ contract DecentPoems is DecentPoemsRenderer, ERC721, Ownable {
         }
 
         return string(_getJSON(poem.verses, poemWords, poem.authors));
+    }
+
+    // WRITE
+
+    function safeMint(address to, uint256 poemIndex)
+        public
+        payable
+        onlyMintable(poemIndex)
+    {
+        uint256 elapsedTime = block.timestamp - _poems[poemIndex].createdAt;
+        require(
+            msg.value >= _calculatePrice(elapsedTime),
+            "Insufficient ether"
+        );
+
+        uint256 tokenId = _minted.length + 1;
+        _poems[poemIndex].mintedAt = block.timestamp;
+        _poems[poemIndex].tokenId = tokenId;
+        _minted.push(poemIndex);
+        _safeMint(to, tokenId);
+        _distributeValue(msg.value, _poems[poemIndex]);
+    }
+
+    function submitVerse(
+        string memory prefix,
+        uint256 wordIndex,
+        string memory suffix
+    ) public {
+        (uint256 currentIndex, string memory currentWord) = getCurrentWord();
+        require(wordIndex == currentIndex, "Wrong word");
+
+        Poem storage poem = _poems[_poems.length - 1];
+        string memory verse = string(
+            abi.encodePacked(prefix, currentWord, suffix)
+        );
+
+        poem.verses.push(verse);
+        poem.authors.push(_msgSender());
+        poem.wordIndexes.push(currentIndex);
+
+        if (poem.verses.length == _maxVerses) {
+            poem.createdAt = block.timestamp;
+            emit PoemCreated(_msgSender(), _poems.length);
+            _poems.push();
+        } else {
+            emit VerseSubmitted(_msgSender(), _poems.length - 1);
+        }
+
+        _currentRandomSeed = uint256(blockhash(block.number - 1));
+    }
+
+    // Internal
+
+    function _distributeValue(uint256 value, Poem storage poem) internal {
+        address[] memory authors = poem.authors;
+        uint256 creatorSplit = (value / 100) * _creatorMintingRoyalty;
+        payable(_creatorAddress).transfer(creatorSplit);
+
+        uint256 authorSplit = (value - creatorSplit) / authors.length;
+
+        for (uint256 i = 0; i < authors.length; i++) {
+            payable(authors[i]).transfer(authorSplit);
+        }
+    }
+
+    function _calculatePrice(uint256 elapsedTime)
+        internal
+        view
+        returns (uint256)
+    {
+        return
+            _auctionStartPrice -
+            (((_auctionStartPrice - _auctionEndPrice) / _auctionDuration) *
+                elapsedTime);
     }
 }

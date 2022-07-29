@@ -43,7 +43,7 @@ describe("DecentPoemsRender", () => {
       ]);
 
       const correct =
-        "<svg width='600' height='600'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
+        "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>ameba               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
 
       expect(result).equal(correct);
     });

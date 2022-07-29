@@ -37,7 +37,7 @@ task("check", "Deploy Decent Words", async (_, hre) => {
   console.log(params.length);
 });
 
-task("populate", "Deploy Decent Words")
+task("populate", "Populate Decent Words")
   .addParam("wordsFile")
   .setAction(async ({ wordsFile }, hre) => {
     const words = readFileSync(wordsFile, "utf-8").split("\n");
