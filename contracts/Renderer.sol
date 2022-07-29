@@ -64,7 +64,7 @@ contract Renderer is DecentPoemsRenderer, ERC721 {
         return string(super._getDescription(verses, authors));
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI(uint256)
         public
         view
         virtual

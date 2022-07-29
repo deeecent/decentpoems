@@ -337,7 +337,7 @@ describe("DecentPoems", () => {
     });
   });
 
-  describe.only("getPoemFromTokenId", async () => {
+  describe("getPoemFromTokenId", async () => {
     it("should return first minted poem for token 1", async () => {
       mockDecentWords.words.returns("");
       await producePoem("minted");

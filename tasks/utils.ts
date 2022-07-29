@@ -54,7 +54,7 @@ export async function loadContract(
   const addresses = networks[chainId];
 
   let contract;
-  if (contractName in addresses) {
+  if (addresses !== undefined && contractName in addresses) {
     const address = addresses[contractName];
     contract = FACTORIES[contractName].connect(address, deployer);
   }
