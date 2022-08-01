@@ -611,4 +611,10 @@ describe("DecentPoems", () => {
       expect(result.split).equal(abe.address);
     });
   });
+
+  describe("tokenURI", async () => {
+    it("should ", async () => {
+      expect(true).true;
+    });
+  });
 });

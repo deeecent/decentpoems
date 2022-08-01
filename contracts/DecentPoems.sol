@@ -13,7 +13,7 @@ import "./DecentWords.sol";
 
 import "hardhat/console.sol";
 
-contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
+contract DecentPoems is ERC721Royalty, Ownable {
     using Strings for uint256;
 
     uint256 constant expiration = 1 days;
@@ -45,7 +45,7 @@ contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
     uint256 public constant PERCENTAGE_SCALE = 1e6; // 100%
     uint256 public _creatorRoyalty = 5 * 1e4; // 5%
     uint256 public _saleRoyalty = 5 * 1e4;
-    uint32 public _distributorFee = 1e3;
+    uint32 public _distributorFee = 1e3; // 0.1%
     address public _creatorAddress;
 
     event VerseSubmitted(address author, uint256 id);
@@ -163,26 +163,30 @@ contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
         }
     }
 
+    function poemURI(uint256 poemIndex) public view returns (string memory) {
+        return _renderPoem(_poems[poemIndex]);
+    }
+
     function tokenURI(uint256 tokenId)
         public
         view
         override
         returns (string memory)
     {
-        Poem storage poem = _poems[_minted[tokenId]];
-        string[] memory poemWords = new string[](_maxVerses);
-        for (uint256 i = 0; i < _maxVerses; i++) {
-            poemWords[i] = _decentWords.words(poem.wordIndexes[i]);
-        }
-
-        return string(_getJSON(poem.verses, poemWords, poem.authors));
-    }
-
-    function getSVG(string[] memory words) public view returns (string memory) {
-        return string(_getSVG(words));
+        return _renderPoem(getPoemFromTokenId(tokenId));
     }
 
     // WRITE
+
+    function setFees(
+        uint256 creatorRoyalty,
+        uint256 saleRoyalty,
+        uint32 distributorFee
+    ) public onlyOwner {
+        _creatorRoyalty = creatorRoyalty;
+        _saleRoyalty = saleRoyalty;
+        _distributorFee = distributorFee;
+    }
 
     function safeMint(address to, uint256 poemIndex)
         public
@@ -241,6 +245,26 @@ contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
     }
 
     // Internal
+
+    function _renderPoem(Poem memory poem)
+        internal
+        view
+        returns (string memory)
+    {
+        string[] memory poemWords = new string[](_maxVerses);
+        for (uint256 i = 0; i < _maxVerses; i++) {
+            poemWords[i] = _decentWords.words(poem.wordIndexes[i]);
+        }
+
+        return
+            string(
+                DecentPoemsRenderer.getJSON(
+                    poem.verses,
+                    poemWords,
+                    poem.authors
+                )
+            );
+    }
 
     function _feeDenominator() internal pure virtual override returns (uint96) {
         return uint96(PERCENTAGE_SCALE);

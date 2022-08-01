@@ -2,11 +2,12 @@ import { ethers } from "hardhat";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { solidity } from "ethereum-waffle";
-import { Renderer, Renderer__factory } from "../typechain";
+import {
+  DecentPoemsRenderer,
+  DecentPoemsRenderer__factory,
+} from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { readFileSync, readSync } from "fs";
-import { BigNumber, wordlists } from "ethers";
-import { getEVMTimestamp, mineEVMBlock } from "./evm";
+import { fetchJson } from "ethers/lib/utils";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
@@ -16,57 +17,142 @@ const AddressZero = ethers.constants.AddressZero;
 const AddressOne = AddressZero.replace(/.$/, "1");
 
 describe("DecentPoemsRender", () => {
-  let renderer: Renderer;
+  let renderer: DecentPoemsRenderer;
   let alice: SignerWithAddress, bob: SignerWithAddress;
+
+  let authors: string[];
+  const verses = [
+    "test0",
+    "test1",
+    "test2",
+    "test3",
+    "test4",
+    "test5",
+    "test6",
+  ];
+  const words = [
+    "ameba",
+    "cane",
+    "zuzzurullone",
+    "parziale",
+    "quarantadue",
+    "no",
+    "alberto",
+  ];
 
   beforeEach(async () => {
     [alice, bob] = await ethers.getSigners();
 
-    const RendererFactory = (await ethers.getContractFactory(
-      "Renderer",
+    const DecentPoemsRendererFactory = (await ethers.getContractFactory(
+      "DecentPoemsRenderer",
       alice
-    )) as Renderer__factory;
-    renderer = await RendererFactory.deploy();
+    )) as DecentPoemsRenderer__factory;
+    renderer = await DecentPoemsRendererFactory.deploy();
     await renderer.deployed();
+
+    authors = [
+      alice.address,
+      bob.address,
+      alice.address,
+      alice.address,
+      bob.address,
+      alice.address,
+    ];
   });
 
-  describe("RendererFactory", async () => {
-    it("returns the correct svg", async () => {
-      const result = await renderer.getSVG([
-        "ameba",
-        "cane",
-        "zuzzurullone",
-        "parziale",
-        "quarantadue",
-        "no",
-        "alberto",
-      ]);
+  describe("DecentPoemsRenderer", async () => {
+    describe("getPoem", async () => {
+      it("should not include the first verse (title)", async () => {
+        const result = await renderer.getPoem(verses);
 
-      const correct =
-        "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>ameba               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
+        expect(result).to.not.include(verses[0]);
+      });
 
-      expect(result).equal(correct);
+      it("should return verses concatenated by double new lines", async () => {
+        const expected = verses
+          .slice(1, 7)
+          .reduce((verse, poem) => `${verse}\\n\\n${poem}`);
+
+        const result = await renderer.getPoem(verses);
+
+        expect(result).equal(expected);
+      });
+
+      it("should escape double quotes", async () => {
+        const verses = ["", 'This is a "double quote" string'];
+
+        const result = await renderer.getPoem(verses);
+
+        expect(result).equal('This is a \\"double quote\\" string');
+      });
+
+      it("should escape new lines", async () => {
+        const verses = ["", "This is a \n new line"];
+
+        const result = await renderer.getPoem(verses);
+
+        expect(result).equal("This is a \\\n new line");
+      });
+
+      it("should escape carriage returns", async () => {
+        const verses = ["", "This is a \r carriage return"];
+
+        const result = await renderer.getPoem(verses);
+
+        expect(result).equal("This is a \\\r carriage return");
+      });
     });
 
-    it("returns the correct description", async () => {
-      const result = await renderer.getDescription(
-        [
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-          "Solidity 0.8.14 is not fully supported yet. You can still use Hardhat, but some features, like stack traces, might not work correctly.",
-        ],
-        [
-          alice.address,
-          bob.address,
-          alice.address,
-          alice.address,
-          bob.address,
-          alice.address,
-        ]
-      );
+    describe("getDescription", async () => {
+      it("concatenates the list of authors to the poem", async () => {
+        const result = await renderer.getDescription(verses, authors);
+
+        const expected = "Authors:\\n\\n* ".concat(
+          authors.join("\\n* ").toLowerCase()
+        );
+
+        expect(result).include(expected);
+      });
+
+      it("concatenates the license at the end", async () => {
+        const result = await renderer.getDescription(verses, authors);
+
+        const expected = "License: CC BY-NC-ND 4.0";
+
+        expect(result).include(expected);
+      });
+    });
+
+    describe("getSVG", async () => {
+      it("returns the correct svg", async () => {
+        const result = await renderer.getSVG(words);
+
+        const correct =
+          "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>ameba               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
+
+        expect(result).equal(correct);
+      });
+    });
+
+    describe("getJSON", async () => {
+      it("should return a valid JSON", async () => {
+        const data = await renderer.getJSON(verses, words, authors);
+
+        const result = await fetchJson(data);
+
+        expect(result).to.have.property("name");
+        expect(result).to.have.property("description");
+        expect(result).to.have.property("image");
+        expect(result).to.have.property("attributes");
+      });
+
+      it("should use first verse as name", async () => {
+        const data = await renderer.getJSON(verses, [], []);
+
+        const result = await fetchJson(data);
+
+        expect(result["name"]).equal(verses[0]);
+      });
     });
   });
 });
