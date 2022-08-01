@@ -1,12 +1,17 @@
 import { readFile, writeFile } from "fs/promises";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DecentPoems__factory, DecentWords__factory } from "../typechain";
+import {
+  DecentPoemsRenderer__factory,
+  DecentPoems__factory,
+  DecentWords__factory,
+} from "../typechain";
 
 const CONFIG_FILE_PATH = "./deployment/networks.json";
 
 const FACTORIES: Record<string, any> = {
   DecentWords: DecentWords__factory,
   DecentPoems: DecentPoems__factory,
+  DecentPoemsRenderer: DecentPoemsRenderer__factory,
 };
 
 export async function storeContractAddress(
@@ -32,9 +37,12 @@ export async function storeContractAddress(
 export async function deployContract(
   hre: HardhatRuntimeEnvironment,
   contractName: string,
+  libraries = {},
   ...args: any[]
 ) {
-  const factory = await hre.ethers.getContractFactory(contractName);
+  const factory = await hre.ethers.getContractFactory(contractName, {
+    libraries: libraries,
+  });
   const contract = await factory.deploy(...args);
   await contract.deployed();
 

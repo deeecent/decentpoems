@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { DecentWords } from "../typechain";
+import { DecentPoemsRenderer, DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 
@@ -41,6 +41,13 @@ task("deploy-words", "Deploy DecentWords").setAction(async (_, hre) => {
   await deployContract(hre, "DecentWords");
 });
 
+task("deploy-renderer", "Deploy DecentPoemsRenderer").setAction(
+  async (_, hre) => {
+    console.log("Deploy contract DecentWords");
+    await deployContract(hre, "DecentPoemsRenderer");
+  }
+);
+
 task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
   console.log("Load contract DecentWords");
   const decentWordsContract = (await loadContract(
@@ -53,10 +60,22 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
     return;
   }
 
+  console.log("Load contract DecentPoemsRenderer");
+  const decentPoemsRendererContract = (await loadContract(
+    hre,
+    "DecentPoemsRenderer"
+  )) as DecentPoemsRenderer;
+
+  if (decentPoemsRendererContract === undefined) {
+    console.error("You need to first deploy DecentPoemsRenderer");
+    return;
+  }
+
   console.log("Deploy contract DecentPoems");
   await deployContract(
     hre,
     "DecentPoems",
+    { DecentPoemsRenderer: decentPoemsRendererContract.address },
     decentWordsContract.address,
     process.env.SPLIT_ADDRESS,
     7
