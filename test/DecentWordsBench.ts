@@ -16,7 +16,7 @@ chai.use(solidity);
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-describe("DecentWords", () => {
+describe.skip("DecentWords Benchmark", () => {
   let decentWordsV1: DecentWordsV1;
   let decentWordsV2: DecentWordsV2;
   let decentWordsV3: DecentWordsV3;
@@ -160,7 +160,7 @@ describe("DecentWords", () => {
     });
   });
 
-  describe.skip("execution plans", async () => {
+  describe("execution plans", async () => {
     it("execution plan v1", async () => {
       let chunks: number[] = [];
       const DecentWordsV1Factory = (await ethers.getContractFactory(
