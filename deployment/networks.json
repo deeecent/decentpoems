@@ -6,5 +6,10 @@
     "DecentWords": "0x62DFA3EFB42C558Efe4e9618bBf224304477b191",
     "DecentPoems": "0x1cBB1b51C81BffF91Bae01D131d4FF621CC22B1C",
     "DecentPoemsRenderer": "0x136aF725A5C9254B9edBcfdAe8B3F06F5101f3E9"
+  },
+  "666666": {
+    "DecentWords": "0xf6018dffAc9B1C63e8f1097148664551CEaEc5A2",
+    "DecentPoemsRenderer": "0xb2b1A5641C8b4E1F0B2A2ae543bEb3061aA63e15",
+    "DecentPoems": "0xB84b2b76DB057Dd42Af3336d53980126c1D19e5E"
   }
 }

@@ -2,8 +2,10 @@ import { derived, writable, type Readable } from "svelte/store";
 import { chainId, networkError, providerReadOnly, signer } from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
 import { contractsAddresses } from "./config";
-import type { BigNumber, ethers } from "ethers";
-import type { Poem } from "src/types";
+import type { BigNumber } from "ethers";
+import type { Metadata, Poem } from "src/types";
+import { EventDispatcher } from "./events";
+import { Buffer } from "buffer/";
 
 export const decentPoems: Readable<DecentPoems | null> = derived(
   [networkError, signer, chainId],
@@ -34,7 +36,21 @@ export const decentPoemsReadOnly: Readable<DecentPoems | null> = derived(
   }
 );
 
-let timerId = -1;
+const eventDispatcher = derived(
+  decentPoemsReadOnly,
+  ($decentPoemsReadOnly, set: (value: EventDispatcher | null) => void) => {
+    if ($decentPoemsReadOnly) {
+      console.log("Create dispatcher");
+      const d = new EventDispatcher(
+        $decentPoemsReadOnly,
+        $decentPoemsReadOnly.provider
+      );
+      set(d);
+    } else {
+      set(null);
+    }
+  }
+);
 
 function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
   const poem: Poem = {
@@ -58,44 +74,18 @@ function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
   return poem;
 }
 
-async function updatePoem(
-  contract: DecentPoems,
-  provider: ethers.providers.JsonRpcProvider,
-  set: (value: Poem) => void
-) {
-  if (timerId !== -1) {
-    console.log("updatePoems: clear interval", timerId);
-    window.clearInterval(timerId);
-  }
-
-  let lastBlock = (await provider.getBlock("latest")).number;
-  set(parsePoemStruct(await contract.getCurrentPoem()));
-
-  timerId = window.setInterval(async () => {
-    const currentBlock = (await provider.getBlock("latest")).number;
-    let eventsFilter = contract.filters.VerseSubmitted();
-    let events = await contract.queryFilter(
-      eventsFilter,
-      lastBlock,
-      currentBlock
-    );
-    console.log("Check current Poem events", lastBlock, currentBlock, events);
-    if (events.length) {
-      set(parsePoemStruct(await contract.getCurrentPoem()));
-    }
-    lastBlock = currentBlock;
-  }, 10000);
-}
-
 export const currentPoem = derived(
-  [providerReadOnly, decentPoemsReadOnly],
-  ([$providerReadOnly, $decentPoemsReadOnly], set: (value: Poem) => void) => {
-    if ($decentPoemsReadOnly && $providerReadOnly) {
-      updatePoem($decentPoemsReadOnly, $providerReadOnly, set);
+  [decentPoemsReadOnly, eventDispatcher],
+  ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem) => void) => {
+    if ($decentPoemsReadOnly && $eventDispatcher) {
+      $eventDispatcher.add("VerseSubmitted", () =>
+        $decentPoemsReadOnly.getCurrentPoem().then(parsePoemStruct).then(set)
+      );
     }
-    () => {
-      console.log("currentPoem: clear interval", timerId);
-      clearInterval(timerId);
+    return () => {
+      if ($eventDispatcher) {
+        $eventDispatcher.remove("VerseSubmitted");
+      }
     };
   }
 );
@@ -116,14 +106,47 @@ export const currentWord = derived(
 
 export const refreshAuctions = writable(Date.now());
 
+export function unpackString(s: string) {
+  function decode(x: string) {
+    return Buffer.from(x, "base64").toString("utf8");
+  }
+  const [jsonHeader, jsonRaw] = s.split(",");
+  const json: Metadata = JSON.parse(decode(jsonRaw));
+  const [svgHeader, svgRaw] = json.image.split(",");
+  const svg = decode(svgRaw);
+  return {
+    raw: s,
+    json,
+    jsonHeader,
+    jsonRaw,
+    svgHeader,
+    svgRaw,
+    svg,
+  };
+}
+
 export const auctions = derived(
-  [decentPoemsReadOnly, refreshAuctions],
-  ([$decentPoemsReadOnly, $refreshAuctions], set: (value: Poem[]) => void) => {
-    if ($decentPoemsReadOnly) {
-      $decentPoemsReadOnly
-        .getAuctions()
-        .then((values) => values.map(parsePoemStruct))
-        .then(set);
+  [decentPoemsReadOnly, eventDispatcher],
+  ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem[]) => void) => {
+    if ($decentPoemsReadOnly && $eventDispatcher) {
+      $eventDispatcher.add("PoemCreated", async () => {
+        const [ids, auctions] = await $decentPoemsReadOnly.getAuctions();
+        let poems: Poem[] = [];
+        for (let i = 0; i < auctions.length; i++) {
+          let poem = parsePoemStruct(auctions[i]);
+          poem.id = ids[i].toNumber();
+          const raw = unpackString(await $decentPoemsReadOnly.poemURI(poem.id));
+          poem.metadata = raw.json;
+          poems.push(poem);
+        }
+        console.log(poems);
+        set(poems);
+      });
     }
+    return () => {
+      if ($eventDispatcher) {
+        $eventDispatcher.remove("PoemCreated");
+      }
+    };
   }
 );

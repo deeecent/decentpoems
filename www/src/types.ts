@@ -1,4 +1,11 @@
+export type Metadata = {
+  name: string;
+  description: string;
+  image: string;
+};
+
 export type Poem = {
+  id?: number;
   title: {
     author: string;
     text: string;
@@ -8,6 +15,7 @@ export type Poem = {
     text: string;
   }[];
   created?: Date;
+  metadata?: Metadata;
 };
 
 export const poem: Poem = {

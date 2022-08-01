@@ -29,7 +29,7 @@
     </Row>
     <Row>
       <Column>
-        <h4>Oldest Auction</h4>
+        <h4>Last Auction</h4>
         {#if $auctions.length}
           <Auction poem={$auctions[0]} />
         {/if}
