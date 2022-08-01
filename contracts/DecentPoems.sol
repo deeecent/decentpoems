@@ -111,11 +111,16 @@ contract DecentPoems is ERC721Royalty, Ownable {
         return _calculatePrice(elapsedTime);
     }
 
-    function getAuctions() public view returns (Poem[] memory) {
+    function getAuctions()
+        public
+        view
+        returns (uint256[] memory, Poem[] memory)
+    {
         // Cannot be zero because it's initialized in the constructor
         if (_poems.length == 1) {
-            Poem[] memory empty;
-            return empty;
+            uint256[] memory emptyIds;
+            Poem[] memory emptyPoems;
+            return (emptyIds, emptyPoems);
         }
 
         uint256 poemsLeft = _poems.length - 2;
@@ -135,10 +140,13 @@ contract DecentPoems is ERC721Royalty, Ownable {
         }
 
         Poem[] memory _poemAuctions = new Poem[](auctionCount);
+        uint256[] memory _poemIds = new uint256[](auctionCount);
         poemsLeft = _poems.length - 2;
         for (uint256 i = 0; i < auctionCount; poemsLeft--) {
             if (_poems[poemsLeft].mintedAt == 0) {
-                _poemAuctions[i++] = _poems[poemsLeft];
+                _poemAuctions[i] = _poems[poemsLeft];
+                _poemIds[i] = poemsLeft;
+                i++;
             }
 
             if (poemsLeft == 0) {
@@ -146,7 +154,7 @@ contract DecentPoems is ERC721Royalty, Ownable {
             }
         }
 
-        return _poemAuctions;
+        return (_poemIds, _poemAuctions);
     }
 
     function getMinted(uint256 page)

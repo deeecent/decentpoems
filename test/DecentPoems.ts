@@ -323,18 +323,20 @@ describe("DecentPoems", () => {
 
   describe("getAuctions", async () => {
     it("should return empty if no poem has been created", async () => {
-      const result = await decentPoems.getAuctions();
+      const [resultIds, resultPoems] = await decentPoems.getAuctions();
 
-      expect(result.length).equal(0);
+      expect(resultIds.length).equal(0);
+      expect(resultPoems.length).equal(0);
     });
 
     it("should return all poems created within the auction duration time", async () => {
       await producePoem();
       await producePoem();
 
-      const result = await decentPoems.getAuctions();
+      const [resultIds, resultPoems] = await decentPoems.getAuctions();
 
-      expect(result.length).equal(2);
+      expect(resultIds.length).equal(2);
+      expect(resultPoems.length).equal(2);
     });
 
     it("should not return poems that have been minted", async () => {
@@ -342,18 +344,20 @@ describe("DecentPoems", () => {
       const price = await decentPoems._auctionStartPrice();
       await decentPoems.safeMint(deployer.address, 0, { value: price });
 
-      const result = await decentPoems.getAuctions();
+      const [resultIds, resultPoems] = await decentPoems.getAuctions();
 
-      expect(result.length).equal(0);
+      expect(resultIds.length).equal(0);
+      expect(resultPoems.length).equal(0);
     });
 
     it("should not return expired poems", async () => {
       await producePoem();
       await expirePoem(0);
 
-      const result = await decentPoems.getAuctions();
+      const [resultIds, resultPoems] = await decentPoems.getAuctions();
 
-      expect(result.length).equal(0);
+      expect(resultIds.length).equal(0);
+      expect(resultPoems.length).equal(0);
     });
   });
 
