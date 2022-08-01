@@ -676,7 +676,7 @@ describe("DecentPoems", () => {
       await expect(decentPoems.tokenURI(1)).revertedWith("Non existing token");
     });
 
-    describe.only("poemURI", async () => {
+    describe("poemURI", async () => {
       it("should return the renderer response for the given poem index", async () => {
         await producePoem("another");
 

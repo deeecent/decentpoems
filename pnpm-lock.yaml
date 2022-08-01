@@ -19,7 +19,6 @@ specifiers:
   dotenv: ^16.0.1
   ethereum-waffle: ^3.4.4
   ethers: ^5.6.9
-  exceptions: link:@nomiclabs/ethereumjs-vm/dist/exceptions
   hardhat: ^2.10.1
   hardhat-gas-reporter: ^1.0.8
   solidity-coverage: ^0.7.21
@@ -48,13 +47,12 @@ devDependencies:
   dotenv: 16.0.1
   ethereum-waffle: 3.4.4_typescript@4.7.4
   ethers: 5.6.9
-  exceptions: link:@nomiclabs/ethereumjs-vm/dist/exceptions
   hardhat: 2.10.1_6oasmw356qmm23djlsjgkwvrtm
   hardhat-gas-reporter: 1.0.8_hardhat@2.10.1
   solidity-coverage: 0.7.21
-  ts-node: link:node_modules/ts-node
+  ts-node: 10.9.1_f6w67sjx3imwytyzb2qhabnzqe
   typechain: 8.1.0_typescript@4.7.4
-  typescript: link:node_modules/typescript
+  typescript: 4.7.4
 
 packages:
 
