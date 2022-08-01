@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { currentPoem, currentWord, decentPoems } from "./stores/contract";
+  import {
+    currentPoem,
+    currentWord,
+    decentPoems,
+    auctions,
+  } from "./stores/contract";
 
   import { Grid, Column, Row } from "carbon-components-svelte";
   import Auction from "./Auction.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
   import Minted from "./Minted.svelte";
-  import { poem } from "./types";
 </script>
 
 {#if $currentPoem && $currentWord}
@@ -26,11 +30,12 @@
     <Row>
       <Column>
         <h4>Oldest Auction</h4>
-        <Auction {poem} />
+        {#if $auctions.length}
+          <Auction poem={$auctions[0]} />
+        {/if}
       </Column>
       <Column>
         <h4>Last Minted</h4>
-        <Minted {poem} />
       </Column>
     </Row>
   </Grid>

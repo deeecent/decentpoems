@@ -17,7 +17,11 @@
 <Grid noGutter padding>
   <Row>
     <Column>
-      <Verse title author={poem.title.author} text={poem.title.text} />
+      {#if poem.title.text}
+        <Verse title author={poem.title.author} text={poem.title.text} />
+      {:else}
+        <h2>Start a new poem</h2>
+      {/if}
       {#each poem.verses as { author, text }}
         <Verse {author} {text} />
       {/each}

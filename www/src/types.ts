@@ -7,7 +7,7 @@ export type Poem = {
     author: string;
     text: string;
   }[];
-  created: Date;
+  created?: Date;
 };
 
 export const poem: Poem = {
@@ -33,5 +33,4 @@ export const poem: Poem = {
       author: "0xF9334F0DaC4af9cbDE0F986E5adC0273801032AD",
     },
   ],
-  created: new Date(),
 };

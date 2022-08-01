@@ -178,6 +178,10 @@ contract DecentPoems is DecentPoemsRenderer, ERC721Royalty, Ownable {
         return string(_getJSON(poem.verses, poemWords, poem.authors));
     }
 
+    function getSVG(string[] memory words) public view returns (string memory) {
+        return string(_getSVG(words));
+    }
+
     // WRITE
 
     function safeMint(address to, uint256 poemIndex)

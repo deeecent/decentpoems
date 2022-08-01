@@ -1,4 +1,4 @@
-import { derived, type Readable } from "svelte/store";
+import { derived, writable, type Readable } from "svelte/store";
 import { chainId, networkError, providerReadOnly, signer } from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
 import { contractsAddresses } from "./config";
@@ -37,20 +37,25 @@ export const decentPoemsReadOnly: Readable<DecentPoems | null> = derived(
 let timerId = -1;
 
 function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
-  return {
+  const poem: Poem = {
     title: {
       text: poemStruct.verses[0],
       author: poemStruct.authors[0],
     },
-    verses: poemStruct.verses.slice(1).reduce((prev, curr, index) => {
+    verses: poemStruct.verses.slice(1).reduce((prev, _, index) => {
       prev.push({
         text: poemStruct.verses[index + 1],
         author: poemStruct.authors[index + 1],
       });
       return prev;
     }, [] as { author: string; text: string }[]),
-    created: new Date(poemStruct.createdAt.toNumber() * 1000),
-  } as Poem;
+  };
+
+  if (poemStruct.createdAt.gt(0)) {
+    poem.created = new Date(poemStruct.createdAt.toNumber() * 1000);
+  }
+
+  return poem;
 }
 
 async function updatePoem(
@@ -105,6 +110,20 @@ export const currentWord = derived(
       $decentPoemsReadOnly
         .getCurrentWord()
         .then(({ index, word }) => set({ index, word }));
+    }
+  }
+);
+
+export const refreshAuctions = writable(Date.now());
+
+export const auctions = derived(
+  [decentPoemsReadOnly, refreshAuctions],
+  ([$decentPoemsReadOnly, $refreshAuctions], set: (value: Poem[]) => void) => {
+    if ($decentPoemsReadOnly) {
+      $decentPoemsReadOnly
+        .getAuctions()
+        .then((values) => values.map(parsePoemStruct))
+        .then(set);
     }
   }
 );
