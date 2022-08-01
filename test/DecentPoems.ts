@@ -5,6 +5,7 @@ import chaiAsPromised from "chai-as-promised";
 import { solidity } from "ethereum-waffle";
 import {
   DecentPoems,
+  DecentPoemsRenderer__factory,
   DecentPoems__factory,
   DecentWords__factory,
 } from "../typechain";
@@ -24,6 +25,7 @@ describe("DecentPoems", () => {
   let decentPoems: DecentPoems;
   let mockDecentWords: any;
   let mockSplitMain: any;
+  let mockDecentPoemsRenderer: any;
   let deployer: SignerWithAddress,
     bob: SignerWithAddress,
     carl: SignerWithAddress,
@@ -38,16 +40,22 @@ describe("DecentPoems", () => {
     );
     mockDecentWords = await mockDecentWordsFactory.deploy();
 
+    const mockDecentPoemsRendererFactory =
+      await smock.mock<DecentPoemsRenderer__factory>("DecentPoemsRenderer");
+    mockDecentPoemsRenderer = await mockDecentPoemsRendererFactory.deploy();
+
     const mockSplitMainFactory = await smock.mock<SplitMain__factory>(
       "SplitMain"
     );
     mockSplitMain = await mockSplitMainFactory.deploy();
     mockSplitMain.createSplit.returns(deployer.address);
 
-    const DecentPoemsFactory = (await ethers.getContractFactory(
-      "DecentPoems",
-      deployer
-    )) as DecentPoems__factory;
+    const DecentPoemsFactory = (await ethers.getContractFactory("DecentPoems", {
+      signer: deployer,
+      libraries: {
+        DecentPoemsRenderer: mockDecentPoemsRenderer.address,
+      },
+    })) as DecentPoems__factory;
     decentPoems = await DecentPoemsFactory.deploy(
       mockDecentWords.address,
       mockSplitMain.address,
@@ -613,8 +621,107 @@ describe("DecentPoems", () => {
   });
 
   describe("tokenURI", async () => {
-    it("should ", async () => {
-      expect(true).true;
+    it("should return the renderer response for the given token id", async () => {
+      await producePoem("test");
+      const price = await decentPoems.getCurrentPrice(0);
+      mockSplitMain.createSplit.returns(abe.address);
+      await decentPoems.safeMint(deployer.address, 0, { value: price });
+
+      const expectedInputVerses = [
+        "testtest",
+        "testtest",
+        "testtest",
+        "testtest",
+        "testtest",
+        "testtest",
+        "testtest",
+      ];
+
+      const expectedInputWords = [
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+      ];
+
+      const expectedInputAuthors = [
+        bob.address,
+        bob.address,
+        bob.address,
+        bob.address,
+        bob.address,
+        bob.address,
+        bob.address,
+      ];
+
+      mockDecentPoemsRenderer.getJSON
+        .whenCalledWith(
+          expectedInputVerses,
+          expectedInputWords,
+          expectedInputAuthors
+        )
+        .returns("success");
+
+      const result = await decentPoems.tokenURI(1);
+
+      expect(result).equal("success");
+    });
+
+    it("should fail for a non minted poem id", async () => {
+      await producePoem();
+
+      await expect(decentPoems.tokenURI(1)).revertedWith("Non existing token");
+    });
+
+    describe.only("poemURI", async () => {
+      it("should return the renderer response for the given poem index", async () => {
+        await producePoem("another");
+
+        const expectedInputVerses = [
+          "anothertest",
+          "anothertest",
+          "anothertest",
+          "anothertest",
+          "anothertest",
+          "anothertest",
+          "anothertest",
+        ];
+
+        const expectedInputWords = [
+          "test",
+          "test",
+          "test",
+          "test",
+          "test",
+          "test",
+          "test",
+        ];
+
+        const expectedInputAuthors = [
+          bob.address,
+          bob.address,
+          bob.address,
+          bob.address,
+          bob.address,
+          bob.address,
+          bob.address,
+        ];
+
+        mockDecentPoemsRenderer.getJSON
+          .whenCalledWith(
+            expectedInputVerses,
+            expectedInputWords,
+            expectedInputAuthors
+          )
+          .returns("success");
+
+        const result = await decentPoems.poemURI(0);
+
+        expect(result).equal("success");
+      });
     });
   });
 });

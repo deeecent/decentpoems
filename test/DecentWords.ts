@@ -2,12 +2,7 @@ import { ethers } from "hardhat";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { solidity } from "ethereum-waffle";
-import {
-  DecentWords,
-  DecentWords__factory,
-  Renderer,
-  Renderer__factory,
-} from "../typechain";
+import { DecentWords, DecentWords__factory } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { readFileSync, readSync } from "fs";
 import { BigNumber, wordlists } from "ethers";
