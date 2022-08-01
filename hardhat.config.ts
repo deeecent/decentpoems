@@ -12,32 +12,15 @@ import "@nomiclabs/hardhat-etherscan";
 
 import("./tasks").catch((e) => console.log("Cannot load tasks", e.toString()));
 
+const DEFAULT_KEY =
+  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || "";
-const RINKEBY_PRIVATE_KEY =
-  process.env.RINKEBY_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const MUMBAI_PRIVATE_KEY =
-  process.env.RINKEBY_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const POLYGON_PRIVATE_KEY =
-  process.env.POLYGON_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const KOVAN_PRIVATE_KEY =
-  process.env.KOVAN_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const TEVMOS_PRIVATE_KEY =
-  process.env.TEVMOS_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const EVMOS_PRIVATE_KEY =
-  process.env.EVMOS_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const CRONOS_PRIVATE_KEY =
-  process.env.CRONOS_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
-const TCRONOS_PRIVATE_KEY =
-  process.env.TCRONOS_PRIVATE_KEY! ||
-  "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
+const LOCALHOST_PRIVATE_KEY = process.env.LOCALHOST_PRIVATE_KEY || DEFAULT_KEY;
+const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY! || DEFAULT_KEY;
+const MUMBAI_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY! || DEFAULT_KEY;
+const POLYGON_PRIVATE_KEY = process.env.POLYGON_PRIVATE_KEY! || DEFAULT_KEY;
+
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const CRONOSCAN_API_KEY = process.env.CRONOSCAN_API_KEY;
 const COINMARKETCAP_KEY = process.env.COINMARKETCAP_KEY || "";
@@ -75,10 +58,9 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {},
-    localhost: {},
-    kovan: {
-      url: `https://kovan.infura.io/v3/${INFURA_API_KEY}`,
-      accounts: [KOVAN_PRIVATE_KEY],
+    localhost: {
+      url: "http://127.0.0.1:8545",
+      accounts: [LOCALHOST_PRIVATE_KEY],
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
@@ -91,22 +73,6 @@ const config: HardhatUserConfig = {
     polygon: {
       url: "https://polygon-rpc.com/",
       accounts: [POLYGON_PRIVATE_KEY],
-    },
-    tevmos: {
-      url: "https://eth.bd.evmos.dev:8545",
-      accounts: [TEVMOS_PRIVATE_KEY],
-    },
-    evmos: {
-      url: "https://jsonrpc-evmos-ia.notional.ventures/",
-      accounts: [EVMOS_PRIVATE_KEY],
-    },
-    "cronostestnet_338-3": {
-      url: "https://evm-t3.cronos.org/",
-      accounts: [TCRONOS_PRIVATE_KEY],
-    },
-    "cronosmainnet_25-1": {
-      url: "https://cronosrpc-1.xstaking.sg/",
-      accounts: [CRONOS_PRIVATE_KEY],
     },
   },
   etherscan: {
@@ -124,6 +90,9 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: "./typechain",
+  },
+  mocha: {
+    timeout: 100000000,
   },
 };
 
