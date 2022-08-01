@@ -3,14 +3,18 @@ import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { solidity } from "ethereum-waffle";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { DecentWordsV1__factory } from "../typechain/factories/contracts/DecentWordsV1__factory";
-import { DecentWordsV2__factory } from "../typechain/factories/contracts/DecentWordsV2__factory";
-import { DecentWordsV3__factory } from "../typechain/factories/contracts/DecentWordsV3__factory";
-import { DecentWordsV1 } from "../typechain/contracts/DecentWordsV1";
-import { DecentWordsV2 } from "../typechain/contracts/DecentWordsV2";
-import { DecentWordsV3 } from "../typechain/contracts/DecentWordsV3";
 import { readFileSync } from "fs";
 import { ContractFactory } from "ethers";
+import {
+  DecentWordsV1,
+  DecentWordsV2,
+  DecentWordsV3,
+} from "../typechain/contracts/benchmark";
+import {
+  DecentWordsV1__factory,
+  DecentWordsV2__factory,
+  DecentWordsV3__factory,
+} from "../typechain/factories/contracts/benchmark";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
