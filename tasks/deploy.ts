@@ -17,7 +17,10 @@ task("populate", "Populate Decent Words")
       return;
     }
 
-    const wordsPerChunk = 834;
+    const chunkSizes = [
+      898, 917, 946, 928, 884, 884, 906, 914, 869, 946, 946, 946, 852, 946, 946,
+      928, 914, 917, 884, 914, 917, 931, 946, 914, 928, 906, 931, 564,
+    ];
     let lastIndex = (await decentWordsContract.total()).toNumber();
     if (lastIndex === words.length) {
       console.log("Already populated.");
@@ -26,13 +29,14 @@ task("populate", "Populate Decent Words")
 
     console.log(`Populating from ${lastIndex}`);
 
-    while (lastIndex < words.length) {
-      const chunk = words.slice(lastIndex, lastIndex + wordsPerChunk);
-      const tx = await decentWordsContract.addWords(chunk);
-      await tx.wait(1);
-
-      lastIndex = Math.min(lastIndex + wordsPerChunk, words.length);
-      console.log(`Next starting index ${lastIndex}`);
+    for (let i = 0, j = 0; i < chunkSizes.length; i++) {
+      if (j < lastIndex) {
+        j += chunkSizes[i];
+      } else {
+        const chunk = words.slice(j, j + chunkSizes[i]);
+        await decentWordsContract.addWords(chunk);
+        j += chunkSizes[i];
+      }
     }
   });
 
