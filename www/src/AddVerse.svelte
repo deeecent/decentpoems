@@ -14,7 +14,7 @@
   $: valid = text.toLocaleLowerCase().split(/\W/).includes(word);
 
   async function submitVerse() {
-    const pos = text.indexOf(word);
+    const pos = text.toLocaleLowerCase().indexOf(word);
     if (!contract || pos < 0) {
       throw new Error("Something bad happened");
     }
