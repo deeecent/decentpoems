@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { poem } from "./types";
+  import type { Poem } from "./types";
   import { Grid, Column, Row } from "carbon-components-svelte";
   import Minted from "./Minted.svelte";
 
-  export let poems = [poem, poem, poem];
+  export let poems: Poem[];
 </script>
 
 <Grid padding>

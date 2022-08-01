@@ -4,6 +4,7 @@
     currentWord,
     decentPoems,
     auctions,
+    decentPoemsReadOnly,
   } from "./stores/contract";
 
   import { Grid, Column, Row } from "carbon-components-svelte";
@@ -30,8 +31,11 @@
     <Row>
       <Column>
         <h4>Last Auction</h4>
-        {#if $auctions.length}
-          <Auction poem={$auctions[0]} />
+        {#if $decentPoemsReadOnly && $auctions && $auctions.length}
+          <Auction
+            auction={$auctions[0]}
+            decentPoemsReadOnly={$decentPoemsReadOnly}
+          />
         {/if}
       </Column>
       <Column>

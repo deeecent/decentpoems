@@ -3,7 +3,7 @@ import { chainId, networkError, providerReadOnly, signer } from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
 import { contractsAddresses } from "./config";
 import type { BigNumber } from "ethers";
-import type { Metadata, Poem } from "src/types";
+import type { PoemAuction, Metadata, Poem } from "src/types";
 import { EventDispatcher } from "./events";
 import { Buffer } from "buffer/";
 
@@ -65,12 +65,8 @@ function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
       });
       return prev;
     }, [] as { author: string; text: string }[]),
+    created: new Date(poemStruct.createdAt.toNumber() * 1000),
   };
-
-  if (poemStruct.createdAt.gt(0)) {
-    poem.created = new Date(poemStruct.createdAt.toNumber() * 1000);
-  }
-
   return poem;
 }
 
@@ -127,20 +123,28 @@ export function unpackString(s: string) {
 
 export const auctions = derived(
   [decentPoemsReadOnly, eventDispatcher],
-  ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem[]) => void) => {
+  (
+    [$decentPoemsReadOnly, $eventDispatcher],
+    set: (value: PoemAuction[]) => void
+  ) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
       $eventDispatcher.add("PoemCreated", async () => {
-        const [ids, auctions] = await $decentPoemsReadOnly.getAuctions();
-        let poems: Poem[] = [];
-        for (let i = 0; i < auctions.length; i++) {
-          let poem = parsePoemStruct(auctions[i]);
-          poem.id = ids[i].toNumber();
-          const raw = unpackString(await $decentPoemsReadOnly.poemURI(poem.id));
-          poem.metadata = raw.json;
-          poems.push(poem);
+        const [ids, auctionsStruct] = await $decentPoemsReadOnly.getAuctions();
+        let auctions: PoemAuction[] = [];
+        for (let i = 0; i < auctionsStruct.length; i++) {
+          const poem = parsePoemStruct(auctionsStruct[i]);
+          const id = ids[i].toNumber();
+          const raw = unpackString(await $decentPoemsReadOnly.poemURI(id));
+          const price = await $decentPoemsReadOnly.getCurrentPrice(id);
+          auctions.push({
+            ...poem,
+            metadata: raw.json,
+            id,
+            price,
+          });
         }
-        console.log(poems);
-        set(poems);
+        console.log(auctions);
+        set(auctions);
       });
     }
     return () => {

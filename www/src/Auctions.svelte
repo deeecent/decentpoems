@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { poem } from "./types";
   import { Grid, Column, Row } from "carbon-components-svelte";
+  import type { DecentPoems } from "../../typechain";
   import Auction from "./Auction.svelte";
+  import type { PoemAuction } from "./types";
 
-  export let poems = [poem, poem, poem];
+  export let decentPoems: DecentPoems;
+  export let auctions: PoemAuction[];
 </script>
 
 <Grid padding>
-  {#each poems as poem}
+  {#each auctions as auction}
     <Row>
-      <Column><Auction {poem} /></Column>
+      <Column><Auction {auction} decentPoemsReadOnly={decentPoems} /></Column>
     </Row>
   {/each}
 </Grid>
