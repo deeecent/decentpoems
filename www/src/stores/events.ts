@@ -2,15 +2,18 @@ import type { Contract, providers } from "ethers";
 
 const MAX_BLOCK_DELTA = 128;
 
-//let timerId = -1;
-
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 export class EventDispatcher {
   contract: Contract;
   address: string;
   provider: providers.Provider;
   topics: string[];
-  callbacks: { [key: string]: () => void };
-  topicToCallback: { [key: string]: () => void };
+  callbacks: [string, () => void][];
+  topicToCallbacks: { [key: string]: (() => void)[] };
   timerId = -1;
 
   constructor(contract: Contract, provider: providers.Provider) {
@@ -18,53 +21,66 @@ export class EventDispatcher {
     this.address = contract.address;
     this.provider = provider;
     this.topics = [];
-    this.callbacks = {};
-    this.topicToCallback = {};
+    this.callbacks = [];
+    this.topicToCallbacks = {};
   }
 
   updateTopics() {
-    this.topics = Object.keys(this.callbacks).reduce((prev, curr) => {
-      const t = this.contract.filters[curr]().topics;
+    for (let [eventName, callback] of this.callbacks) {
+      const t = this.contract.filters[eventName]().topics;
       if (t && t[0] && !Array.isArray(t[0])) {
-        this.topicToCallback[t[0]] = this.callbacks[curr];
-        return prev.concat(t[0]);
+        const first = t[0];
+        if (!this.topicToCallbacks[first]) {
+          this.topicToCallbacks[first] = [];
+        }
+        this.topicToCallbacks[first].push(callback);
+        return (this.topics = this.topics.concat(first));
       } else {
         throw new Error(
-          `"${curr}" doesn't exist in contract or multiple topics provided`
+          `"${eventName}" doesn't exist in contract or multiple topics provided`
         );
       }
-    }, [] as string[]);
-  }
-
-  add(eventName: string, callback: () => void) {
-    this.callbacks[eventName] = callback;
-    this.updateTopics();
-    if (this.timerId > 0) {
-      callback();
-    } else {
-      this.listen();
     }
   }
 
-  remove(eventName: string) {
-    delete this.callbacks[eventName];
+  add(eventName: string, callback: () => void) {
+    this.callbacks.push([eventName, callback]);
+    //this.callbacks[eventName] = callback;
     this.updateTopics();
-    if (!Object.keys(this.callbacks).length) {
+    //callback();
+    if (this.timerId < 0) {
+      this.listen();
+    }
+    return this.callbacks.length - 1;
+  }
+
+  remove(listenerId: number) {
+    this.callbacks.splice(listenerId, 1);
+    this.updateTopics();
+    if (!this.callbacks.length) {
       this.stop();
     }
   }
 
   async listen() {
+    console.log("calling listen");
     if (this.timerId > 0) {
       return;
     }
     this.timerId = 99999;
 
-    // This can fail and block everything
-    let lastBlock = (await this.provider.getBlock("latest")).number;
+    let lastBlock: number = -1;
+    while (lastBlock < 0) {
+      try {
+        lastBlock = (await this.provider.getBlock("latest")).number;
+      } catch (e) {
+        console.error(e);
+        await sleep(1000);
+      }
+    }
 
     // Trigger all callbacks
-    Object.values(this.callbacks).forEach((callback) => callback());
+    this.callbacks.forEach(([, callback]) => callback());
 
     this.timerId = window.setInterval(async () => {
       const currentBlock = (await this.provider.getBlock("latest")).number;
@@ -89,14 +105,14 @@ export class EventDispatcher {
         for (let event of events) {
           if (event.topics) {
             console.log("Trigger", event);
-            const callback = this.topicToCallback[event.topics[0]];
-            if (callback) {
-              callback();
+            const callbacks = this.topicToCallbacks[event.topics[0]];
+            if (callbacks.length) {
+              callbacks.forEach((c) => c());
             }
           }
         }
       } else {
-        Object.values(this.callbacks).forEach((callback) => callback);
+        this.callbacks.forEach(([, callback]) => callback());
       }
       lastBlock = currentBlock + 1;
     }, 5000);

@@ -8,6 +8,6 @@ contract SplitMain {
         uint32,
         address
     ) external returns (address) {
-        return address(0);
+        return address(1);
     }
 }

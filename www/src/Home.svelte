@@ -4,6 +4,7 @@
     currentWord,
     decentPoems,
     auctions,
+    minted,
     decentPoemsReadOnly,
   } from "./stores/contract";
 
@@ -39,7 +40,10 @@
         {/if}
       </Column>
       <Column>
-        <h4>Last Minted</h4>
+        {#if $minted && $minted.length}
+          <h4>Last Minted</h4>
+          <Minted poem={$minted[0]} />
+        {/if}
       </Column>
     </Row>
   </Grid>

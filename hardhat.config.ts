@@ -16,7 +16,6 @@ const DEFAULT_KEY =
   "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"; // well known private key
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || "";
-const LOCALHOST_PRIVATE_KEY = process.env.LOCALHOST_PRIVATE_KEY || DEFAULT_KEY;
 const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY! || DEFAULT_KEY;
 const MUMBAI_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY! || DEFAULT_KEY;
 const POLYGON_PRIVATE_KEY = process.env.POLYGON_PRIVATE_KEY! || DEFAULT_KEY;
@@ -60,7 +59,6 @@ const config: HardhatUserConfig = {
     hardhat: {},
     localhost: {
       url: "http://127.0.0.1:8545",
-      accounts: [LOCALHOST_PRIVATE_KEY],
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,

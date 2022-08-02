@@ -2,7 +2,7 @@ import { derived, writable, type Readable } from "svelte/store";
 import { chainId, networkError, providerReadOnly, signer } from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
 import { contractsAddresses } from "./config";
-import type { BigNumber } from "ethers";
+import { BigNumber } from "ethers";
 import type { PoemAuction, Metadata, Poem } from "src/types";
 import { EventDispatcher } from "./events";
 import { Buffer } from "buffer/";
@@ -74,15 +74,15 @@ export const currentPoem = derived(
   [decentPoemsReadOnly, eventDispatcher],
   ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem) => void) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      $eventDispatcher.add("VerseSubmitted", () =>
+      let index = $eventDispatcher.add("VerseSubmitted", () =>
         $decentPoemsReadOnly.getCurrentPoem().then(parsePoemStruct).then(set)
       );
+      return () => {
+        if ($eventDispatcher) {
+          $eventDispatcher.remove(index);
+        }
+      };
     }
-    return () => {
-      if ($eventDispatcher) {
-        $eventDispatcher.remove("VerseSubmitted");
-      }
-    };
   }
 );
 
@@ -128,29 +128,64 @@ export const auctions = derived(
     set: (value: PoemAuction[]) => void
   ) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      $eventDispatcher.add("PoemCreated", async () => {
+      const update = async () => {
         const [ids, auctionsStruct] = await $decentPoemsReadOnly.getAuctions();
-        let auctions: PoemAuction[] = [];
+        let poems: PoemAuction[] = [];
         for (let i = 0; i < auctionsStruct.length; i++) {
           const poem = parsePoemStruct(auctionsStruct[i]);
           const id = ids[i].toNumber();
           const raw = unpackString(await $decentPoemsReadOnly.poemURI(id));
           const price = await $decentPoemsReadOnly.getCurrentPrice(id);
-          auctions.push({
+          poems.push({
             ...poem,
             metadata: raw.json,
             id,
             price,
           });
         }
-        console.log(auctions);
-        set(auctions);
-      });
+        set(poems);
+      };
+      let poemCreatedIndex = $eventDispatcher.add("PoemCreated", update);
+      let transferIndex = $eventDispatcher.add("Transfer", update);
+      return () => {
+        $eventDispatcher.remove(poemCreatedIndex);
+        $eventDispatcher.remove(transferIndex);
+      };
     }
-    return () => {
-      if ($eventDispatcher) {
-        $eventDispatcher.remove("PoemCreated");
-      }
-    };
+  }
+);
+
+export const minted = derived(
+  [decentPoemsReadOnly, eventDispatcher],
+  (
+    [$decentPoemsReadOnly, $eventDispatcher],
+    set: (value: PoemAuction[]) => void
+  ) => {
+    if ($decentPoemsReadOnly && $eventDispatcher) {
+      const update = async () => {
+        const auctionsStruct = await $decentPoemsReadOnly.getMinted(0);
+        let poems: PoemAuction[] = [];
+        for (let i = 0; i < auctionsStruct.length; i++) {
+          if (auctionsStruct[i].createdAt.eq(0)) {
+            break;
+          }
+          const poem = parsePoemStruct(auctionsStruct[i]);
+          // Minting starts with tokenId 1
+          const id = i + 1;
+          const raw = unpackString(await $decentPoemsReadOnly.tokenURI(id));
+          poems.push({
+            ...poem,
+            metadata: raw.json,
+            id,
+            price: BigNumber.from(0),
+          });
+        }
+        set(poems);
+      };
+      let index = $eventDispatcher.add("Transfer", update);
+      return () => {
+        $eventDispatcher.remove(index);
+      };
+    }
   }
 );

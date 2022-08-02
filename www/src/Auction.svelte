@@ -16,9 +16,10 @@
 
   let price = formatEther(auction.price);
   let pending = false;
+  let timerId: number;
 
   onMount(() => {
-    const timerId = window.setInterval(async () => {
+    timerId = window.setInterval(async () => {
       const newPrice = await decentPoemsReadOnly.getCurrentPrice(auction.id);
       console.log("check price", newPrice);
       price = formatEther(newPrice);
@@ -28,7 +29,12 @@
 
   async function mint(decentPoems: DecentPoems, address: string, id: number) {
     const price = await decentPoems.getCurrentPrice(id);
-    await decentPoems.safeMint(address, id, { value: price });
+    try {
+      await decentPoems.safeMint(address, id, { value: price });
+    } catch (e) {
+      console.error(e);
+    }
+    window.clearInterval(timerId);
   }
 
   async function onMint() {

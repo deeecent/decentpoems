@@ -16,8 +16,6 @@ import "hardhat/console.sol";
 contract DecentPoems is ERC721Royalty, Ownable {
     using Strings for uint256;
 
-    uint256 constant expiration = 1 days;
-
     DecentWords public _decentWords;
     SplitMain public _splitter;
 
@@ -127,7 +125,7 @@ contract DecentPoems is ERC721Royalty, Ownable {
         uint256 auctionCount;
         for (
             ;
-            _poems[poemsLeft].createdAt > block.timestamp - expiration;
+            _poems[poemsLeft].createdAt > block.timestamp - _auctionDuration;
             poemsLeft--
         ) {
             if (_poems[poemsLeft].mintedAt == 0) {
@@ -240,13 +238,12 @@ contract DecentPoems is ERC721Royalty, Ownable {
         poem.verses.push(verse);
         poem.authors.push(_msgSender());
         poem.wordIndexes.push(currentIndex);
+        emit VerseSubmitted(_msgSender(), _poems.length - 1);
 
         if (poem.verses.length == _maxVerses) {
             poem.createdAt = block.timestamp;
             emit PoemCreated(_msgSender(), _poems.length);
             _poems.push();
-        } else {
-            emit VerseSubmitted(_msgSender(), _poems.length - 1);
         }
 
         _currentRandomSeed = uint256(blockhash(block.number - 1));
