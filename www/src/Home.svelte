@@ -8,7 +8,7 @@
     decentPoemsReadOnly,
   } from "./stores/contract";
 
-  import { Grid, Column, Row } from "carbon-components-svelte";
+  import { Grid, Column, Row, Tile } from "carbon-components-svelte";
   import Auction from "./Auction.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
   import Minted from "./Minted.svelte";
@@ -16,6 +16,18 @@
 
 {#if $currentPoem && $currentWord}
   <Grid padding>
+    <Row>
+      <Column>
+        <Tile light>
+          <p>
+            <strong>Decent Poems</strong> /ˈdē-sᵊnt ˈpō-əms/ <em>noun</em>
+            <strong>1</strong> a protocol for collective writing
+            <strong>2</strong>
+            a coordination experiment <strong>3</strong> a royalty distribution system.
+          </p>
+        </Tile>
+      </Column>
+    </Row>
     <Row>
       <Column>
         <CurrentPoem
@@ -55,5 +67,17 @@
     border-top: 1px;
     border-color: black;
     border-style: dashed;
+  }
+
+  p {
+    font-family: serif;
+  }
+
+  p strong {
+    font-family: sans-serif;
+  }
+
+  .large {
+    font-size: 1.2rem;
   }
 </style>

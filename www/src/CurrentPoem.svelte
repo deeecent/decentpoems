@@ -1,6 +1,12 @@
 <script lang="ts">
   import AddVerse from "./AddVerse.svelte";
-  import { Grid, Column, Row } from "carbon-components-svelte";
+  import {
+    Grid,
+    Column,
+    Row,
+    Tile,
+    InlineNotification,
+  } from "carbon-components-svelte";
 
   import Verse from "./Verse.svelte";
   import type { DecentPoems } from "../../typechain";
@@ -17,10 +23,16 @@
 <Grid noGutter padding>
   <Row>
     <Column>
-      {#if poem.title.text}
-        <Verse title author={poem.title.author} text={poem.title.text} />
+      {#if !poem.title.text}
+        <InlineNotification
+          lowContrast
+          kind="info"
+          title="Hey you:"
+          subtitle="Every decent poem starts with a decent title. "
+          hideCloseButton
+        />
       {:else}
-        <h2>Start a new poem</h2>
+        <Verse title author={poem.title.author} text={poem.title.text} />
       {/if}
       {#each poem.verses as { author, text }}
         <Verse {author} {text} />
