@@ -17,21 +17,13 @@
   export let wordIndex: number;
   export let contract: DecentPoems | null;
 
-  const length = 7;
+  const length = 6;
 </script>
 
 <Grid noGutter padding>
   <Row>
     <Column>
-      {#if !poem.title.text}
-        <InlineNotification
-          lowContrast
-          kind="info"
-          title="Hey you:"
-          subtitle="Every decent poem starts with a decent title. "
-          hideCloseButton
-        />
-      {:else}
+      {#if poem.title.text}
         <Verse title author={poem.title.author} text={poem.title.text} />
       {/if}
       {#each poem.verses as { author, text }}
@@ -41,8 +33,15 @@
   </Row>
   <Row>
     <Column>
+      <p class="small">the current word is:</p>
+      <p class="word">{word}</p>
+    </Column>
+  </Row>
+  <Row>
+    <Column>
       <AddVerse
         {contract}
+        isTitle={!poem.title.text.length}
         number={poem.verses.length + 1}
         {length}
         {word}
@@ -51,3 +50,20 @@
     </Column>
   </Row>
 </Grid>
+
+<style>
+  .small,
+  .word {
+    text-align: center;
+  }
+
+  .small {
+    font-size: 1rem;
+    font-style: italic;
+  }
+
+  .word {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+</style>

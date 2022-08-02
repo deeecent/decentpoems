@@ -71,13 +71,10 @@
 
   p {
     font-family: serif;
+    font-size: 1.2rem;
   }
 
   p strong {
     font-family: sans-serif;
-  }
-
-  .large {
-    font-size: 1.2rem;
   }
 </style>

@@ -4,6 +4,7 @@
   import { connect } from "./stores/wallet";
 
   export let contract: DecentPoems | null;
+  export let isTitle: boolean;
   export let number: number;
   export let length: number;
   export let word: string;
@@ -49,12 +50,20 @@
   }
 </script>
 
-<p>Your verse must contain the word <strong>{word}</strong>.</p>
+{#if isTitle}
+  <p>Write the title of the poem (remember to include the current word)</p>
+{:else}
+  <p>Write a new verse (remember to include the current word)</p>
+{/if}
 
 <Form on:submit={onSubmit}>
-  <TextArea bind:value={text} labelText="Add your verse" />
+  <TextArea bind:value={text} rows={isTitle ? 1 : 3} />
 
   <Button disabled={!valid} type="submit">
-    Submit verse {number}/{length}
+    {#if isTitle}
+      Submit title
+    {:else}
+      Submit verse {number}/{length}
+    {/if}
   </Button>
 </Form>
