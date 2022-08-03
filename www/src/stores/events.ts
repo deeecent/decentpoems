@@ -7,6 +7,7 @@ function sleep(ms: number) {
     setTimeout(resolve, ms);
   });
 }
+
 export class EventDispatcher {
   contract: Contract;
   address: string;

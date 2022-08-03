@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap");
+
+:root {
+  --serif: "Merriweather", serif;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  color: black;
+  box-sizing: inherit;
+  font-size: 16px;
+  margin: 0px;
+  font-family: var(--serif);
+  background-image: linear-gradient(
+    to right bottom,
+    #ffffff,
+    #fcfafc,
+    #f9f6f8,
+    #f8f1f3,
+    #f6ecec
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+section {
+  max-width: 50rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+p {
+  line-height: 1.6em;
+}

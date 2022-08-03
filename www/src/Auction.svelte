@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Button } from "carbon-components-svelte";
   import { formatEther } from "ethers/lib/utils";
   import { onMount } from "svelte";
   import type { DecentPoems } from "../../typechain";
@@ -65,4 +64,4 @@
   Authors: {authors.join(", ")}
 </div>
 
-<Button on:click={onMint}>Mint for {price} Eth</Button>
+<button on:click={onMint}>Mint for {price} Eth</button>

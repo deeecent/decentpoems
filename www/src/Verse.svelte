@@ -1,35 +1,34 @@
 <script lang="ts">
-  import { Column, Row, Grid } from "carbon-components-svelte";
-
   export let author: string;
   export let text: string;
   export let title = false;
 </script>
 
-<Grid padding={false}>
-  <Row>
-    <Column>
-      {#if title}
-        <h1>{text}</h1>
-      {:else}
-        <p>{text}</p>
-      {/if}
-      <p class="author">{author}</p>
-    </Column>
-  </Row>
-</Grid>
+{#if title}
+  <h1>{text}</h1>
+{:else}
+  <p class="verse">{text}</p>
+{/if}
+<p class="author">{author}</p>
 
 <style>
   h1 {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
 
-  p {
-    font-size: 2rem;
+  .verse {
+    font-size: 1.5rem;
+  }
+
+  h1,
+  .verse {
+    margin-bottom: 0.5rem;
   }
 
   .author {
     font-size: 1rem;
     opacity: 0.5;
+    margin-top: 0;
+    margin-bottom: 2rem;
   }
 </style>

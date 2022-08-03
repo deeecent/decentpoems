@@ -1,9 +1,7 @@
 <script lang="ts">
   import { Route } from "tinro";
   import { init } from "./stores/wallet";
-  import { Content } from "carbon-components-svelte";
 
-  import Header from "./Header.svelte";
   import Home from "./Home.svelte";
   import Auctions from "./Auctions.svelte";
   import MintedList from "./MintedList.svelte";
@@ -16,20 +14,17 @@
 {#await initializing}
   <p>Loading please wait…</p>
 {:then}
-  <!--Header /-->
-  <Content>
-    <NetworkError />
-    <Route path="/">
-      <Home />
-    </Route>
-    <Route path="/auctions">
-      <Auctions />
-    </Route>
-    <Route path="/minted"><MintedList /></Route>
-    <Route path="/__debug">
-      <Debug />
-    </Route>
-  </Content>
+  <NetworkError />
+  <Route path="/">
+    <Home />
+  </Route>
+  <Route path="/auctions">
+    <Auctions />
+  </Route>
+  <Route path="/minted"><MintedList /></Route>
+  <Route path="/__debug">
+    <Debug />
+  </Route>
 {:catch}
   <p>There was an error loading the page.</p>
 {/await}

@@ -1,5 +1,4 @@
-//import "./main.css";
-import "carbon-components-svelte/css/g10.css";
+import "./main.css";
 
 import App from "./App.svelte";
 

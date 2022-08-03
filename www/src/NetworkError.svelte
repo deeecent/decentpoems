@@ -1,8 +1,6 @@
 <script lang="ts">
   import {
     Grid,
-    Column,
-    Row,
     InlineNotification,
     NotificationActionButton,
   } from "carbon-components-svelte";
