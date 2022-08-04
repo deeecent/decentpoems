@@ -1,31 +1,36 @@
 import { ethers } from "hardhat";
 import chai from "chai";
-import { smock } from "@defi-wonderland/smock";
+import { MockContract, smock } from "@defi-wonderland/smock";
 import chaiAsPromised from "chai-as-promised";
 import { solidity } from "ethereum-waffle";
 import {
   DecentPoems,
   DecentPoemsRenderer__factory,
   DecentPoems__factory,
+  DecentWords,
   DecentWords__factory,
+  MockSplitMain,
+  MockSplitMain__factory,
+  MockVRFCoordinator,
+  MockVRFCoordinator__factory,
 } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { setEVMTimestamp, mineEVMBlock } from "./evm";
 import { parseEther } from "ethers/lib/utils";
-import { SplitMain__factory } from "../typechain";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const AddressZero = ethers.constants.AddressZero;
-
 describe("DecentPoems", () => {
   let decentPoems: DecentPoems;
-  let mockDecentWords: any;
-  let mockSplitMain: any;
+  let mockDecentWords: MockContract<DecentWords>;
+  let mockSplitMain: MockContract<MockSplitMain>;
+  let mockVrfCoordinator: MockContract<MockVRFCoordinator>;
   let mockDecentPoemsRenderer: any;
+  let fakeVrfSubscriptionId = 42;
+  let fakeVrfKeyHash = ethers.utils.formatBytes32String("42");
   let deployer: SignerWithAddress,
     bob: SignerWithAddress,
     carl: SignerWithAddress,
@@ -44,11 +49,15 @@ describe("DecentPoems", () => {
       await smock.mock<DecentPoemsRenderer__factory>("DecentPoemsRenderer");
     mockDecentPoemsRenderer = await mockDecentPoemsRendererFactory.deploy();
 
-    const mockSplitMainFactory = await smock.mock<SplitMain__factory>(
-      "SplitMain"
+    const mockSplitMainFactory = await smock.mock<MockSplitMain__factory>(
+      "MockSplitMain"
     );
     mockSplitMain = await mockSplitMainFactory.deploy();
     mockSplitMain.createSplit.returns(deployer.address);
+
+    const mockVrfCoordinatorFactory =
+      await smock.mock<MockVRFCoordinator__factory>("MockVRFCoordinator");
+    mockVrfCoordinator = await mockVrfCoordinatorFactory.deploy();
 
     const DecentPoemsFactory = (await ethers.getContractFactory("DecentPoems", {
       signer: deployer,
@@ -56,12 +65,17 @@ describe("DecentPoems", () => {
         DecentPoemsRenderer: mockDecentPoemsRenderer.address,
       },
     })) as DecentPoems__factory;
+
     decentPoems = await DecentPoemsFactory.deploy(
       mockDecentWords.address,
       mockSplitMain.address,
-      7
+      mockVrfCoordinator.address,
+      7,
+      fakeVrfSubscriptionId,
+      fakeVrfKeyHash
     );
     await decentPoems.deployed();
+    await decentPoems.useVRF(false);
 
     mockDecentWords.total.returns(1);
     mockDecentWords.words.returns("test");
@@ -96,6 +110,23 @@ describe("DecentPoems", () => {
 
       await expect(decentPoems.getCurrentWord()).revertedWith(
         "DecentWords not populated"
+      );
+    });
+
+    it("should fail if seed is 0", async () => {
+      // Given that the mock VRF will not call the random fulfillment function,
+      // the seed will remain to 0
+      await decentPoems.useVRF(true);
+      mockVrfCoordinator.getSubscription.returns([
+        parseEther("2"),
+        2,
+        bob.address,
+        [],
+      ]);
+      await decentPoems.resetRandomSeed();
+
+      await expect(decentPoems.getCurrentWord()).revertedWith(
+        "Word not generated yet"
       );
     });
   });
@@ -221,6 +252,106 @@ describe("DecentPoems", () => {
       const createdAtAfter = (await decentPoems.getPoem(0)).createdAt;
 
       expect(createdAtAfter.toNumber()).greaterThan(createdAtBefore.toNumber());
+    });
+
+    it("should emit VerseSubmitted", async () => {
+      await expect(decentPoems.connect(bob).submitVerse("1", 0, "3"))
+        .to.emit(decentPoems, "VerseSubmitted")
+        .withArgs(bob.address, 0);
+    });
+
+    it("should emit PoemCreated after submitting the last verse", async () => {
+      for (let i = 0; i < 6; i++) {
+        await decentPoems.connect(bob).submitVerse("", 0, "");
+      }
+
+      await expect(decentPoems.connect(carl).submitVerse("", 0, ""))
+        .to.emit(decentPoems, "PoemCreated")
+        .withArgs(carl.address, 1);
+    });
+
+    it("should emit WordGenerated", async () => {
+      await expect(decentPoems.connect(bob).submitVerse("1", 0, "3")).to.emit(
+        decentPoems,
+        "WordGenerated"
+      );
+    });
+
+    describe("useVRF == true", async () => {
+      beforeEach(async () => {
+        await decentPoems.useVRF(true);
+      });
+
+      it("should call vrf contract for randomness when vrf coordinator balance greater than 1 ether", async () => {
+        mockVrfCoordinator.getSubscription.returns([
+          parseEther("2"),
+          0,
+          bob.address,
+          [],
+        ]);
+        await decentPoems.submitVerse("1", 0, "3");
+
+        mockVrfCoordinator.requestRandomWords
+          .atCall(0)
+          .calledWith(fakeVrfKeyHash, fakeVrfSubscriptionId, 2, 100000, 1);
+      });
+
+      it("should not call vrf contract for randomness when vrf coordinator balance less than 1 ether", async () => {
+        mockVrfCoordinator.getSubscription.returns([
+          parseEther("0.1"),
+          0,
+          bob.address,
+          [],
+        ]);
+        await decentPoems.submitVerse("1", 0, "3");
+
+        expect(mockVrfCoordinator.requestRandomWords.getCall(0)).be.undefined;
+      });
+
+      it("should fallback to blockhash when vrf coordinator balance less than 1 ether", async () => {
+        mockVrfCoordinator.getSubscription.returns([
+          parseEther("0.1"),
+          0,
+          bob.address,
+          [],
+        ]);
+        await decentPoems.submitVerse("1", 0, "3");
+
+        expect(await decentPoems.getCurrentWord()).deep.equal([
+          BigNumber.from(0),
+          "test",
+        ]);
+      });
+
+      it("should fail until randomness is fulfilled", async () => {
+        mockVrfCoordinator.getSubscription.returns([
+          parseEther("1"),
+          0,
+          bob.address,
+          [],
+        ]);
+        await decentPoems.submitVerse("1", 0, "3");
+
+        await expect(decentPoems.submitVerse("", 0, "")).revertedWith(
+          "Word not generated yet"
+        );
+      });
+
+      it("should succeed after randomness is fulfilled", async () => {
+        mockVrfCoordinator.getSubscription.returns([
+          parseEther("1"),
+          0,
+          bob.address,
+          [],
+        ]);
+        await decentPoems.submitVerse("1", 0, "3");
+        await mockVrfCoordinator.mock_fulfillRandomness(
+          [42],
+          decentPoems.address
+        );
+
+        await decentPoems.submitVerse("", 0, "");
+      });
     });
   });
 

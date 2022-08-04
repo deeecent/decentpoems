@@ -6,18 +6,20 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
-import "./SplitMain.sol";
+import "./ISplitMain.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
 import "hardhat/console.sol";
 
-contract DecentPoems is ERC721Royalty, Ownable {
+contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     using Strings for uint256;
 
     DecentWords public _decentWords;
-    SplitMain public _splitter;
+    ISplitMain public _splitter;
 
     struct Poem {
         string[] verses;
@@ -35,6 +37,7 @@ contract DecentPoems is ERC721Royalty, Ownable {
     uint256 public constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
+    bool public _useVRF = true;
 
     uint256 public _auctionDuration = 1 days;
     uint256 public _auctionStartPrice = 1 ether;
@@ -46,20 +49,36 @@ contract DecentPoems is ERC721Royalty, Ownable {
     uint32 public _distributorFee = 1e3; // 0.1%
     address public _creatorAddress;
 
+    // VRF Parameters
+    uint64 public immutable _vrfSubscriptionId;
+    VRFCoordinatorV2Interface immutable _vrfCoordinator;
+    bytes32 immutable _vrfKeyHash;
+    uint32 _vrfCallbackGasLimit = 100000;
+    uint16 _vrfRequestConfirmations = 2;
+    uint32 _vrfNumWords = 1;
+
     event VerseSubmitted(address author, uint256 id);
     event PoemCreated(address author, uint256 id);
+    event WordGenerated(uint256 randomSeed);
 
     constructor(
         address decentWords,
         address splitterAddress,
-        uint256 maxVerses
-    ) ERC721("Decent Poems", "POEMS") {
+        address vrfCoordinatorAddress,
+        uint256 maxVerses,
+        uint64 vrfSubscriptionId,
+        bytes32 vrfKeyHash
+    ) ERC721("Decent Poems", "POEMS") VRFConsumerBaseV2(vrfCoordinatorAddress) {
         _decentWords = DecentWords(decentWords);
-        _splitter = SplitMain(splitterAddress);
-        _currentRandomSeed = uint256(blockhash(block.number - 1));
+        _splitter = ISplitMain(splitterAddress);
         _maxVerses = maxVerses;
         _poems.push();
         _creatorAddress = msg.sender;
+
+        _vrfSubscriptionId = vrfSubscriptionId;
+        _vrfKeyHash = vrfKeyHash;
+        _vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorAddress);
+        _resetRandomSeed();
     }
 
     modifier onlyMintable(uint256 poemIndex) {
@@ -78,6 +97,7 @@ contract DecentPoems is ERC721Royalty, Ownable {
         returns (uint256 index, string memory word)
     {
         require(_decentWords.total() > 0, "DecentWords not populated");
+        require(_currentRandomSeed > 0, "Word not generated yet");
         index = _currentRandomSeed % _decentWords.total();
         word = _decentWords.words(index);
     }
@@ -246,10 +266,53 @@ contract DecentPoems is ERC721Royalty, Ownable {
             _poems.push();
         }
 
-        _currentRandomSeed = uint256(blockhash(block.number - 1));
+        _resetRandomSeed();
+    }
+
+    function fulfillRandomWords(
+        uint256, /* requestId */
+        uint256[] memory randomWords
+    ) internal override {
+        _currentRandomSeed = randomWords[0];
+        emit WordGenerated(_currentRandomSeed);
+    }
+
+    function useVRF(bool flag) external onlyOwner {
+        _useVRF = flag;
+    }
+
+    // Emergency, in case VRF fails
+    function resetRandomSeed() external onlyOwner {
+        _resetRandomSeed();
     }
 
     // Internal
+    function _resetRandomSeed() internal {
+        if (_useVRF) {
+            (uint256 balance, , , ) = _vrfCoordinator.getSubscription(
+                _vrfSubscriptionId
+            );
+            if (balance >= 1 ether) {
+                _currentRandomSeed = 0;
+                _requestSeed();
+
+                return;
+            }
+        }
+
+        _currentRandomSeed = uint256(blockhash(block.number - 1));
+        emit WordGenerated(_currentRandomSeed);
+    }
+
+    function _requestSeed() internal {
+        _vrfCoordinator.requestRandomWords(
+            _vrfKeyHash,
+            _vrfSubscriptionId,
+            _vrfRequestConfirmations,
+            _vrfCallbackGasLimit,
+            _vrfNumWords
+        );
+    }
 
     function _renderPoem(Poem memory poem)
         internal
