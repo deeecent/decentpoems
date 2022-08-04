@@ -10,11 +10,11 @@
   export let wordIndex: number;
   export let contract: DecentPoems | null;
 
-  $: hasTitle = !!poem.title.text;
+  $: isTitle = !poem.title.text;
   const length = 6;
 </script>
 
-{#if hasTitle}
+{#if !isTitle}
   <div class="poem">
     {#if poem.title.text}
       <div class="title">
@@ -30,7 +30,7 @@
 {/if}
 
 <div class="add-verse">
-  {#if !hasTitle}
+  {#if isTitle}
     <p class="small">
       How did you get here? We don't know. But we know that you should stop
       hesitating and write the title for the greatest poem ever written. <strong
@@ -65,14 +65,18 @@
 
   <p class="word">{word}</p>
 
-  <AddVerse
-    {contract}
-    {hasTitle}
-    number={poem.verses.length + 1}
-    {length}
-    {word}
-    {wordIndex}
-  />
+  {#if word !== ""}
+    <AddVerse
+      {contract}
+      {isTitle}
+      number={poem.verses.length + 1}
+      {length}
+      {word}
+      {wordIndex}
+    />
+  {:else}
+    loading.
+  {/if}
 </div>
 
 <style>

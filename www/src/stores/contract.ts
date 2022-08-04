@@ -99,26 +99,35 @@ export const currentWord = derived(
   [decentPoemsReadOnly, eventDispatcher],
   (
     [$decentPoemsReadOnly, $eventDispatcher],
-    set: ({ index, word }: { index: BigNumber; word: string }) => void
+    set: (value: { index: number; word: string }) => void
   ) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      console.log("subscribe to word generated");
-      let index = $eventDispatcher.add("WordGenerated", () => {
-        console.log("word generated");
-        $decentPoemsReadOnly
-          .getCurrentWord()
-          .then(({ index, word }) => set({ index, word }))
-          .catch((e) => {
-            console.log("Error fetching current word", e);
-          });
-      });
-      return () => {
-        if ($eventDispatcher) {
-          $eventDispatcher.remove(index);
+      const update = async () => {
+        try {
+          const [index, word] = await $decentPoemsReadOnly.getCurrentWord();
+          set({ index: index.toNumber(), word: word });
+        } catch (e) {
+          console.log("Error fetching current word", e);
+          set({ index: -1, word: "" });
         }
       };
+      const indexVerseSubmitted = $eventDispatcher.add(
+        "VerseSubmitted",
+        update
+      );
+      const indexWordGenerated = $eventDispatcher.add("WordGenerated", update);
+      return () => {
+        if ($eventDispatcher) {
+          $eventDispatcher.remove(indexVerseSubmitted);
+          $eventDispatcher.remove(indexWordGenerated);
+        }
+      };
+    } else {
+      set({ index: -1, word: "" });
     }
-  }
+  },
+
+  { index: -1, word: "" }
 );
 
 export const refreshAuctions = writable(Date.now());

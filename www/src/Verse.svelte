@@ -9,7 +9,7 @@
 {:else}
   <p class="verse">{text}</p>
 {/if}
-<p class="author">{author}</p>
+<p class="author ellipsis">{author}</p>
 
 <style>
   h1 {
@@ -26,9 +26,10 @@
   }
 
   .author {
-    font-size: 1rem;
+    font-size: 0.8rem;
     opacity: 0.5;
     margin-top: 0;
     margin-bottom: 2rem;
+    font-family: var(--monospace);
   }
 </style>

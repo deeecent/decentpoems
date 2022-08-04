@@ -4,7 +4,7 @@
   import type { PoemAuction } from "./types";
   import { address, connect } from "./stores/wallet";
   import { decentPoems } from "./stores/contract";
-  import { formatEther, secondsToHms } from "./utils";
+  import { formatEther, secondsToHms, shortAddress } from "./utils";
 
   export let auction: PoemAuction;
   export let decentPoemsReadOnly: DecentPoems;
@@ -72,19 +72,20 @@
 <div class="auction">
   <div class="nft-container">
     <div class="nft">
-      <p>Auction ends in {secondsToHms(secondsLeft)}</p>
+      <p class="time-left">Auction ends in {secondsToHms(secondsLeft)}</p>
       <img src={auction.metadata.image} />
       <button on:click={onMint}>Mint for {price} MATIC</button>
     </div>
   </div>
+
   <div class="panel">
     <div class="poem">
       <h1>{auction.title.text}</h1>
       {#each auction.verses as { author, text }}
         <p>{text}</p>
       {/each}
-      <div>
-        Authors: {authors.join(", ")}
+      <div class="authors">
+        Authors: {authors.map(shortAddress).join(", ")}
       </div>
     </div>
   </div>
@@ -109,6 +110,11 @@
     border-radius: 0.25rem;
     background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
+    width: 100%;
+  }
+
+  .authors {
+    margin-top: 4rem;
   }
 
   .nft {
@@ -124,30 +130,39 @@
     margin: 0;
   }
 
+  .time-left {
+    font-family: var(--sans-serif);
+    font-weight: bold;
+  }
+
   img {
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5);
     max-width: 30rem;
     border-radius: 0.25rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
     width: 100%;
   }
 
   button {
-    border-radius: 0.25rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    display: block;
     box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
-    margin: 3rem auto 0 auto;
-    margin-top: 3rem;
-    padding: 1rem 1rem;
-    font-size: 1.2rem;
-    transition: all 400ms;
-    cursor: pointer;
     width: 80%;
-    background-color: rgb(133, 160, 255);
-    color: rgb(36, 36, 36);
+    margin-bottom: 2rem;
   }
+
   button:hover {
     box-shadow: 0 0.5rem 1.5rem 0.1rem rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 900px) {
+    .auction {
+      flex-direction: column;
+    }
+
+    .nft {
+      width: 100%;
+    }
+
+    button {
+      width: 100%;
+    }
   }
 </style>
