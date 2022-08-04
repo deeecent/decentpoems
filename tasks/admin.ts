@@ -3,6 +3,7 @@ import { DecentPoems, DecentPoemsRenderer, DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 import { BigNumber } from "ethers";
+import { parseEther } from "ethers/lib/utils";
 
 task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
   console.log("Load contract DecentPoems");
@@ -47,6 +48,23 @@ task("set-vrf", "Set VRF on/off")
     console.log(`   Setting VRF to ${activate}`);
     await decentPoemsContract.useVRF(activate);
     console.log(`VRF ${activate ? "activated" : "deactivated"}.`);
+  });
+
+task("mint", "Mint poem")
+  .addParam("index", "The poem index")
+  .addParam("to", "To address")
+  .setAction(async ({ index, to }, hre) => {
+    console.log("Load contract DecentPoems");
+    const decentPoemsContract = (await loadContract(
+      hre,
+      "DecentPoems"
+    )) as DecentPoems;
+
+    console.log(`Contract ${decentPoemsContract.address} loaded.`);
+    console.log(`   Minting poem ${index} to ${to}`);
+    const currentPrice = decentPoemsContract.getCurrentPrice(index);
+    await decentPoemsContract.safeMint(to, index, { value: currentPrice });
+    console.log(`Done`);
   });
 
 task("word", "Get current word").setAction(async (_, hre) => {
