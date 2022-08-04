@@ -704,7 +704,7 @@ describe("DecentPoems", () => {
       );
     });
 
-    it.only("should create a split for the future royalties", async () => {
+    it("should create a split for the future royalties", async () => {
       const authors = [bob, abe, carl, ben, abe, carl, abe];
 
       for (let i = 0; i < 7; i++) {
@@ -855,7 +855,8 @@ describe("DecentPoems", () => {
           .whenCalledWith(
             expectedInputVerses,
             expectedInputWords,
-            expectedInputAuthors
+            expectedInputAuthors,
+            ethers.constants.AddressZero
           )
           .returns("success");
 
