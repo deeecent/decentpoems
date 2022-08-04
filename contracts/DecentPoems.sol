@@ -37,7 +37,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     uint256 public constant PAGE_SIZE = 20;
     uint256 public _maxVerses;
     uint256 public _currentRandomSeed;
-    bool public _useVRF = true;
+    bool public _useVRF = false;
 
     uint256 public _auctionDuration = 1 days;
     uint256 public _auctionStartPrice = 1 ether;
@@ -54,7 +54,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface immutable _vrfCoordinator;
     bytes32 immutable _vrfKeyHash;
     uint32 _vrfCallbackGasLimit = 100000;
-    uint16 _vrfRequestConfirmations = 2;
+    uint16 _vrfRequestConfirmations = 3;
     uint32 _vrfNumWords = 1;
 
     event VerseSubmitted(address author, uint256 id);

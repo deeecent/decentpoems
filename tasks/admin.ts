@@ -1,7 +1,49 @@
 import { task } from "hardhat/config";
-import { DecentPoemsRenderer, DecentWords } from "../typechain";
+import { DecentPoems, DecentPoemsRenderer, DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
+import { BigNumber } from "ethers";
+
+task("set-vrf", "Set VRF on/off")
+  .addPositionalParam("activated", "true/false")
+  .setAction(async ({ activated }, hre) => {
+    console.log("Load contract DecentPoems");
+    const decentPoemsContract = (await loadContract(
+      hre,
+      "DecentPoems"
+    )) as DecentPoems;
+
+    console.log(`Contract ${decentPoemsContract.address} loaded.`);
+    console.log(`   Setting VRF to ${activated}`);
+    await decentPoemsContract.useVRF(activated);
+    console.log(`VRF ${activated ? "activated" : "deactivated"}.`);
+  });
+
+task("word", "Get current word").setAction(async (_, hre) => {
+  console.log("Load contract DecentPoems");
+  const decentPoemsContract = (await loadContract(
+    hre,
+    "DecentPoems"
+  )) as DecentPoems;
+
+  console.log(`Contract ${decentPoemsContract.address} loaded.`);
+
+  const currentWord = await decentPoemsContract.getCurrentWord();
+  console.log(`Word: ${currentWord}.`);
+});
+
+task("reset-seed", "Get current word").setAction(async (_, hre) => {
+  console.log("Load contract DecentPoems");
+  const decentPoemsContract = (await loadContract(
+    hre,
+    "DecentPoems"
+  )) as DecentPoems;
+
+  console.log(`Contract ${decentPoemsContract.address} loaded.`);
+
+  const currentWord = await decentPoemsContract.resetRandomSeed();
+  console.log(`Seed reset.`);
+});
 
 task("populate", "Populate Decent Words")
   .addParam("wordsFile")
@@ -114,6 +156,10 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
   }
 
   console.log("Deploy contract DecentPoems");
+  console.log(`   0xSplit address: ${process.env.SPLIT_ADDRESS}`);
+  console.log(`   VRF Coordinator: ${process.env.VRF_COORDINATOR_ADDRESS}`);
+  console.log(`   VRF Key Hash: ${process.env.VRF_KEY_HASH}`);
+  console.log(`   VRF Subscription ID: ${process.env.VRF_SUBSCRIPTION_ID}`);
   await deployContract(
     hre,
     "DecentPoems",
@@ -122,7 +168,7 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
     process.env.SPLIT_ADDRESS,
     process.env.VRF_COORDINATOR_ADDRESS,
     7,
-    process.env.VRF_SUBSCRIPTION_ID,
+    BigNumber.from(process.env.VRF_SUBSCRIPTION_ID),
     process.env.VRF_KEY_HASH
   );
 });
