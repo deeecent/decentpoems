@@ -10,11 +10,11 @@
   export let wordIndex: number;
   export let contract: DecentPoems | null;
 
-  let hasTitle = !poem.title.text;
+  $: hasTitle = !!poem.title.text;
   const length = 6;
 </script>
 
-{#if !hasTitle}
+{#if hasTitle}
   <div class="poem">
     {#if poem.title.text}
       <div class="title">
@@ -30,29 +30,38 @@
 {/if}
 
 <div class="add-verse">
-  <p class="small">
-    {#if hasTitle}
-      You got a once in a lifetime opportunity to start a new poem. Very lucky
-      indeed. All you have to do is to write the title of the poem.
+  {#if !hasTitle}
+    <p class="small">
+      How did you get here? We don't know. But we know that you should stop
+      hesitating and write the title for the greatest poem ever written. <strong
+        >It's your turn, but if you don't act fast enough someone else will
+        write it</strong
+      >
       <br />
       The title must include the word:
-    {:else if poem.verses.length === 0}
+    </p>
+  {:else if poem.verses.length === 0}
+    <p class="small">
       You are officially invited to write the first verse for this poem. There
       are <strong>{length} verses in total</strong>. Write something that makes
       sense with the title.
       <br />
       Remember, your verse must include the word:
-    {:else if poem.verses.length === 1}
+    </p>
+  {:else if poem.verses.length === 1}
+    <p class="small">
       We are just getting started! We have a title and the first verse. It's now
       your turn to write the second verse. There are <strong
         >{length} verses in total</strong
       >.
       <br />
       Remember, your verse must include the word:
-    {:else}
+    </p>
+  {:else}
+    <p class="small">
       Verse {poem.verses.length + 1} of {length} must include the word:
-    {/if}
-  </p>
+    </p>
+  {/if}
 
   <p class="word">{word}</p>
 
@@ -82,7 +91,7 @@
   }
 
   .small {
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-style: italic;
     text-align: left;
   }
@@ -95,6 +104,7 @@
 
   .title {
     margin-bottom: 4rem;
+    font-family: "Prompt", sans-serif;
   }
 
   .verse {

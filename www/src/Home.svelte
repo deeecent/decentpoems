@@ -8,7 +8,7 @@
     decentPoemsReadOnly,
   } from "./stores/contract";
 
-  import Auction from "./Auction.svelte";
+  import AuctionList from "./AuctionList.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
   import Minted from "./Minted.svelte";
 </script>
@@ -35,10 +35,28 @@
   {/if}
 </div>
 
-{#if $decentPoemsReadOnly && $auctions && $auctions.length}
-  <h4>Last Auction</h4>
-  <Auction auction={$auctions[0]} decentPoemsReadOnly={$decentPoemsReadOnly} />
-{/if}
+<div class="auctions">
+  <section class="intro">
+    <p>
+      Every time a <strong>Decent Poem</strong> is completed, it is sold in a
+      <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted and
+      the preceedings are split to the authors. Authors will also get revenues
+      on secondary sales.
+    </p>
+  </section>
+
+  {#if $decentPoemsReadOnly && $auctions}
+    {#if $auctions.length}
+      <AuctionList
+        auctions={$auctions}
+        decentPoemsReadOnly={$decentPoemsReadOnly}
+      />
+    {:else}
+      <section class="intro">There are no auctions at the moment.</section>
+    {/if}
+  {/if}
+</div>
+
 {#if $minted && $minted.length}
   <h4>Last Minted</h4>
   <Minted poem={$minted[0]} />
@@ -61,13 +79,23 @@
     align-self: flex-start;
   }
 
+  .auctions {
+    padding-top: 10rem;
+    background: linear-gradient(
+      180deg,
+      rgba(188, 72, 255, 0) 0%,
+      rgba(188, 72, 255, 0.1) 35%,
+      rgba(71, 72, 255, 0.2) 100%
+    );
+  }
+
   p {
     font-size: 1.2rem;
     font-family: var(--serif);
   }
 
   p strong {
-    font-family: sans-serif;
+    font-family: var(--sans-serif);
   }
 
   /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */

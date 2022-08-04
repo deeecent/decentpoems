@@ -27,15 +27,20 @@ export class EventDispatcher {
   }
 
   updateTopics() {
+    this.topics = [];
+    this.topicToCallbacks = {};
     for (let [eventName, callback] of this.callbacks) {
+      console.log("update event", eventName, this.callbacks);
       const t = this.contract.filters[eventName]().topics;
+      console.log(this.contract.filters);
+      console.log(t);
       if (t && t[0] && !Array.isArray(t[0])) {
         const first = t[0];
         if (!this.topicToCallbacks[first]) {
           this.topicToCallbacks[first] = [];
         }
         this.topicToCallbacks[first].push(callback);
-        return (this.topics = this.topics.concat(first));
+        this.topics = this.topics.concat(first);
       } else {
         throw new Error(
           `"${eventName}" doesn't exist in contract or multiple topics provided`

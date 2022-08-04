@@ -85,7 +85,7 @@
   />
 
   <button disabled={!valid} type="submit">
-    {#if hasTitle}
+    {#if !hasTitle}
       Submit title
     {:else}
       Submit verse {number} of {length}
@@ -96,6 +96,7 @@
 <style>
   textarea {
     font-family: var(--serif);
+    font-size: 1.5rem;
     display: block;
     width: 100%;
     border: 2px solid black;

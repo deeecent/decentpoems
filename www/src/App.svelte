@@ -3,7 +3,7 @@
   import { init } from "./stores/wallet";
 
   import Home from "./Home.svelte";
-  import Auctions from "./Auctions.svelte";
+  import AuctionList from "./AuctionList.svelte";
   import MintedList from "./MintedList.svelte";
   import NetworkError from "./NetworkError.svelte";
   import Debug from "./Debug.svelte";
@@ -19,7 +19,7 @@
     <Home />
   </Route>
   <Route path="/auctions">
-    <Auctions />
+    <AuctionList />
   </Route>
   <Route path="/minted"><MintedList /></Route>
   <Route path="/__debug">
