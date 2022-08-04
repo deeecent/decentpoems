@@ -3,7 +3,6 @@ import { DecentPoems, DecentPoemsRenderer, DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 import { BigNumber } from "ethers";
-import { parseEther } from "ethers/lib/utils";
 
 task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
   console.log("Load contract DecentPoems");
@@ -14,7 +13,7 @@ task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
 
   console.log(`Contract ${decentPoemsContract.address} loaded.`);
   for (let i = 0; i < 7; i++) {
-    console.log("sentence one");
+    console.log(`sentence ${i}`);
     let notGenerated = true;
     let word;
     while (notGenerated) {
@@ -23,9 +22,9 @@ task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
         notGenerated = false;
 
         const tx = await decentPoemsContract.submitVerse(
-          "test ",
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
           word[0],
-          " end."
+          ", Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."
         );
         await tx.wait(1);
       } catch (e) {}
@@ -78,6 +77,19 @@ task("word", "Get current word").setAction(async (_, hre) => {
 
   const currentWord = await decentPoemsContract.getCurrentWord();
   console.log(`Word: ${currentWord}.`);
+});
+
+task("auctions", "Get auctions").setAction(async (_, hre) => {
+  console.log("Load contract DecentPoems");
+  const decentPoemsContract = (await loadContract(
+    hre,
+    "DecentPoems"
+  )) as DecentPoems;
+
+  console.log(`Contract ${decentPoemsContract.address} loaded.`);
+
+  const auctions = await decentPoemsContract.getAuctions();
+  console.log(`Auctions: ${auctions}.`);
 });
 
 task("reset-seed", "Get current word").setAction(async (_, hre) => {
