@@ -16,6 +16,7 @@ export type Poem = {
     text: string;
   }[];
   created: Date;
+  validUntil: Date;
 };
 
 export type PoemAuction = Poem & {

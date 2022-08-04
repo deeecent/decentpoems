@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { formatEther } from "ethers/lib/utils";
   import { onMount } from "svelte";
   import type { DecentPoems } from "../../typechain";
   import type { PoemAuction } from "./types";
   import { address, connect } from "./stores/wallet";
   import { decentPoems } from "./stores/contract";
+  import { formatEther, secondsToHms } from "./utils";
 
   export let auction: PoemAuction;
   export let decentPoemsReadOnly: DecentPoems;
@@ -15,15 +15,24 @@
 
   let price = formatEther(auction.price);
   let pending = false;
-  let timerId: number;
+  let priceTimerId: number;
+  let secondsTimerId: number;
+  let secondsLeft = (auction.validUntil.getTime() - Date.now()) / 1000;
 
   onMount(() => {
-    timerId = window.setInterval(async () => {
+    priceTimerId = window.setInterval(async () => {
       const newPrice = await decentPoemsReadOnly.getCurrentPrice(auction.id);
       console.log("check price", newPrice);
       price = formatEther(newPrice);
     }, 10000);
-    return () => window.clearInterval(timerId);
+
+    secondsTimerId = window.setInterval(() => {
+      secondsLeft = (auction.validUntil.getTime() - Date.now()) / 1000;
+    }, 1000);
+    return () =>
+      [priceTimerId, secondsTimerId].forEach((timerId) =>
+        window.clearInterval(timerId)
+      );
   });
 
   async function mint(decentPoems: DecentPoems, address: string, id: number) {
@@ -33,7 +42,10 @@
     } catch (e) {
       console.error(e);
     }
-    window.clearInterval(timerId);
+    return () =>
+      [priceTimerId, secondsTimerId].forEach((timerId) =>
+        window.clearInterval(timerId)
+      );
   }
 
   async function onMint() {
@@ -57,11 +69,85 @@
   }
 </script>
 
-<p>Time left: 12h 45m 21s</p>
-<h3>{auction.title.text}</h3>
-<img src={auction.metadata.image} />
-<div>
-  Authors: {authors.join(", ")}
+<div class="auction">
+  <div class="nft-container">
+    <div class="nft">
+      <p>Auction ends in {secondsToHms(secondsLeft)}</p>
+      <img src={auction.metadata.image} />
+      <button on:click={onMint}>Mint for {price} MATIC</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="poem">
+      <h1>{auction.title.text}</h1>
+      {#each auction.verses as { author, text }}
+        <p>{text}</p>
+      {/each}
+      <div>
+        Authors: {authors.join(", ")}
+      </div>
+    </div>
+  </div>
 </div>
 
-<button on:click={onMint}>Mint for {price} Eth</button>
+<style>
+  .auction {
+    padding: 2rem;
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .auction > * {
+    flex: 1;
+  }
+
+  .panel {
+    border: 1px solid rgb(136, 136, 136, 0.1);
+    padding: 5rem 2rem;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
+  }
+
+  .nft {
+    width: 70%;
+    margin: 0 auto;
+  }
+
+  .nft p {
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  img {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5);
+    max-width: 30rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    width: 100%;
+  }
+
+  button {
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    display: block;
+    box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
+    margin: 3rem auto 0 auto;
+    margin-top: 3rem;
+    padding: 1rem 1rem;
+    font-size: 1.2rem;
+    transition: all 400ms;
+    cursor: pointer;
+    width: 80%;
+    background-color: rgb(133, 160, 255);
+    color: rgb(36, 36, 36);
+  }
+  button:hover {
+    box-shadow: 0 0.5rem 1.5rem 0.1rem rgba(0, 0, 0, 0.5);
+  }
+</style>

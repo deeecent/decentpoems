@@ -53,6 +53,8 @@ const eventDispatcher = derived(
 );
 
 function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
+  const created = new Date(poemStruct.createdAt.toNumber() * 1000);
+  const validUntil = new Date(created.setDate(created.getDate() + 1));
   const poem: Poem = {
     title: {
       text: poemStruct.verses[0],
@@ -65,7 +67,8 @@ function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
       });
       return prev;
     }, [] as { author: string; text: string }[]),
-    created: new Date(poemStruct.createdAt.toNumber() * 1000),
+    created,
+    validUntil,
   };
   return poem;
 }
@@ -75,7 +78,13 @@ export const currentPoem = derived(
   ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem) => void) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
       let index = $eventDispatcher.add("VerseSubmitted", () =>
-        $decentPoemsReadOnly.getCurrentPoem().then(parsePoemStruct).then(set)
+        $decentPoemsReadOnly
+          .getCurrentPoem()
+          .then(parsePoemStruct)
+          .then(set)
+          .catch((e) => {
+            console.log("Error fetching current poem", e);
+          })
       );
       return () => {
         if ($eventDispatcher) {
@@ -87,15 +96,27 @@ export const currentPoem = derived(
 );
 
 export const currentWord = derived(
-  [decentPoemsReadOnly, currentPoem],
+  [decentPoemsReadOnly, eventDispatcher],
   (
-    [$decentPoemsReadOnly, $currentPoem],
+    [$decentPoemsReadOnly, $eventDispatcher],
     set: ({ index, word }: { index: BigNumber; word: string }) => void
   ) => {
-    if ($decentPoemsReadOnly && $currentPoem) {
-      $decentPoemsReadOnly
-        .getCurrentWord()
-        .then(({ index, word }) => set({ index, word }));
+    if ($decentPoemsReadOnly && $eventDispatcher) {
+      console.log("subscribe to word generated");
+      let index = $eventDispatcher.add("WordGenerated", () => {
+        console.log("word generated");
+        $decentPoemsReadOnly
+          .getCurrentWord()
+          .then(({ index, word }) => set({ index, word }))
+          .catch((e) => {
+            console.log("Error fetching current word", e);
+          });
+      });
+      return () => {
+        if ($eventDispatcher) {
+          $eventDispatcher.remove(index);
+        }
+      };
     }
   }
 );
