@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=PT+Sans+Caption:wght@400;700&family=PT+Sans:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 :root {
   --serif: "PT Serif", serif;
-  --sans-serif: "Inconsolata", sans-serif;
+  --sans-serif: "Pt Sans Caption", sans-serif;
+  --monospace: monospace;
 }
 
 html {
@@ -10,7 +11,7 @@ html {
 }
 
 body {
-  color: black;
+  color: rgb(35, 38, 78);
   box-sizing: inherit;
   font-size: 16px;
   margin: 0px;
@@ -52,6 +53,24 @@ p {
 }
 
 button {
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  display: block;
+  margin: 3rem auto 0 auto;
+  margin-top: 3rem;
+  padding: 1rem 1rem;
+  font-size: 1.2rem;
+  transition: all 400ms;
+  cursor: pointer;
+  background-color: rgb(194, 194, 228);
+  color: rgb(36, 36, 36);
+}
+
+button:hover {
+  background-color: rgb(146, 146, 184);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+h1 {
   font-family: var(--sans-serif);
-  font-weight: bold;
 }

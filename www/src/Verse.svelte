@@ -26,9 +26,10 @@
   }
 
   .author {
-    font-size: 1rem;
+    font-size: 0.8rem;
     opacity: 0.5;
     margin-top: 0;
     margin-bottom: 2rem;
+    font-family: var(--monospace);
   }
 </style>

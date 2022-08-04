@@ -6,7 +6,7 @@
   import { connect } from "./stores/wallet";
 
   export let contract: DecentPoems | null;
-  export let hasTitle: boolean;
+  export let isTitle: boolean;
   export let number: number;
   export let length: number;
   export let word: string;
@@ -78,14 +78,10 @@
 {/if}
 
 <form disabled={status == "sent"} on:submit={onSubmit}>
-  <textarea
-    bind:value={text}
-    placeholder="Write here"
-    rows={hasTitle ? 1 : 3}
-  />
+  <textarea bind:value={text} placeholder="Write here" rows={isTitle ? 1 : 3} />
 
   <button disabled={!valid} type="submit">
-    {#if !hasTitle}
+    {#if isTitle}
       Submit title
     {:else}
       Submit verse {number} of {length}
