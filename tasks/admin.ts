@@ -166,8 +166,8 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
     { DecentPoemsRenderer: decentPoemsRendererContract.address },
     decentWordsContract.address,
     process.env.SPLIT_ADDRESS,
-    process.env.VRF_COORDINATOR_ADDRESS,
     7,
+    process.env.VRF_COORDINATOR_ADDRESS,
     BigNumber.from(process.env.VRF_SUBSCRIPTION_ID),
     process.env.VRF_KEY_HASH
   );
