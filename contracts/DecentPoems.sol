@@ -220,6 +220,16 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         _distributorFee = distributorFee;
     }
 
+    function setAuctionParams(
+        uint256 auctionDuration,
+        uint256 auctionStartPrice,
+        uint32 auctionEndPrice
+    ) public onlyOwner {
+        _auctionDuration = auctionDuration;
+        _auctionStartPrice = auctionStartPrice;
+        _auctionEndPrice = auctionEndPrice;
+    }
+
     function safeMint(address to, uint256 poemIndex)
         public
         payable
