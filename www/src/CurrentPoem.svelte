@@ -65,14 +65,18 @@
 
   <p class="word">{word}</p>
 
-  <AddVerse
-    {contract}
-    {isTitle}
-    number={poem.verses.length + 1}
-    {length}
-    {word}
-    {wordIndex}
-  />
+  {#if word !== ""}
+    <AddVerse
+      {contract}
+      {isTitle}
+      number={poem.verses.length + 1}
+      {length}
+      {word}
+      {wordIndex}
+    />
+  {:else}
+    loading.
+  {/if}
 </div>
 
 <style>

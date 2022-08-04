@@ -28,7 +28,7 @@
       <CurrentPoem
         poem={$currentPoem}
         word={$currentWord.word}
-        wordIndex={$currentWord.index.toNumber()}
+        wordIndex={$currentWord.index}
         contract={$decentPoems}
       />
     </section>

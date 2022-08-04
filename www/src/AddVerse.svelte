@@ -13,13 +13,13 @@
   export let wordIndex: number;
   let text = "";
   let pending = false;
-  let status: null | "sent" | "confirmed" | "error" = null;
-
-  $: valid = text.toLocaleLowerCase().split(/\W/).includes(word);
+  let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   async function submitVerse() {
+    status = "wait";
     const pos = text.toLocaleLowerCase().indexOf(word);
     if (!contract || pos < 0) {
+      status = null;
       throw new Error("Something bad happened");
     }
     const prefix = text.slice(0, pos);
@@ -65,6 +65,9 @@
       submitVerse();
     }
   }
+
+  $: valid = text.toLocaleLowerCase().split(/\W/).includes(word);
+  $: disabled = status === "wait" || status === "sent";
 </script>
 
 {#if status === "sent"}
@@ -77,10 +80,15 @@
   </Notification>
 {/if}
 
-<form disabled={status == "sent"} on:submit={onSubmit}>
-  <textarea bind:value={text} placeholder="Write here" rows={isTitle ? 1 : 3} />
+<form on:submit={onSubmit}>
+  <textarea
+    {disabled}
+    bind:value={text}
+    placeholder="Write here"
+    rows={isTitle ? 1 : 3}
+  />
 
-  <button disabled={!valid} type="submit">
+  <button disabled={disabled || !valid} type="submit">
     {#if isTitle}
       Submit title
     {:else}

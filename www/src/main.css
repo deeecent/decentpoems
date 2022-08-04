@@ -77,6 +77,13 @@ button:hover {
   border-color: rgba(0, 0, 0, 0.3);
 }
 
+button:disabled,
+button:disabled:hover {
+  background-color: rgb(161, 161, 161);
+  color: rgb(97, 97, 97);
+  cursor: not-allowed;
+}
+
 h1 {
   font-family: var(--sans-serif);
 }
