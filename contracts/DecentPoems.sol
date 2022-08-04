@@ -343,7 +343,8 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
                 DecentPoemsRenderer.getJSON(
                     poem.verses,
                     poemWords,
-                    poem.authors
+                    poem.authors,
+                    poem.split
                 )
             );
     }
