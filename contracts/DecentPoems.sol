@@ -64,8 +64,8 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     constructor(
         address decentWords,
         address splitterAddress,
-        address vrfCoordinatorAddress,
         uint256 maxVerses,
+        address vrfCoordinatorAddress,
         uint64 vrfSubscriptionId,
         bytes32 vrfKeyHash
     ) ERC721("Decent Poems", "POEMS") VRFConsumerBaseV2(vrfCoordinatorAddress) {

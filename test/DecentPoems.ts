@@ -69,8 +69,8 @@ describe("DecentPoems", () => {
     decentPoems = await DecentPoemsFactory.deploy(
       mockDecentWords.address,
       mockSplitMain.address,
-      mockVrfCoordinator.address,
       7,
+      mockVrfCoordinator.address,
       fakeVrfSubscriptionId,
       fakeVrfKeyHash
     );
