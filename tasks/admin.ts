@@ -4,6 +4,34 @@ import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 import { BigNumber } from "ethers";
 
+task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
+  console.log("Load contract DecentPoems");
+  const decentPoemsContract = (await loadContract(
+    hre,
+    "DecentPoems"
+  )) as DecentPoems;
+
+  console.log(`Contract ${decentPoemsContract.address} loaded.`);
+  for (let i = 0; i < 7; i++) {
+    console.log("sentence one");
+    let notGenerated = true;
+    let word;
+    while (notGenerated) {
+      try {
+        word = await decentPoemsContract.getCurrentWord();
+        notGenerated = false;
+
+        const tx = await decentPoemsContract.submitVerse(
+          "test ",
+          word[0],
+          " end."
+        );
+        await tx.wait(1);
+      } catch (e) {}
+    }
+  }
+});
+
 task("set-vrf", "Set VRF on/off")
   .addPositionalParam("activated", "true/false")
   .setAction(async ({ activated }, hre) => {
@@ -13,10 +41,12 @@ task("set-vrf", "Set VRF on/off")
       "DecentPoems"
     )) as DecentPoems;
 
+    const activate = activated == "true" ? true : false;
+
     console.log(`Contract ${decentPoemsContract.address} loaded.`);
-    console.log(`   Setting VRF to ${activated}`);
-    await decentPoemsContract.useVRF(activated);
-    console.log(`VRF ${activated ? "activated" : "deactivated"}.`);
+    console.log(`   Setting VRF to ${activate}`);
+    await decentPoemsContract.useVRF(activate);
+    console.log(`VRF ${activate ? "activated" : "deactivated"}.`);
   });
 
 task("word", "Get current word").setAction(async (_, hre) => {
@@ -41,7 +71,8 @@ task("reset-seed", "Get current word").setAction(async (_, hre) => {
 
   console.log(`Contract ${decentPoemsContract.address} loaded.`);
 
-  const currentWord = await decentPoemsContract.resetRandomSeed();
+  const tx = await decentPoemsContract.resetRandomSeed();
+  await tx.wait(3);
   console.log(`Seed reset.`);
 });
 

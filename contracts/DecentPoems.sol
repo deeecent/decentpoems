@@ -31,6 +31,12 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         address split;
     }
 
+    struct Contribution {
+        uint32 percentage;
+        uint32 count;
+    }
+    mapping(uint256 => mapping(address => Contribution)) _contributions;
+
     Poem[] public _poems;
     uint256[] public _minted;
 
@@ -43,8 +49,8 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     uint256 public _auctionStartPrice = 1 ether;
     uint256 public _auctionEndPrice = 0.001 ether;
 
-    uint256 public constant PERCENTAGE_SCALE = 1e6; // 100%
-    uint256 public _creatorRoyalty = 5 * 1e4; // 5%
+    uint32 public constant PERCENTAGE_SCALE = 1e6; // 100%
+    uint32 public _creatorRoyalty = 5 * 1e4; // 5%
     uint256 public _saleRoyalty = 5 * 1e4;
     uint32 public _distributorFee = 1e3; // 0.1%
     address public _creatorAddress;
@@ -205,7 +211,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     // WRITE
 
     function setFees(
-        uint256 creatorRoyalty,
+        uint32 creatorRoyalty,
         uint256 saleRoyalty,
         uint32 distributorFee
     ) public onlyOwner {
@@ -231,10 +237,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         _minted.push(poemIndex);
         _safeMint(to, tokenId);
         _distributeValue(msg.value, _poems[poemIndex]);
-        _poems[poemIndex].split = _createSplit(
-            _poems[poemIndex].authors,
-            _creatorAddress
-        );
+        _poems[poemIndex].split = _createSplit(_creatorAddress, poemIndex);
         _setTokenRoyalty(
             tokenId,
             _poems[poemIndex].split,
@@ -255,9 +258,20 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
             abi.encodePacked(prefix, currentWord, suffix)
         );
 
+        if (poem.verses.length == 0) {
+            _contributions[_poems.length - 1][_creatorAddress]
+                .percentage = _creatorRoyalty;
+            _contributions[_poems.length - 1][_creatorAddress].count = 1;
+        }
+
         poem.verses.push(verse);
         poem.authors.push(_msgSender());
         poem.wordIndexes.push(currentIndex);
+        _contributions[_poems.length - 1][_msgSender()].percentage +=
+            (PERCENTAGE_SCALE - _creatorRoyalty) /
+            uint32(_maxVerses);
+        _contributions[_poems.length - 1][_msgSender()].count++;
+
         emit VerseSubmitted(_msgSender(), _poems.length - 1);
 
         if (poem.verses.length == _maxVerses) {
@@ -338,33 +352,78 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         return uint96(PERCENTAGE_SCALE);
     }
 
-    function _createSplit(address[] memory authors, address creator)
+    function sort(address[] memory data) internal pure {
+        uint length = data.length;
+        for (uint i = 1; i < length; i++) {
+            address key = data[i];
+            int j = int(i) - 1;
+            while (data[uint(j)] > key) {
+                data[uint(j) + 1] = data[uint(j)];
+                j--;
+                if (j < 0) {
+                    break;
+                }
+            }
+            data[uint(j + 1)] = key;
+        }
+    }
+
+    function _createSplit(address creator, uint256 poemIndex)
         internal
         returns (address)
     {
+        address[] storage authors = _poems[poemIndex].authors;
         uint256 totalRecipients = authors.length + 1;
+
         address[] memory recipients = new address[](totalRecipients);
         for (uint256 i = 0; i < totalRecipients - 1; i++) {
             recipients[i] = authors[i];
         }
         recipients[totalRecipients - 1] = creator;
 
-        uint32[] memory percentAllocations = new uint32[](totalRecipients);
-        uint256 accumulatedPercentage = 0;
-        for (uint256 i = 0; i < totalRecipients - 1; i++) {
-            uint256 percentage = (PERCENTAGE_SCALE - _creatorRoyalty) /
-                (totalRecipients - 1);
-            percentAllocations[i] = uint32(percentage);
-            accumulatedPercentage = accumulatedPercentage + percentage;
+        sort(recipients);
+
+        uint256 uniqueRecipientsCount = totalRecipients;
+        address lastChecked = address(0);
+        for (uint256 i = 0; i < totalRecipients; i++) {
+            if (recipients[i] > lastChecked) {
+                uniqueRecipientsCount -= (_contributions[poemIndex][
+                    recipients[i]
+                ].count - 1);
+                lastChecked = recipients[i];
+            }
         }
 
-        percentAllocations[totalRecipients - 1] = uint32(
-            1e6 - accumulatedPercentage
+        address[] memory uniqueRecipients = new address[](
+            uniqueRecipientsCount
         );
+        lastChecked = address(0);
+        uint256 added = 0;
+        for (uint256 i = 0; i < totalRecipients; i++) {
+            if (recipients[i] > lastChecked) {
+                uniqueRecipients[added] = recipients[i];
+                lastChecked = recipients[i];
+                added++;
+            }
+        }
+
+        uint32[] memory percentAllocations = new uint32[](
+            uniqueRecipientsCount
+        );
+        uint32 accumulated;
+        for (uint256 i = 0; i < uniqueRecipientsCount; i++) {
+            percentAllocations[i] = _contributions[poemIndex][
+                uniqueRecipients[i]
+            ].percentage;
+            accumulated += percentAllocations[i];
+        }
+
+        // Round up to 100%
+        percentAllocations[0] += PERCENTAGE_SCALE - accumulated;
 
         return
             _splitter.createSplit(
-                recipients,
+                uniqueRecipients,
                 percentAllocations,
                 _distributorFee,
                 owner()
