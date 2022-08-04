@@ -25,11 +25,11 @@ library DecentPoemsRenderer {
         return string(svgBytes);
     }
 
-    function getDescription(string[] memory verses, address[] memory authors)
-        public
-        pure
-        returns (string memory)
-    {
+    function getDescription(
+        string[] memory verses,
+        address[] memory authors,
+        address split
+    ) public pure returns (string memory) {
         bytes memory description = abi.encodePacked(
             getPoem(verses),
             "\\n\\n-------\\n\\n"
@@ -47,7 +47,14 @@ library DecentPoemsRenderer {
 
         description = abi.encodePacked(
             description,
-            "\\n-------\\n\\nLicense: CC BY-NC-ND 4.0"
+            "\\n-------\\n\\n0xSplit:\\n",
+            "[",
+            Strings.toHexString(uint160(split), 20),
+            "](",
+            "https://app.0xsplits.xyz/accounts/",
+            Strings.toHexString(uint160(split), 20),
+            "/)",
+            "\\n\\nLicense: CC BY-NC-ND 4.0"
         );
 
         return string(description);
@@ -82,7 +89,8 @@ library DecentPoemsRenderer {
     function getJSON(
         string[] memory verses,
         string[] memory words,
-        address[] memory authors
+        address[] memory authors,
+        address split
     ) public pure returns (string memory) {
         return
             string(
@@ -94,7 +102,7 @@ library DecentPoemsRenderer {
                             verses[0],
                             '",',
                             unicode'"description":"',
-                            getDescription(verses, authors),
+                            getDescription(verses, authors, split),
                             '","image":"data:image/svg+xml;base64,',
                             Base64.encode(abi.encodePacked(getSVG(words))),
                             '","attributes":[]}'

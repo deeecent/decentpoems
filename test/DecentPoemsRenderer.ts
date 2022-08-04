@@ -105,7 +105,11 @@ describe("DecentPoemsRender", () => {
 
     describe("getDescription", async () => {
       it("concatenates the list of authors to the poem", async () => {
-        const result = await renderer.getDescription(verses, authors);
+        const result = await renderer.getDescription(
+          verses,
+          authors,
+          AddressZero
+        );
 
         const expected = "Authors:\\n\\n* ".concat(
           authors.join("\\n* ").toLowerCase()
@@ -114,8 +118,24 @@ describe("DecentPoemsRender", () => {
         expect(result).include(expected);
       });
 
+      it("concatenates the split address", async () => {
+        const result = await renderer.getDescription(
+          verses,
+          authors,
+          bob.address
+        );
+
+        const expected = `0xSplit:\\n[${bob.address.toLowerCase()}](https://app.0xsplits.xyz/accounts/${bob.address.toLowerCase()}/)`;
+
+        expect(result).include(expected);
+      });
+
       it("concatenates the license at the end", async () => {
-        const result = await renderer.getDescription(verses, authors);
+        const result = await renderer.getDescription(
+          verses,
+          authors,
+          AddressZero
+        );
 
         const expected = "License: CC BY-NC-ND 4.0";
 
@@ -136,7 +156,12 @@ describe("DecentPoemsRender", () => {
 
     describe("getJSON", async () => {
       it("should return a valid JSON", async () => {
-        const data = await renderer.getJSON(verses, words, authors);
+        const data = await renderer.getJSON(
+          verses,
+          words,
+          authors,
+          bob.address
+        );
 
         const result = await fetchJson(data);
 
@@ -147,7 +172,7 @@ describe("DecentPoemsRender", () => {
       });
 
       it("should use first verse as name", async () => {
-        const data = await renderer.getJSON(verses, [], []);
+        const data = await renderer.getJSON(verses, [], [], AddressZero);
 
         const result = await fetchJson(data);
 

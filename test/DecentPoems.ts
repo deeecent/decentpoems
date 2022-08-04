@@ -706,33 +706,39 @@ describe("DecentPoems", () => {
 
     it("should create a split for the future royalties", async () => {
       const authors = [bob, abe, carl, ben, abe, carl, abe];
+
       for (let i = 0; i < 7; i++) {
         await decentPoems.connect(authors[i]).submitVerse("", 0, "");
       }
 
+      const recipients = authors.concat(deployer);
+
       const price = await decentPoems.getCurrentPrice(0);
       const scale = await decentPoems.PERCENTAGE_SCALE();
       const creatorRoyalty = await decentPoems._creatorRoyalty();
+      const unitAllocation = (scale - creatorRoyalty) / 7;
+      const percentages = {
+        [bob.address]: unitAllocation,
+        [abe.address]: unitAllocation * 3,
+        [carl.address]: unitAllocation * 2,
+        [ben.address]: unitAllocation,
+        [deployer.address]: creatorRoyalty,
+      };
 
       await decentPoems.safeMint(deployer.address, 0, { value: price });
 
-      const expectedAuthorAddresses = authors
-        .map((a) => a.address)
-        .concat(deployer.address);
-      const expectedAuthorAllocation = scale.sub(creatorRoyalty).div(7);
-      const expectedAllocations = [
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        expectedAuthorAllocation,
-        scale.sub(expectedAuthorAllocation.mul(7)),
-      ].map((n) => n.toNumber());
+      const recipientAddresses = recipients.map((a) => a.address);
+      const sortedRecipientAddresses = [...new Set(recipientAddresses.sort())];
+
+      const expectedAllocations = sortedRecipientAddresses.map((address) =>
+        Math.floor(percentages[address])
+      );
+
+      const sum = expectedAllocations.reduce((x, y) => x + y);
+      expectedAllocations[0] += scale - sum;
 
       expect(mockSplitMain.createSplit.getCall(0).args[0]).eql(
-        expectedAuthorAddresses
+        sortedRecipientAddresses
       );
       expect(mockSplitMain.createSplit.getCall(0).args[1]).eql(
         expectedAllocations
@@ -849,7 +855,8 @@ describe("DecentPoems", () => {
           .whenCalledWith(
             expectedInputVerses,
             expectedInputWords,
-            expectedInputAuthors
+            expectedInputAuthors,
+            ethers.constants.AddressZero
           )
           .returns("success");
 
