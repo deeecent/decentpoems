@@ -54,7 +54,7 @@ p {
 
 button {
   border-radius: 0.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   display: block;
   margin: 3rem auto 0 auto;
   margin-top: 3rem;
@@ -67,8 +67,8 @@ button {
 }
 
 button:hover {
-  background-color: rgb(146, 146, 184);
-  border: 1px solid rgba(0, 0, 0, 0.6);
+  background-color: rgb(169, 169, 199);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 h1 {

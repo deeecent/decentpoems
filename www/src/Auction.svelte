@@ -134,7 +134,6 @@
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5);
     max-width: 30rem;
     border-radius: 0.25rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
     width: 100%;
   }
 
