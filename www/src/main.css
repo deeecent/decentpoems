@@ -8,12 +8,18 @@
 
 html {
   box-sizing: border-box;
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  html {
+    font-size: 14px;
+  }
 }
 
 body {
   color: rgb(35, 38, 78);
   box-sizing: inherit;
-  font-size: 16px;
   margin: 0px;
   font-family: var(--serif);
   background-image: linear-gradient(
@@ -73,4 +79,10 @@ button:hover {
 
 h1 {
   font-family: var(--sans-serif);
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

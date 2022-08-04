@@ -21,3 +21,7 @@ export function formatEther(value: BigNumberish, decimals = 4) {
   const res = parseFloat(ethers.utils.formatEther(value));
   return Math.round(res * 1e4) / 1e4;
 }
+
+export function shortAddress(address: string) {
+  return address.slice(0, 6) + "…" + address.slice(-4);
+}

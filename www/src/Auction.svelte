@@ -4,7 +4,7 @@
   import type { PoemAuction } from "./types";
   import { address, connect } from "./stores/wallet";
   import { decentPoems } from "./stores/contract";
-  import { formatEther, secondsToHms } from "./utils";
+  import { formatEther, secondsToHms, shortAddress } from "./utils";
 
   export let auction: PoemAuction;
   export let decentPoemsReadOnly: DecentPoems;
@@ -84,8 +84,8 @@
       {#each auction.verses as { author, text }}
         <p>{text}</p>
       {/each}
-      <div>
-        Authors: {authors.join(", ")}
+      <div class="authors">
+        Authors: {authors.map(shortAddress).join(", ")}
       </div>
     </div>
   </div>
@@ -110,6 +110,11 @@
     border-radius: 0.25rem;
     background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
+    width: 100%;
+  }
+
+  .authors {
+    margin-top: 4rem;
   }
 
   .nft {
@@ -140,9 +145,24 @@
   button {
     box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
     width: 80%;
+    margin-bottom: 2rem;
   }
 
   button:hover {
     box-shadow: 0 0.5rem 1.5rem 0.1rem rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 900px) {
+    .auction {
+      flex-direction: column;
+    }
+
+    .nft {
+      width: 100%;
+    }
+
+    button {
+      width: 100%;
+    }
   }
 </style>
