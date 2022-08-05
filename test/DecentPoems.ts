@@ -802,7 +802,8 @@ describe("DecentPoems", () => {
         .whenCalledWith(
           expectedInputVerses,
           expectedInputWords,
-          expectedInputAuthors
+          expectedInputAuthors,
+          abe.address
         )
         .returns("success");
 
