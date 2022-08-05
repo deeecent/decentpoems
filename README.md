@@ -21,7 +21,7 @@ Once 7 sentences have been signed into the blockchain, a poem is generated.
 The poem immediately goes into a Dutch Auction (also handled by the smart contract) which will allow anyone who loves it to buy it.
 This will generate an NFT that can now be traded.
 
-Cherry on the cake? All the revenue (from minting and from the royalties) are equally split among the authors, by means o 0xSplit.
+Cherry on the cake: all the revenue (from minting and from the trades royalties) are equally split among the authors, by means o 0xSplit.
 
 Everything is 100% on chain, based on Polygon. So the system could in principle live forever.
 
