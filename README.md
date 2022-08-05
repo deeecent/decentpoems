@@ -3,6 +3,7 @@
 # Decent Poems
 
 ![Logo](https://github.com/deeecent/decentpoems/blob/main/doc/logo.github.svg?raw=true)
+![Logo](https://github.com/deeecent/decentpoems/blob/main/doc/logo.github.alpha.svg?raw=true)
 
 ## Introduction
 
