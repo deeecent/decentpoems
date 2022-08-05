@@ -518,7 +518,7 @@ describe("DecentPoems", () => {
     });
   });
 
-  describe.only("getMinted", async () => {
+  describe("getMinted", async () => {
     function getExisting(items: any) {
       let existing = [];
       for (let i = 0; i < items.length; i++) {
