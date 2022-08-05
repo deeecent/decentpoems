@@ -1,6 +1,12 @@
 ![Test workflow](https://github.com/vrde/hyperpoem/actions/workflows/node.yml/badge.svg)
 
-# HardHat TypeScript Template
+# Decent Poems
+
+![Logo](https://github.com/deecent/decentpoems/blob/master/doc/logo.github.svg?raw=true)
+
+## Introduction
+
+Decent Poems is a
 
 ```bash
 npx degit https://github.com/vrde/hardhat-typescript-template\#main contracts
@@ -29,4 +35,5 @@ When the node is running, try the following commands
 - `npx hardhat --network localhost store 666` to store a new value in the contract.
 - `npx hardhat --network localhost retrieve` to retrieve the current value.
 - `npx hardhat --network localhost retrieve --hex` to retrieve the current value in hex.
+
 # hyperpoem
