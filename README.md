@@ -25,6 +25,8 @@ Cherry on the cake? All the revenue (from minting and from the royalties) are eq
 
 Everything is 100% on chain, based on Polygon. So the system could in principle live forever.
 
+Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
+
 ## What's included
 
 - CI with GitHub actions.
