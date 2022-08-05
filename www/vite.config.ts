@@ -32,6 +32,7 @@ function getAddresses(chainId: string, dirs: string[]) {
 export default async ({ mode }) => {
   //process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   const env = loadEnv(mode, process.cwd(), [
+    "BASE_",
     "VITE_",
     "HTML_",
     "SMART_CONTRACT_",

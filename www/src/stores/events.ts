@@ -30,10 +30,7 @@ export class EventDispatcher {
     this.topics = [];
     this.topicToCallbacks = {};
     for (let [eventName, callback] of this.callbacks) {
-      console.log("update event", eventName, this.callbacks);
       const t = this.contract.filters[eventName]().topics;
-      console.log(this.contract.filters);
-      console.log(t);
       if (t && t[0] && !Array.isArray(t[0])) {
         const first = t[0];
         if (!this.topicToCallbacks[first]) {
@@ -69,7 +66,6 @@ export class EventDispatcher {
   }
 
   async listen() {
-    console.log("calling listen");
     if (this.timerId > 0) {
       return;
     }
