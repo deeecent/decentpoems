@@ -16,25 +16,19 @@ So, text + art = Decent Poems: why not storing the whole english dictionary on-c
 
 ### Poetic explanation
 
-> The contract generates a word, just a word.
-> Anon sees it, writes a verse that on the ledger is stored.
-
-> The contract generates a new word, not looking for sense.
-> Someone else takes it and writes another sentence.
-
-> 5 more times we go on this tone.
-> 5 more sentences joins the poem.
-
-> Will it be short or long, good or bad?
-> Only the harmony of the writers can tell.
-
-> Now a poem has come to life. Where will it go? Who will see it?
-> A dutch auction is started. Will someone come and buy it?
-
-> If a degen presses the button and signs the transaction,
-> A new NFT is added to the Decent Poems collection.
-
-> A new piece of creativity flows in the OpenSeas
+> The contract generates a word, just a word.<br/>
+> Anon sees it, writes a verse that on the ledger is stored.<br/><br/>
+> The contract generates a new word, not looking for sense.<br/>
+> Someone else takes it and writes another sentence.<br/><br/>
+> 5 more times we go on this tone.<br/>
+> 5 more sentences joins the poem.<br/><br/>
+> Will it be short or long, good or bad?<br/>
+> Only the harmony of the writers can tell.<br/><br/>
+> Now a poem has come to life. Where will it go? Who will see it?<br/>
+> A dutch auction is started. Will someone come and buy it?<br/><br/>
+> If a degen presses the button and signs the transaction,<br/>
+> A new NFT is added to the Decent Poems collection.<br/><br/>
+> A new piece of creativity flows in the OpenSeas<br/>
 > And all of its authors will enjoy its proceeds.
 
 ### Prosaic version
