@@ -10,7 +10,7 @@
 
   import AuctionList from "./AuctionList.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
-  import Minted from "./Minted.svelte";
+  import MintedList from "./MintedList.svelte";
 </script>
 
 <div class="main">
@@ -57,10 +57,12 @@
   {/if}
 </div>
 
-{#if $minted && $minted.length}
-  <h4>Last Minted</h4>
-  <Minted poem={$minted[0]} />
-{/if}
+<div class="auctions">
+  {#if $minted && $minted.length}
+    <h4>Last Minted</h4>
+    <MintedList poems={$minted} />
+  {/if}
+</div>
 
 <style>
   .main {
@@ -80,12 +82,13 @@
   }
 
   .auctions {
-    padding-top: 10rem;
+    padding: 10rem 0;
     background: linear-gradient(
       180deg,
       rgba(188, 72, 255, 0) 0%,
       rgba(188, 72, 255, 0.1) 35%,
-      rgba(96, 86, 104, 0.2) 100%
+      rgba(96, 86, 104, 0.2) 75%,
+      rgba(188, 72, 255, 0) 100%
     );
   }
 

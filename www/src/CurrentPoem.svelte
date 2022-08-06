@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
   import AddVerse from "./AddVerse.svelte";
 
   import Verse from "./Verse.svelte";
@@ -17,12 +18,12 @@
 {#if !isTitle}
   <div class="poem">
     {#if poem.title.text}
-      <div class="title">
+      <div transition:fade class="title">
         <Verse title author={poem.title.author} text={poem.title.text} />
       </div>
     {/if}
     {#each poem.verses as { author, text }}
-      <div class="verse">
+      <div transition:fade class="verse">
         <Verse {author} {text} />
       </div>
     {/each}

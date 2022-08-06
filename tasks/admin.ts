@@ -176,9 +176,9 @@ task("populate-localhost", "Populate Decent Words")
     }
   });
 
-task("deploy-split", "Deploy Split mock").setAction(async (_, hre) => {
+task("deploy-split", "Deploy mock split").setAction(async (_, hre) => {
   console.log("Deploy *mock* contract Split");
-  await deployContract(hre, "SplitMain");
+  await deployContract(hre, "MockSplitMain");
 });
 
 task("deploy-words", "Deploy DecentWords").setAction(async (_, hre) => {
@@ -230,6 +230,7 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
     7,
     process.env.VRF_COORDINATOR_ADDRESS,
     BigNumber.from(process.env.VRF_SUBSCRIPTION_ID),
-    process.env.VRF_KEY_HASH
+    process.env.VRF_KEY_HASH,
+    false
   );
 });
