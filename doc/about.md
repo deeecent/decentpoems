@@ -1,29 +1,50 @@
 ## Inspiration
 
-Card games where everyone collaborates to a commmon goal.
+We like having fun and we like art. We also like to give people a challenge, a goal with a reward.
+We have worked in the past on decentralized treasure hunt games because we like to see people play, collaborate and win.
+
+With the chance to build something on a platform like Polygon, we thought it would have been nice to leverage the low fees of the blockchain to create an interactive, board-game kind of app, with a "web3" flavour.
+
+We initially tried to think if we could turn one of the many board or card games into a Dapp, but nothing really exciting came to our mind.
+We thought about the many existing word games (wordle, scrabble etc.), which are usually very fun and entertaining, but we didn't won't to just "migrate" a game into web3.
+
+At the same time, we realized how tiny is the world of digital written art is: there are NFTs about music, images, videos... but very few about text (for instance https://variousbooks.xyz/).
+
+So, text + art = Decent Poems: why not storing the whole english dictionary on-chain and use it to stimulate people creativity?
 
 ## What it does
 
-> The contract generates a word, just a word.
-> Anon sees it, writes a verse that on the ledger is stored.
+### Poetic explanation
 
-> The contract generates a new word, not looking for sense.
-> Someone else takes it and writes another sentence.
+> *The contract generates a word, just a word.<br/>*
+> *Anon sees it, writes a verse that on the ledger is stored.<br/><br/>*
+> *The contract generates a new word, not looking for sense.<br/>*
+> *Someone else takes it and writes another sentence.<br/><br/>*
+> *5 more times we go on this tone.<br/>*
+> *5 more sentences joins the poem.<br/><br/>*
+> *Will it be short or long, good or bad?<br/>*
+> *Only the harmony of the writers can tell.<br/><br/>*
+> *Now a poem has come to life. Where will it go? Who will see it?<br/>*
+> *A dutch auction is started. Will someone come and buy it?<br/><br/>*
+> *If a degen presses the button and signs the transaction,<br/>*
+> *A new NFT is added to the Decent Poems collection.<br/><br/>*
+> *A new piece of creativity flows in the OpenSeas<br/>*
+> *And all of its authors will enjoy its proceeds.*
 
-> 5 more times we go on this tone.
-> 5 more sentences joins the poem.
+### Prosaic explanation
 
-> Will it be short or long, good or bad?
-> Only the harmony of the writers can tell.
+Decent Poems could be called a Decent-ralized Poem writing app.
 
-Now a poem has come to life. Where will it go? Who will see it?
-A dutch auction is started. Will someone come and buy it?
+A smart contract generates a random word, and someone has to write a sentence with it.
 
-If a degen presses the button and signs the transaction,
-A new NFT is added to the Decent Poems collection.
+Once 7 sentences have been signed into the blockchain, a poem is generated.
 
-A new piece of creativity flows in the OpenSeas
-And all of its authors will enjoy its proceeds.
+The poem immediately goes into a Dutch Auction (also handled by the smart contract) which will allow anyone who loves it to buy it.
+This will generate an NFT that can now be traded.
+
+Cherry on the cake: all the revenue (from minting and from the trades royalties) are equally split among the authors, by means o 0xSplit.
+
+Everything is 100% on chain, based on Polygon. So the system could in principle live forever.
 
 ## How we built it
 

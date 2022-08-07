@@ -186,12 +186,14 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         view
         returns (Poem[PAGE_SIZE] memory poems)
     {
-        uint256 startingIndex = PAGE_SIZE * page;
-        uint256 maxItems = _minted.length >= startingIndex + PAGE_SIZE
-            ? PAGE_SIZE
-            : _minted.length - startingIndex;
-        for (uint256 i = 0; i < maxItems; i++) {
-            poems[i] = _poems[_minted[i + startingIndex]];
+        if (_minted.length > 0 && PAGE_SIZE * page <= _minted.length) {
+            uint256 startingIndex = _minted.length - PAGE_SIZE * page;
+            uint256 maxItems = PAGE_SIZE >= startingIndex
+                ? startingIndex
+                : PAGE_SIZE;
+            for (uint256 i = startingIndex; i > startingIndex - maxItems; i--) {
+                poems[startingIndex - i] = _poems[_minted[i - 1]];
+            }
         }
     }
 
@@ -223,7 +225,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     function setAuctionParams(
         uint256 auctionDuration,
         uint256 auctionStartPrice,
-        uint32 auctionEndPrice
+        uint256 auctionEndPrice
     ) public onlyOwner {
         _auctionDuration = auctionDuration;
         _auctionStartPrice = auctionStartPrice;

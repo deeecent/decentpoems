@@ -588,6 +588,41 @@ describe("DecentPoems", () => {
 
       expect(existing.length).equal(1);
     });
+
+    it("should return poems in ascending order", async () => {
+      const pageSize = await decentPoems.PAGE_SIZE();
+      const price = await decentPoems._auctionStartPrice();
+      for (let i = 0; i < pageSize.toNumber() + 1; i++) {
+        await producePoem();
+        await decentPoems.safeMint(deployer.address, i, { value: price });
+      }
+
+      const page0 = await decentPoems.getMinted(0);
+      let existing = getExisting(page0);
+      const page1 = await decentPoems.getMinted(1);
+      existing = existing.concat(getExisting(page1));
+
+      let previousMintedAt = existing[0].mintedAt.toNumber();
+      for (let i = 1; i < existing.length; i++) {
+        const mintedAt = existing[i].mintedAt.toNumber();
+        expect(mintedAt).lessThan(previousMintedAt);
+        previousMintedAt = mintedAt;
+      }
+    });
+
+    it("returns empty when page is beyond total", async () => {
+      const pageSize = await decentPoems.PAGE_SIZE();
+      const price = await decentPoems._auctionStartPrice();
+      for (let i = 0; i < pageSize.toNumber(); i++) {
+        await producePoem();
+        await decentPoems.safeMint(deployer.address, i, { value: price });
+      }
+
+      const result = await decentPoems.getMinted(1);
+      let existing = getExisting(result);
+
+      expect(existing.length).equal(0);
+    });
   });
 
   describe("safeMint", async () => {

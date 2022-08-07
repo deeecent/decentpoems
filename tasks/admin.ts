@@ -3,6 +3,7 @@ import { DecentPoems, DecentPoemsRenderer, DecentWords } from "../typechain";
 import { readFileSync } from "fs";
 import { loadContract, deployContract } from "./utils";
 import { BigNumber } from "ethers";
+import { parseEther } from "ethers/lib/utils";
 
 task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
   console.log("Load contract DecentPoems");
@@ -47,6 +48,29 @@ task("set-vrf", "Set VRF on/off")
     console.log(`   Setting VRF to ${activate}`);
     await decentPoemsContract.useVRF(activate);
     console.log(`VRF ${activate ? "activated" : "deactivated"}.`);
+  });
+
+task("set-auction", "Set Auction parameters")
+  .addParam("duration", "Auction duration in seconds")
+  .addParam("startPrice", "Start price in MATIC")
+  .addParam("endPrice", "End price in MATIC")
+  .setAction(async ({ duration, startPrice, endPrice }, hre) => {
+    console.log("Load contract DecentPoems");
+    const decentPoemsContract = (await loadContract(
+      hre,
+      "DecentPoems"
+    )) as DecentPoems;
+
+    console.log(`Contract ${decentPoemsContract.address} loaded.`);
+    console.log(`   Setting duration to ${duration}`);
+    console.log(`   Setting start price to ${startPrice} MATIC`);
+    console.log(`   Setting end price to ${endPrice} MATIC`);
+    await decentPoemsContract.setAuctionParams(
+      duration,
+      parseEther(startPrice),
+      parseEther(endPrice)
+    );
+    console.log(`Done.`);
   });
 
 task("mint", "Mint poem")
