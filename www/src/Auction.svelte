@@ -98,8 +98,8 @@
     align-items: stretch;
     border: 1px solid rgb(136, 136, 136, 0.1);
     background-color: rgba(255, 255, 255, 0.295);
-    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
-    border-radius: 2rem;
+    box-shadow: 0 0.5rem 2rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
   }
 
   .auction > * {
@@ -108,6 +108,10 @@
 
   .poem {
     padding: 2rem 2rem;
+    background-color: #f3f3f3;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    box-shadow: 2rem 0 2rem rgba(0, 0, 0, 0.1);
   }
 
   .panel {
@@ -120,13 +124,13 @@
 
   .nft-container {
     border-left: 1px dashed rgba(200, 200, 200, 0.295);
-    background-color: #f3f3f3;
     border-top-right-radius: 1rem;
     border-bottom-right-radius: 1rem;
+    background-color: #f3f3f380;
+    padding: 2rem;
   }
 
   .nft {
-    width: 70%;
     margin: 2rem auto;
     position: sticky;
     top: 2rem;
@@ -146,7 +150,7 @@
   }
 
   img {
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
     max-width: 30rem;
     border-radius: 0.25rem;
     width: 100%;
@@ -156,7 +160,6 @@
 
   button {
     box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
-    width: 80%;
     margin: 0 auto;
   }
 
@@ -175,6 +178,20 @@
 
     button {
       width: 100%;
+    }
+
+    .nft-container {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 1rem;
+      border-bottom-left-radius: 1rem;
+      border-top-left-radius: 0;
+    }
+
+    .poem {
+      border-top-right-radius: 1rem;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 1rem;
     }
   }
 </style>

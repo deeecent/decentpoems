@@ -59,7 +59,7 @@ p {
 }
 
 button {
-  border-radius: 10rem;
+  border-radius: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.171);
   display: block;
   margin: 3rem auto 0 auto;
