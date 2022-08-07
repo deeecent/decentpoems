@@ -87,7 +87,7 @@
   }
 
   .poem {
-    border-bottom: 1px dashed black;
+    border-bottom: 1px dashed rgb(200, 200, 200);
   }
 
   .small,
@@ -117,6 +117,6 @@
   }
 
   .add-verse {
-    background-color: #eee;
+    background-color: #f3f3f3;
   }
 </style>

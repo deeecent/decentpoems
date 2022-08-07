@@ -94,12 +94,21 @@
     padding: 0 0 10rem 0;
   }
 
-  .auctions,
-  .minted {
+  .auctions {
     background: linear-gradient(
       180deg,
       rgba(188, 72, 255, 0) 0%,
       rgba(188, 72, 255, 0.1) 35%,
+      rgba(96, 86, 104, 0.2) 75%,
+      rgba(188, 72, 255, 0) 100%
+    );
+  }
+
+  .minted {
+    background: linear-gradient(
+      180deg,
+      rgba(188, 72, 255, 0.1) 0%,
+      rgba(188, 72, 255, 0) 0%,
       rgba(96, 86, 104, 0.2) 75%,
       rgba(188, 72, 255, 0) 100%
     );

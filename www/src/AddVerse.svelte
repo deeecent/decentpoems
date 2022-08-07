@@ -109,6 +109,15 @@
     margin-bottom: 1rem;
   }
 
+  @supports selector(:focus-visible) {
+    textarea:focus {
+      /* Remove the focus indicator on mouse-focus for browsers
+       that do support :focus-visible */
+      outline: none;
+      background: transparent;
+    }
+  }
+
   button {
     display: block;
     margin: 0 auto;

@@ -59,27 +59,27 @@ p {
 }
 
 button {
-  border-radius: 0.25rem;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10rem;
+  border: 1px solid rgba(0, 0, 0, 0.171);
   display: block;
   margin: 3rem auto 0 auto;
   margin-top: 3rem;
-  padding: 1rem 1rem;
+  padding: 1rem;
   font-size: 1.2rem;
   transition: all 400ms;
   cursor: pointer;
-  background-color: rgb(194, 194, 228);
+  background-color: rgb(203, 203, 231);
   color: rgb(36, 36, 36);
 }
 
 button:hover {
-  background-color: rgb(169, 169, 199);
+  background-color: rgb(179, 179, 218);
   border-color: rgba(0, 0, 0, 0.3);
 }
 
 button:disabled,
 button:disabled:hover {
-  background-color: rgb(161, 161, 161);
+  background-color: rgb(216, 216, 216);
   color: rgb(97, 97, 97);
   cursor: not-allowed;
 }
