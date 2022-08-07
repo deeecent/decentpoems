@@ -34,9 +34,11 @@
   {#if isTitle}
     <p class="small">
       How did you get here? We don't know. But we know that you should stop
-      hesitating and write the title for the greatest poem ever written. <strong
+      hesitating and write the <strong>title</strong> of the greatest poem ever
+      written.
+      <strong
         >It's your turn, but if you don't act fast enough someone else will
-        write it</strong
+        write it.</strong
       >
       <br />
       The title must include the word:
@@ -55,6 +57,36 @@
       your turn to write the second verse. There are <strong
         >{length} verses in total</strong
       >.
+      <br />
+      Remember, your verse must include the word:
+    </p>
+  {:else if poem.verses.length === 2}
+    <p class="small">
+      Half way through! We have the title and the first two verses. It's now
+      your turn to write the third verse. There are <strong
+        >{length} verses in total</strong
+      >.
+      <br />
+      Remember, your verse must include the word:
+    </p>
+  {:else if poem.verses.length === 3}
+    <p class="small">
+      Nice, does it make sense or not until now? It's your turn to write the
+      fourth verse. There are <strong>{length} verses in total</strong>.
+      <br />
+      Remember, your verse must include the word:
+    </p>
+  {:else if poem.verses.length === 4}
+    <p class="small">
+      Almost there. Write the fifth verse. There are <strong
+        >{length} verses in total</strong
+      >.
+      <br />
+      Remember, your verse must include the word:
+    </p>
+  {:else if poem.verses.length === 5}
+    <p class="small">
+      This is the last verse. Focus.
       <br />
       Remember, your verse must include the word:
     </p>

@@ -88,6 +88,12 @@
     placeholder="Write here"
     rows={isTitle ? 1 : 3}
   />
+  {#if isTitle && text.length > 80}
+    <p>
+      Please note: you are writing the title of the poem, we suggest you to keep
+      it a bit shorter :)
+    </p>
+  {/if}
 
   <button disabled={disabled || !valid} type="submit">
     {#if isTitle}
