@@ -57,9 +57,16 @@
   {/if}
 </div>
 
-<div class="auctions">
+<div class="minted">
   {#if $minted && $minted.length}
-    <h4>Last Minted</h4>
+    <section class="intro">
+      <p>
+        Every time a <strong>Decent Poem</strong> is completed, it is sold in a
+        <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted
+        and the preceedings are split to the authors. Authors will also get
+        revenues on secondary sales.
+      </p>
+    </section>
     <MintedList poems={$minted} />
   {/if}
 </div>
@@ -81,8 +88,14 @@
     align-self: flex-start;
   }
 
+  .main,
+  .minted,
   .auctions {
-    padding: 10rem 0;
+    padding: 0 0 10rem 0;
+  }
+
+  .auctions,
+  .minted {
     background: linear-gradient(
       180deg,
       rgba(188, 72, 255, 0) 0%,

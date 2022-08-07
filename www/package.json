@@ -10,6 +10,7 @@
     "check-updates": "pnpx npm-check-updates"
   },
   "devDependencies": {
+    "0xsequence": "^0.40.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@rollup/plugin-inject": "^4.0.4",
     "@rollup/plugin-replace": "^4.0.0",

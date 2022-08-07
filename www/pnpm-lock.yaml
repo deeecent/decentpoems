@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  0xsequence: ^0.40.5
   '@esbuild-plugins/node-globals-polyfill': ^0.1.1
   '@rollup/plugin-inject': ^4.0.4
   '@rollup/plugin-replace': ^4.0.0
@@ -26,6 +27,7 @@ specifiers:
   web3modal: ^1.9.8
 
 devDependencies:
+  0xsequence: 0.40.5
   '@esbuild-plugins/node-globals-polyfill': 0.1.1
   '@rollup/plugin-inject': 4.0.4
   '@rollup/plugin-replace': 4.0.0
@@ -51,6 +53,212 @@ devDependencies:
   web3modal: 1.9.8
 
 packages:
+
+  /0xsequence/0.40.5:
+    resolution: {integrity: sha512-okeE7YpaNJrl/8lRmmCHIY8EToz0mkQSzNmjMR1jcwlVcSDJfTNl/8ttvRTTvRFrQ0Rt3pGbf9WM3BQUwYx69g==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/api': 0.40.5
+      '@0xsequence/auth': 0.40.5
+      '@0xsequence/config': 0.40.5
+      '@0xsequence/guard': 0.40.5
+      '@0xsequence/indexer': 0.40.5
+      '@0xsequence/metadata': 0.40.5
+      '@0xsequence/multicall': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/provider': 0.40.5
+      '@0xsequence/relayer': 0.40.5
+      '@0xsequence/transactions': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@0xsequence/wallet': 0.40.5
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/abi/0.40.5:
+    resolution: {integrity: sha512-ofZ1+mkLRI7EPGDZrIk0+yE0Sco9uaK3TiOVGOGtoacSUNB2xFzfiuZCvCvISvaMycpcsUTEHpNRwJSNPv84eQ==}
+    dev: true
+
+  /@0xsequence/api/0.40.5:
+    resolution: {integrity: sha512-G8cf3BeS1eFWotZkg6oA2wEJyxbHKLnR2/+Wi5alJfKkoZEgKWNKEHRO4kxy5/J5HztnnfI+kgaDAyBrz2iABA==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
+  /@0xsequence/auth/0.40.5:
+    resolution: {integrity: sha512-PG9FVgcZbC3jPQ8GqeyuFLnpv0RIgVlOFTzn6bUaBVHSjImxyZsHyYyTHUNUIP8PUCtH2hc9MdvwBId/nuA+cQ==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/api': 0.40.5
+      '@0xsequence/config': 0.40.5
+      '@0xsequence/ethauth': 0.7.0_ethers@5.6.9
+      '@0xsequence/indexer': 0.40.5
+      '@0xsequence/metadata': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@0xsequence/wallet': 0.40.5
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/config/0.40.5:
+    resolution: {integrity: sha512-uAKd0iVY3T7aVLtMZp3WrRTJpts8K4rSduOICKsytT5Pj2tKtdmdPsYrmHOo9xDWUymsIxLBsj9Epu1yE0PlVA==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/multicall': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/ethauth/0.7.0_ethers@5.6.9:
+    resolution: {integrity: sha512-pghfR+OLm82wLMR9Uvvf53f0LniZLhcqw0G4EthFw1ME71/CWUskhR2MIeYKh1t7+OE3TqCbOBJ/p/buv8XynQ==}
+    peerDependencies:
+      ethers: ^5.5.2
+    dependencies:
+      ethers: 5.6.9
+      js-base64: 3.7.2
+    dev: true
+
+  /@0xsequence/guard/0.40.5:
+    resolution: {integrity: sha512-i3oqGqrQAy2z4W0cPNFgTDeH5Wwd/Ean6MZv9Op0+srKKwYTGsd4gpKffvqsj9h5T/Ag8UCrlE5WSozJ3lwbCw==}
+    dev: true
+
+  /@0xsequence/indexer/0.40.5:
+    resolution: {integrity: sha512-qhElen7TtO2yJjkkeNNSx0dUd6N1Kj8jGw7Nnb+BMYI5clpel1XGVdDqBbGSMB5J1U/oBzQlcpNYbV2u5yvjGA==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
+  /@0xsequence/metadata/0.40.5:
+    resolution: {integrity: sha512-14/LD8ecTrp2BrWwdHvbN7Wo3j3zQOrjLrXjGU7mkb3kYB0RRygA6dlnVAki+ZLs6X92mnyoDBZjZgWhEghezg==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
+  /@0xsequence/multicall/0.40.5:
+    resolution: {integrity: sha512-uSE4BFGRWoiGTZgxSikubRsDXL6AiAG/WA0XwSssXtxsfhCe0P6lgn7Uyp32k0V0qzh4f3GPkMM9q1MbhJJ/Ag==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@ethersproject/providers': 5.6.8
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/network/0.40.5:
+    resolution: {integrity: sha512-ldEQYy6jAPL33SHmx2T8I+jlHzhy9t5g4fNqi7cdnoDuOEVW7ZC0t6087K/xy25pnxO35HyMNvu1bUNCPEOJhA==}
+    dependencies:
+      '@0xsequence/utils': 0.40.5
+      '@ethersproject/providers': 5.6.8
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/provider/0.40.5:
+    resolution: {integrity: sha512-A1QGdwSr7eXICIPrFrb4DQ8+gLlJbK+hATZXFd5Wpmr5qB7NhuwRCj7CNwL7IChnHiZA43hNB7sxjRZL8fmcFw==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/auth': 0.40.5
+      '@0xsequence/config': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/transactions': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@0xsequence/wallet': 0.40.5
+      '@ethersproject/abstract-signer': 5.6.2
+      '@ethersproject/hash': 5.6.1
+      '@ethersproject/providers': 5.6.8
+      '@ethersproject/web': 5.6.1
+      ethers: 5.6.9
+      eventemitter2: 6.4.7
+      webextension-polyfill-ts: 0.26.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/relayer/0.40.5:
+    resolution: {integrity: sha512-3sv002ywHUm3pBTqOhcS7WmUwomLxQX0vht4PbWp5uzihRDIMUHburaJhE84iSTqaasYyHL3Xn+rIvfGsS+arw==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/config': 0.40.5
+      '@0xsequence/transactions': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@ethersproject/providers': 5.6.8
+      ethers: 5.6.9
+      fetch-ponyfill: 7.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/transactions/0.40.5:
+    resolution: {integrity: sha512-03Cckcw3zm613xb3mGD9W4bj37150QQo4RNXrTlTNHelL1HVY9xmUO1hYJvvp+ka6GXve4VHfI/Oe1ZQ1ZdraA==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@ethersproject/abi': 5.6.4
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/utils/0.40.5:
+    resolution: {integrity: sha512-FYt/qjtbrnB6+O3IHvZBCXPg1wQ97V+8i2DJCQ22Henv2bAgv8qBzJDcyGVe3R0ZgBiqH+hknp0AgwNXfKyECw==}
+    dependencies:
+      '@ethersproject/abstract-signer': 5.6.2
+      '@ethersproject/properties': 5.6.0
+      ethers: 5.6.9
+      js-base64: 3.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@0xsequence/wallet/0.40.5:
+    resolution: {integrity: sha512-i4vBlzm2qvdZH9reGL6jiiUAFh27zXrt7YWQemEbt1rBNGaePl8ajToAUL5iN/N5wqSWV+R1ntUX9OCTkYa1KA==}
+    dependencies:
+      '@0xsequence/abi': 0.40.5
+      '@0xsequence/config': 0.40.5
+      '@0xsequence/guard': 0.40.5
+      '@0xsequence/network': 0.40.5
+      '@0xsequence/relayer': 0.40.5
+      '@0xsequence/transactions': 0.40.5
+      '@0xsequence/utils': 0.40.5
+      '@ethersproject/abi': 5.6.4
+      '@ethersproject/properties': 5.6.0
+      '@ethersproject/providers': 5.6.8
+      ethers: 5.6.9
+      fetch-ponyfill: 7.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
 
   /@babel/code-frame/7.16.7:
     resolution: {integrity: sha512-iAXqUn8IIeBTNd72xsFlgaXHkMBMt6y4HJp1tIaK465CWLT/fG1aqB7ykr95gHHmlBdGbFeWWfyB4NJJ0nmeIg==}
@@ -1439,6 +1647,14 @@ packages:
       whatwg-fetch: 2.0.4
     dev: true
 
+  /cross-fetch/3.1.5:
+    resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
+    dependencies:
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /css-color-keywords/1.0.0:
     resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
     engines: {node: '>=4'}
@@ -2161,6 +2377,10 @@ packages:
       strip-hex-prefix: 1.0.0
     dev: true
 
+  /eventemitter2/6.4.7:
+    resolution: {integrity: sha512-tYUSVOGeQPKt/eC1ABfhHy5Xd96N3oIijJvN3O9+TsC28T5V9yX9oEfEK5faP0EFSNVOG97qtAS68GBrQB2hDg==}
+    dev: true
+
   /eventemitter3/4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
     dev: true
@@ -2219,6 +2439,14 @@ packages:
     resolution: {integrity: sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw==}
     dependencies:
       reusify: 1.0.4
+    dev: true
+
+  /fetch-ponyfill/7.1.0:
+    resolution: {integrity: sha512-FhbbL55dj/qdVO3YNK7ZEkshvj3eQ7EuIGV2I6ic/2YiocvyWv+7jg2s4AyS0wdRU75s3tA8ZxI/xPigb0v5Aw==}
+    dependencies:
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /filelist/1.0.2:
@@ -2657,6 +2885,10 @@ packages:
       chalk: 2.4.2
       filelist: 1.0.2
       minimatch: 3.1.2
+    dev: true
+
+  /js-base64/3.7.2:
+    resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
     dev: true
 
   /js-sha3/0.8.0:
@@ -3992,6 +4224,17 @@ packages:
       tslib: 1.14.1
     transitivePeerDependencies:
       - react-is
+    dev: true
+
+  /webextension-polyfill-ts/0.26.0:
+    resolution: {integrity: sha512-XEFL+aYVEsm/d4RajVwP75g56c/w2aSHnPwgtUv8/nCzbLNSzRQIix6aj1xqFkA5yr7OIDkk3OD/QTnPp8ThYA==}
+    deprecated: This project has moved to @types/webextension-polyfill
+    dependencies:
+      webextension-polyfill: 0.8.0
+    dev: true
+
+  /webextension-polyfill/0.8.0:
+    resolution: {integrity: sha512-a19+DzlT6Kp9/UI+mF9XQopeZ+n2ussjhxHJ4/pmIGge9ijCDz7Gn93mNnjpZAk95T4Tae8iHZ6sSf869txqiQ==}
     dev: true
 
   /webidl-conversions/3.0.1:
