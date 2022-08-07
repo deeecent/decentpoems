@@ -16,7 +16,14 @@
 <h3>{title}</h3>
 <img src={poem.metadata.image} />
 <div>
-  <a>View on OpenSea</a>
+  <ul>
+    <li>
+      <a>View on OpenSea</a>
+    </li>
+    <li>
+      <a>Split {poem.split}</a>
+    </li>
+  </ul>
 </div>
 
 <style>

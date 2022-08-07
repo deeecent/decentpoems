@@ -16,6 +16,7 @@
   let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   async function submitVerse() {
+    console.log("submit");
     status = "wait";
     const pos = text.toLocaleLowerCase().indexOf(word);
     if (!contract || pos < 0) {

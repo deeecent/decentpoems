@@ -20,10 +20,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 3rem;
+    width: 100rem;
   }
 
   .item {
-    width: 15rem;
+    width: 30rem;
     display: flex;
     align-items: flex-end;
   }
