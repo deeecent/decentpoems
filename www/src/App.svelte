@@ -5,7 +5,6 @@
   import Home from "./Home.svelte";
   import AuctionList from "./AuctionList.svelte";
   import MintedList from "./MintedList.svelte";
-  import NetworkError from "./NetworkError.svelte";
   import Debug from "./Debug.svelte";
   import Header from "./Header.svelte";
   import Footer from "./Footer.svelte";
@@ -17,7 +16,6 @@
   <p>Loading please wait…</p>
 {:then}
   <Header />
-  <NetworkError />
   <Route path="/">
     <Home />
   </Route>
