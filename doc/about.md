@@ -3,7 +3,7 @@
 We like having fun and we like art. We also like to give people a challenge, a goal with a reward.
 We have worked in the past on decentralized treasure hunt games because we like to see people play, collaborate and win.
 
-With the chance to build something on a platform like Polygon, we thought it would have been nice to leverage the low fees of the blockchain to create an interactive, board-game kind of app, with a "web3" flavour.
+With the chance to build something on a platform like Polygon, we thought it would have been nice to leverage the low fees of the blockchain to create an interactive, collaborative app, with a "web3" flavour.
 
 We initially tried to think if we could turn one of the many board or card games into a Dapp, but nothing really exciting came to our mind.
 We thought about the many existing word games (wordle, scrabble etc.), which are usually very fun and entertaining, but we didn't won't to just "migrate" a game into web3.
@@ -67,13 +67,13 @@ In a nutshell: OUR BACKEND IS POLYGON!
 
 ## Accomplishments that we're proud of
 
-First of all, the website looks really neat. We achieved the "academy" feeling we wanted to convery with this project.
+First of all, the website looks really neat. We achieved the "dictionary" feeling we wanted to convery with this project.
 
 We also are very proud of having built the system in a way that will allow it to reward its contributors in a completely decentralized, self-sustained fashion. 0xSplit played a foundamental role in this case.
 
 ## What we learned
 
-We learned that the word "dilettante" is not only an italian word, but also an english one with the exact same meaning (although we would know exactly how to pronounce it).
+We learned that the word "dilettante" is not only an italian word, but also an english one with the exact same meaning (although we don't know exactly how to pronounce it).
 
 ## What's next for Decent Poems
 

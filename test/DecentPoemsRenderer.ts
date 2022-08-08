@@ -7,7 +7,7 @@ import {
   DecentPoemsRenderer__factory,
 } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { fetchJson } from "ethers/lib/utils";
+import { base64, fetchJson } from "ethers/lib/utils";
 
 chai.use(solidity);
 chai.use(chaiAsPromised);
@@ -91,7 +91,7 @@ describe("DecentPoemsRender", () => {
 
         const result = await renderer.getPoem(verses);
 
-        expect(result).equal("This is a \\\n new line");
+        expect(result).equal("This is a \\n new line");
       });
 
       it("should escape carriage returns", async () => {
@@ -99,7 +99,7 @@ describe("DecentPoemsRender", () => {
 
         const result = await renderer.getPoem(verses);
 
-        expect(result).equal("This is a \\\r carriage return");
+        expect(result).equal("This is a \\r carriage return");
       });
     });
 
@@ -148,7 +148,7 @@ describe("DecentPoemsRender", () => {
         const result = await renderer.getSVG(words);
 
         const correct =
-          "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>ameba               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
+          "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='#e2dde7'/><text x='50' y='90' font-weight='700' font-size='42'>ameba               </text><text x='50' y='180'>cane                </text><text x='50' y='250'>zuzzurullone        </text><text x='50' y='320'>parziale            </text><text x='50' y='390'>quarantadue         </text><text x='50' y='460'>no                  </text><text x='50' y='530'>alberto             </text></svg>";
 
         expect(result).equal(correct);
       });
@@ -156,8 +156,14 @@ describe("DecentPoemsRender", () => {
 
     describe("getJSON", async () => {
       it("should return a valid JSON", async () => {
+        const funkyVerses = [
+          "Hello \n World",
+          "Hello \n World",
+          "Hello \r World",
+          'Hello " World',
+        ];
         const data = await renderer.getJSON(
-          verses,
+          funkyVerses,
           words,
           authors,
           bob.address
@@ -177,6 +183,19 @@ describe("DecentPoemsRender", () => {
         const result = await fetchJson(data);
 
         expect(result["name"]).equal(verses[0]);
+      });
+
+      it("should escape name", async () => {
+        const data = await renderer.getJSON(
+          ['Test \n \r "'],
+          [],
+          [],
+          AddressZero
+        );
+
+        const json = Buffer.from(data.slice(29), "base64").toString();
+
+        expect(json.slice(9, 22)).equal('Test \\n \\r \\"');
       });
     });
   });

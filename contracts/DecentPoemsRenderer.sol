@@ -10,10 +10,10 @@ library DecentPoemsRenderer {
     using Strings for uint256;
 
     string constant svg =
-        "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='beige'/><text x='50' y='90' font-weight='700' font-size='42'>                    </text><text x='50' y='180'>                    </text><text x='50' y='250'>                    </text><text x='50' y='320'>                    </text><text x='50' y='390'>                    </text><text x='50' y='460'>                    </text><text x='50' y='530'>                    </text></svg>";
+        "<svg viewBox='0 0 600 600' version='1.1' width='600' height='600' xmlns='http://www.w3.org/2000/svg'><style>text{font-family:'Courier New',Courier,monospace;font-size:35px;color:#000;line-height:1.2em}</style><rect width='100%' height='100%' fill='#e2dde7'/><text x='50' y='90' font-weight='700' font-size='42'>                    </text><text x='50' y='180'>                    </text><text x='50' y='250'>                    </text><text x='50' y='320'>                    </text><text x='50' y='390'>                    </text><text x='50' y='460'>                    </text><text x='50' y='530'>                    </text></svg>";
 
     function getSVG(string[] memory words) public pure returns (string memory) {
-        uint16[7] memory wordPositions = [309, 357, 405, 453, 501, 549, 597];
+        uint16[7] memory wordPositions = [311, 359, 407, 455, 503, 551, 599];
         bytes memory svgBytes = bytes(svg);
         for (uint256 w = 0; w < words.length; w++) {
             bytes memory wordBytes = bytes(words[w]);
@@ -29,7 +29,7 @@ library DecentPoemsRenderer {
         string[] memory verses,
         address[] memory authors,
         address split
-    ) public pure returns (string memory) {
+    ) public view returns (string memory) {
         bytes memory description = abi.encodePacked(
             getPoem(verses),
             "\\n\\n-------\\n\\n"
@@ -62,20 +62,12 @@ library DecentPoemsRenderer {
 
     function getPoem(string[] memory verses)
         public
-        pure
+        view
         returns (string memory)
     {
         bytes memory poem;
         for (uint256 i = 1; i < verses.length; i++) {
-            bytes memory verse = bytes(verses[i]);
-            bytes memory escapedVerse;
-            for (uint256 c = 0; c < verse.length; c++) {
-                bytes1 char = verse[c];
-                if (char == 0x22 || char == 0x0d || char == 0x0a) {
-                    escapedVerse = bytes.concat(escapedVerse, bytes1(0x5c));
-                }
-                escapedVerse = bytes.concat(escapedVerse, char);
-            }
+            bytes memory escapedVerse = _escapeString(verses[i]);
             if (i == 1) {
                 poem = abi.encodePacked(escapedVerse);
             } else {
@@ -91,7 +83,7 @@ library DecentPoemsRenderer {
         string[] memory words,
         address[] memory authors,
         address split
-    ) public pure returns (string memory) {
+    ) public view returns (string memory) {
         return
             string(
                 abi.encodePacked(
@@ -99,7 +91,7 @@ library DecentPoemsRenderer {
                     Base64.encode(
                         abi.encodePacked(
                             '{"name":"',
-                            verses[0],
+                            _escapeString(verses[0]),
                             '",',
                             unicode'"description":"',
                             getDescription(verses, authors, split),
@@ -110,5 +102,28 @@ library DecentPoemsRenderer {
                     )
                 )
             );
+    }
+
+    function _escapeString(string memory text)
+        internal
+        view
+        returns (bytes memory)
+    {
+        bytes memory bText = bytes(text);
+        bytes memory escapedText;
+        for (uint256 c = 0; c < bText.length; c++) {
+            bytes1 char = bText[c];
+            if (char == 0x22) {
+                escapedText = bytes.concat(escapedText, bytes1(0x5c), char);
+            } else if (char == 0x0d) {
+                escapedText = bytes.concat(escapedText, "\\r");
+            } else if (char == 0x0a) {
+                escapedText = bytes.concat(escapedText, "\\n");
+            } else {
+                escapedText = bytes.concat(escapedText, char);
+            }
+        }
+
+        return escapedText;
     }
 }
