@@ -37,11 +37,14 @@
 
 <div class="auctions">
   <section class="intro">
+    <h2>Auctions</h2>
     <p>
-      Every time a <strong>Decent Poem</strong> is completed, it is sold in a
+      Every time a <em>Decent Poem</em> is completed, it is sold in a
       <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted and
-      the preceedings are split to the authors. Authors will also get revenues
-      on secondary sales.
+      the <strong>preceedings are split to the authors</strong>, otherwise the
+      poem is
+      <strong>lost forever</strong>. (Authors will also get revenues on
+      secondary sales.)
     </p>
   </section>
 
@@ -52,7 +55,9 @@
         decentPoemsReadOnly={$decentPoemsReadOnly}
       />
     {:else}
-      <section class="intro">There are no auctions at the moment.</section>
+      <section class="empty">
+        <p>There are no auctions at the moment. Make a poem to see it here.</p>
+      </section>
     {/if}
   {/if}
 </div>
@@ -60,11 +65,11 @@
 <div class="minted">
   {#if $minted && $minted.length}
     <section class="intro">
+      <h2>Minted</h2>
       <p>
-        Every time a <strong>Decent Poem</strong> is completed, it is sold in a
-        <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted
-        and the preceedings are split to the authors. Authors will also get
-        revenues on secondary sales.
+        Below you find all <em>Decent Poems</em> minted. Every NFT is stored
+        <strong>on–chain</strong> and will exist as long as the blockchain keeps
+        running.
       </p>
     </section>
     <MintedList poems={$minted} />
@@ -78,7 +83,7 @@
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    min-height: 100vh;
+    min-height: 80vh;
   }
 
   .intro {
@@ -88,10 +93,14 @@
     align-self: flex-start;
   }
 
+  h2 {
+    font-size: 2rem;
+  }
+
   .main,
   .minted,
   .auctions {
-    padding: 0 0 10rem 0;
+    padding: 0 0 5rem 0;
   }
 
   .auctions {
@@ -99,7 +108,7 @@
       180deg,
       rgba(188, 72, 255, 0) 0%,
       rgba(188, 72, 255, 0.1) 35%,
-      rgba(96, 86, 104, 0.2) 75%,
+      rgba(96, 86, 104, 0.1) 75%,
       rgba(188, 72, 255, 0) 100%
     );
   }
@@ -155,5 +164,10 @@
     right: -3px;
     top: 1px;
     transform: rotate(1.4deg);
+  }
+
+  .empty {
+    font-style: italic;
+    text-align: center;
   }
 </style>

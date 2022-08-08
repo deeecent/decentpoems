@@ -17,15 +17,25 @@
 
 <style>
   section {
+    --gap: 3rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 3rem;
-    width: 100rem;
+    gap: var(--gap);
   }
 
   .item {
-    width: 30rem;
+    width: calc(50% - var(--gap));
     display: flex;
     align-items: flex-end;
+  }
+
+  @media (max-width: 900px) {
+    .item {
+      width: 100%;
+    }
+  }
+
+  .wrapper {
+    width: 100%;
   }
 </style>

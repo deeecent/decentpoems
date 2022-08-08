@@ -8,6 +8,7 @@
   import NetworkError from "./NetworkError.svelte";
   import Debug from "./Debug.svelte";
   import Header from "./Header.svelte";
+  import Footer from "./Footer.svelte";
 
   const initializing = init();
 </script>
@@ -27,6 +28,7 @@
   <Route path="/__debug">
     <Debug />
   </Route>
+  <Footer />
 {:catch}
   <p>There was an error loading the page.</p>
 {/await}

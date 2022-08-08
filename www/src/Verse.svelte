@@ -18,6 +18,7 @@
 
   .verse {
     font-size: 1.5rem;
+    margin: 0;
   }
 
   h1,
@@ -28,7 +29,7 @@
   .author {
     font-size: 0.8rem;
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     color: #ccc;
     font-family: var(--monospace);
   }
