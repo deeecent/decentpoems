@@ -369,7 +369,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         return uint96(PERCENTAGE_SCALE);
     }
 
-    function sort(address[] memory data) internal pure {
+    function _sort(address[] memory data) internal pure {
         uint length = data.length;
         for (uint i = 1; i < length; i++) {
             address key = data[i];
@@ -398,7 +398,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         }
         recipients[totalRecipients - 1] = creator;
 
-        sort(recipients);
+        _sort(recipients);
 
         uint256 uniqueRecipientsCount = totalRecipients;
         address lastChecked = address(0);
@@ -443,7 +443,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
                 uniqueRecipients,
                 percentAllocations,
                 _distributorFee,
-                owner()
+                address(0)
             );
     }
 

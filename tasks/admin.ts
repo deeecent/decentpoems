@@ -255,7 +255,6 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
     7,
     process.env.VRF_COORDINATOR_ADDRESS,
     BigNumber.from(process.env.VRF_SUBSCRIPTION_ID),
-    process.env.VRF_KEY_HASH,
-    false
+    process.env.VRF_KEY_HASH
   );
 });

@@ -737,7 +737,7 @@ describe("DecentPoems", () => {
       );
     });
 
-    it("should create a split for the future royalties", async () => {
+    it("should create a split an immutable for the future royalties", async () => {
       const authors = [bob, abe, carl, ben, abe, carl, abe];
 
       for (let i = 0; i < 7; i++) {
@@ -778,7 +778,7 @@ describe("DecentPoems", () => {
       );
       expect(mockSplitMain.createSplit.getCall(0).args[2]).equals(1e3);
       expect(mockSplitMain.createSplit.getCall(0).args[3]).equals(
-        deployer.address
+        ethers.constants.AddressZero
       );
     });
 
