@@ -25,7 +25,7 @@
     </li>
     <li>
       <a class="button secondary small" href={linkToSplit(poem.split)}
-        >View 0xsplit
+        >View split
       </a>
     </li>
   </ul>
@@ -43,7 +43,7 @@
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 
   li {
