@@ -145,7 +145,7 @@
   }
 
   .verse {
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.8rem 0;
   }
 
   .add-verse {

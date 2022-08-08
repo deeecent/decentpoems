@@ -84,7 +84,10 @@
   <div class="nft-container">
     <div class="nft">
       <p class="time-left">Auction ends in {secondsToHms(secondsLeft)}</p>
-      <img src={auction.metadata.image} />
+      <img
+        src={auction.metadata.image}
+        alt="A poem with title: {auction.title.text}"
+      />
       <button on:click={onMint}>Mint for {price} MATIC</button>
     </div>
   </div>

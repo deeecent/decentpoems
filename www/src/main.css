@@ -59,13 +59,15 @@ p {
   line-height: 1.6em;
 }
 
-button {
+button,
+.button {
   border-radius: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.171);
   display: block;
   margin: 3rem auto 0 auto;
   margin-top: 3rem;
   padding: 1rem;
+  font-family: var(--sans-serif);
   font-size: 1.2rem;
   transition: all 400ms;
   cursor: pointer;
@@ -73,21 +75,31 @@ button {
   color: rgb(36, 36, 36);
 }
 
-
-button.small {
-  font-size: 0.8rem;
-  padding: 0.5rem;
-  margin: 0.5rem;
-  display: inline;
+button.secondary,
+.button.secondary {
+  background-color: rgb(204, 204, 204);
+  border: 1px solid rgba(0, 0, 0, 0.171);
 }
 
-button:hover {
+button.small,
+.button.small {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  display: inline;
+  border: none;
+}
+
+button:hover,
+.button:hover {
   background-color: rgb(179, 179, 218);
   border-color: rgba(0, 0, 0, 0.3);
 }
 
 button:disabled,
-button:disabled:hover {
+button:disabled:hover,
+.button:disabled,
+.button:disabled:hover {
   background-color: rgb(216, 216, 216);
   color: rgb(97, 97, 97);
   cursor: not-allowed;

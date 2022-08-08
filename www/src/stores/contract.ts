@@ -1,7 +1,7 @@
 import { derived, writable, type Readable } from "svelte/store";
 import { chainId, networkError, providerReadOnly, signer } from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
-import { contractsAddresses } from "./config";
+import { contractsAddresses, ethereumChainId } from "./config";
 import { BigNumber } from "ethers";
 import type { PoemAuction, Metadata, Poem } from "src/types";
 import { EventDispatcher } from "./events";
@@ -220,3 +220,15 @@ export const minted = derived(
     }
   }
 );
+
+export function linkToOpensea(tokenId: number) {
+  const address = contractsAddresses["DecentPoems"];
+  if (ethereumChainId === 137) {
+    return `https://opensea.io/collection/assets/polygon/${address}/${tokenId}`;
+  }
+  return `https://testnets.opensea.io/assets/mumbai/${address}/${tokenId}`;
+}
+
+export function linkToSplit(address: string) {
+  return `https://app.0xsplits.xyz/accounts/${address}/`;
+}
