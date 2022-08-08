@@ -16,6 +16,7 @@
   let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   async function submitVerse() {
+    console.log("submit");
     status = "wait";
     const pos = text.toLocaleLowerCase().indexOf(word);
     if (!contract || pos < 0) {
@@ -87,6 +88,12 @@
     placeholder="Write here"
     rows={isTitle ? 1 : 3}
   />
+  {#if isTitle && text.length > 80}
+    <p>
+      Please note: you are writing the title of the poem, we suggest you to keep
+      it a bit shorter :)
+    </p>
+  {/if}
 
   <button disabled={disabled || !valid} type="submit">
     {#if isTitle}
@@ -107,6 +114,15 @@
     resize: none;
     padding: 1rem;
     margin-bottom: 1rem;
+  }
+
+  @supports selector(:focus-visible) {
+    textarea:focus {
+      /* Remove the focus indicator on mouse-focus for browsers
+       that do support :focus-visible */
+      outline: none;
+      background: transparent;
+    }
   }
 
   button {

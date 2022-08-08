@@ -10,7 +10,7 @@
 
   import AuctionList from "./AuctionList.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
-  import Minted from "./Minted.svelte";
+  import MintedList from "./MintedList.svelte";
 </script>
 
 <div class="main">
@@ -57,10 +57,19 @@
   {/if}
 </div>
 
-{#if $minted && $minted.length}
-  <h4>Last Minted</h4>
-  <Minted poem={$minted[0]} />
-{/if}
+<div class="minted">
+  {#if $minted && $minted.length}
+    <section class="intro">
+      <p>
+        Every time a <strong>Decent Poem</strong> is completed, it is sold in a
+        <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted
+        and the preceedings are split to the authors. Authors will also get
+        revenues on secondary sales.
+      </p>
+    </section>
+    <MintedList poems={$minted} />
+  {/if}
+</div>
 
 <style>
   .main {
@@ -79,13 +88,29 @@
     align-self: flex-start;
   }
 
+  .main,
+  .minted,
   .auctions {
-    padding-top: 10rem;
+    padding: 0 0 10rem 0;
+  }
+
+  .auctions {
     background: linear-gradient(
       180deg,
       rgba(188, 72, 255, 0) 0%,
       rgba(188, 72, 255, 0.1) 35%,
-      rgba(96, 86, 104, 0.2) 100%
+      rgba(96, 86, 104, 0.2) 75%,
+      rgba(188, 72, 255, 0) 100%
+    );
+  }
+
+  .minted {
+    background: linear-gradient(
+      180deg,
+      rgba(188, 72, 255, 0.1) 0%,
+      rgba(188, 72, 255, 0) 0%,
+      rgba(96, 86, 104, 0.2) 75%,
+      rgba(188, 72, 255, 0) 100%
     );
   }
 

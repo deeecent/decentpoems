@@ -8,9 +8,10 @@
     "DecentPoemsRenderer": "0x267F7ebc9e8B2102783AC75bdB6c6E5671B435b2"
   },
   "666666": {
-    "DecentWords": "0xf6018dffAc9B1C63e8f1097148664551CEaEc5A2",
-    "DecentPoemsRenderer": "0xaf1E564Ab9313AA7482db79B80345F602bd64eE2",
-    "DecentPoems": "0xFd4b42e9C31887B66548BB341bDF908E2A2ca380",
-    "SplitMain": "0xBB5768388BBEac34Ee05123a92Faa8F730539100"
+    "DecentWords": "0x0DD8cc0e8922edfde2B1A655C794b28167bC9913",
+    "DecentPoemsRenderer": "0x8a22225eD7eD460D7ee3842bce2402B9deaD23D3",
+    "DecentPoems": "0x78Afb86ca92C614DC09a7caf7f4A1076ae6E64Dc",
+    "SplitMain": "0xBB5768388BBEac34Ee05123a92Faa8F730539100",
+    "MockSplitMain": "0xf6018dffAc9B1C63e8f1097148664551CEaEc5A2"
   }
 }

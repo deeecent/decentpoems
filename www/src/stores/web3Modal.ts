@@ -2,6 +2,8 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { infuraKey } from "./config";
 
+import { sequence } from "0xsequence";
+
 let web3Modal: Web3Modal;
 let web3ModalConnection: any;
 
@@ -19,6 +21,13 @@ export async function initWeb3Modal() {
       package: WalletConnectProvider,
       options: {
         infuraId: infuraKey,
+      },
+    },
+    sequence: {
+      package: sequence, // required
+      options: {
+        appName: "Decent Poems", // optional
+        defaultNetwork: "polygon",
       },
     },
   };

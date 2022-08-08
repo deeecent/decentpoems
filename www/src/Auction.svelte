@@ -70,14 +70,6 @@
 </script>
 
 <div class="auction">
-  <div class="nft-container">
-    <div class="nft">
-      <p class="time-left">Auction ends in {secondsToHms(secondsLeft)}</p>
-      <img src={auction.metadata.image} />
-      <button on:click={onMint}>Mint for {price} MATIC</button>
-    </div>
-  </div>
-
   <div class="panel">
     <div class="poem">
       <h1>{auction.title.text}</h1>
@@ -89,27 +81,40 @@
       </div>
     </div>
   </div>
+  <div class="nft-container">
+    <div class="nft">
+      <p class="time-left">Auction ends in {secondsToHms(secondsLeft)}</p>
+      <img src={auction.metadata.image} />
+      <button on:click={onMint}>Mint for {price} MATIC</button>
+    </div>
+  </div>
 </div>
 
 <style>
   .auction {
-    padding: 2rem;
     display: flex;
     width: 100%;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
+    border: 1px solid rgb(136, 136, 136, 0.1);
+    background-color: rgba(255, 255, 255, 0.295);
+    box-shadow: 0 0.5rem 2rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
   }
 
   .auction > * {
     flex: 1;
   }
 
+  .poem {
+    padding: 2rem 2rem;
+    background-color: #f3f3f3;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    box-shadow: 2rem 0 2rem rgba(0, 0, 0, 0.1);
+  }
+
   .panel {
-    border: 1px solid rgb(136, 136, 136, 0.1);
-    padding: 5rem 2rem;
-    border-radius: 0.25rem;
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
     width: 100%;
   }
 
@@ -117,9 +122,18 @@
     margin-top: 4rem;
   }
 
+  .nft-container {
+    border-left: 1px dashed rgba(200, 200, 200, 0.295);
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    background-color: #f3f3f380;
+    padding: 2rem;
+  }
+
   .nft {
-    width: 70%;
-    margin: 0 auto;
+    margin: 2rem auto;
+    position: sticky;
+    top: 2rem;
   }
 
   .nft p {
@@ -136,16 +150,17 @@
   }
 
   img {
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
     max-width: 30rem;
     border-radius: 0.25rem;
     width: 100%;
+    display: block;
+    margin: 4rem auto;
   }
 
   button {
     box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
-    width: 80%;
-    margin-bottom: 2rem;
+    margin: 0 auto;
   }
 
   button:hover {
@@ -163,6 +178,20 @@
 
     button {
       width: 100%;
+    }
+
+    .nft-container {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 1rem;
+      border-bottom-left-radius: 1rem;
+      border-top-left-radius: 0;
+    }
+
+    .poem {
+      border-top-right-radius: 1rem;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 1rem;
     }
   }
 </style>

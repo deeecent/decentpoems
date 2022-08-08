@@ -7,6 +7,7 @@
   import MintedList from "./MintedList.svelte";
   import NetworkError from "./NetworkError.svelte";
   import Debug from "./Debug.svelte";
+  import Header from "./Header.svelte";
 
   const initializing = init();
 </script>
@@ -14,6 +15,7 @@
 {#await initializing}
   <p>Loading please wait…</p>
 {:then}
+  <Header />
   <NetworkError />
   <Route path="/">
     <Home />

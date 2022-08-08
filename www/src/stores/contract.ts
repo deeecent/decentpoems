@@ -69,6 +69,7 @@ function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
     }, [] as { author: string; text: string }[]),
     created,
     validUntil,
+    split: poemStruct.split,
   };
   return poem;
 }
