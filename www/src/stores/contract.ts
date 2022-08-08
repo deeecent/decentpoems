@@ -232,3 +232,11 @@ export function linkToOpensea(tokenId: number) {
 export function linkToSplit(address: string) {
   return `https://app.0xsplits.xyz/accounts/${address}/`;
 }
+
+export function linkToContract() {
+  const address = contractsAddresses["DecentPoems"];
+  if (ethereumChainId === 137) {
+    return `https://polygonscan.com/address/${address}`;
+  }
+  return `https://mumbai.polygonscan.com/address/${address}`;
+}
