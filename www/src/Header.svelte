@@ -35,8 +35,7 @@
     text-align: right;
     z-index: 1;
     backdrop-filter: blur(14px);
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 -1rem 1rem 2rem rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .wrapper {

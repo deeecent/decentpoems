@@ -11,20 +11,22 @@
   export let length: number;
   export let word: string;
   export let wordIndex: number;
+
   let text = "";
   let pending = false;
   let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   async function submitVerse() {
     status = "wait";
-    const pos = text.toLocaleLowerCase().indexOf(word);
-    if (!contract || pos < 0) {
+    if (!contract || position < 0) {
       status = null;
       throw new Error("Something bad happened");
     }
-    const prefix = text.slice(0, pos);
-    const suffix = text.slice(pos + word.length);
+
+    const prefix = text.slice(0, position);
+    const suffix = text.slice(position + word.length);
     let receipt: ContractTransaction;
+
     try {
       receipt = await contract.submitVerse(prefix, wordIndex, suffix);
     } catch (e) {
@@ -66,7 +68,7 @@
     }
   }
 
-  $: valid = text.toLocaleLowerCase().split(/\W/).includes(word);
+  $: position = text.search(new RegExp(`\\b${word}\\b`, "i"));
   $: disabled = status === "wait" || status === "sent";
 </script>
 
@@ -97,7 +99,7 @@
     rows={isTitle ? 1 : 3}
   />
 
-  <button disabled={disabled || !valid} type="submit">
+  <button disabled={disabled || position < 0} type="submit">
     {#if isTitle}
       Submit title
     {:else}

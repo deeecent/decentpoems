@@ -6,6 +6,7 @@ import { BigNumber } from "ethers";
 import type { PoemAuction, Metadata, Poem } from "src/types";
 import { EventDispatcher } from "./events";
 import { Buffer } from "buffer/";
+import popular from "../popular.json";
 
 export const decentPoems: Readable<DecentPoems | null> = derived(
   [networkError, signer, chainId],
@@ -59,14 +60,20 @@ function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
     title: {
       text: poemStruct.verses[0],
       author: poemStruct.authors[0],
+      word: poemStruct.wordIndexes.length
+        ? popular[poemStruct.wordIndexes[0].toNumber()]
+        : "",
     },
     verses: poemStruct.verses.slice(1).reduce((prev, _, index) => {
       prev.push({
         text: poemStruct.verses[index + 1],
         author: poemStruct.authors[index + 1],
+        word: poemStruct.wordIndexes.length
+          ? popular[poemStruct.wordIndexes[index + 1].toNumber()]
+          : "",
       });
       return prev;
-    }, [] as { author: string; text: string }[]),
+    }, [] as { author: string; text: string; word: string }[]),
     created,
     validUntil,
     split: poemStruct.split,

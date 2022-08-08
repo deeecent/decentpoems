@@ -10,10 +10,12 @@ export type Poem = {
   title: {
     author: string;
     text: string;
+    word: string;
   };
   verses: {
     author: string;
     text: string;
+    word: string;
   }[];
   created: Date;
   validUntil: Date;
