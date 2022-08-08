@@ -59,15 +59,13 @@ describe("DecentPoems", () => {
       await smock.mock<MockVRFCoordinator__factory>("MockVRFCoordinator");
     mockVrfCoordinator = await mockVrfCoordinatorFactory.deploy();
 
-    const DecentPoemsFactory = (await ethers.getContractFactory("DecentPoems", {
-      signer: deployer,
-      libraries: {
-        DecentPoemsRenderer: mockDecentPoemsRenderer.address,
-      },
-    })) as DecentPoems__factory;
+    const DecentPoemsFactory = (await ethers.getContractFactory(
+      "DecentPoems"
+    )) as DecentPoems__factory;
 
     decentPoems = await DecentPoemsFactory.deploy(
       mockDecentWords.address,
+      mockDecentPoemsRenderer.address,
       mockSplitMain.address,
       7,
       mockVrfCoordinator.address,

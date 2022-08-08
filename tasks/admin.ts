@@ -248,8 +248,9 @@ task("deploy-poems", "Deploy DecentPoems").setAction(async (_, hre) => {
   await deployContract(
     hre,
     "DecentPoems",
-    { DecentPoemsRenderer: decentPoemsRendererContract.address },
+    {},
     decentWordsContract.address,
+    decentPoemsRendererContract.address,
     process.env.SPLIT_ADDRESS,
     7,
     process.env.VRF_COORDINATOR_ADDRESS,

@@ -19,6 +19,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     using Strings for uint256;
 
     DecentWords public _decentWords;
+    DecentPoemsRenderer public _renderer;
     ISplitMain public _splitter;
 
     struct Poem {
@@ -68,14 +69,16 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     event WordGenerated(uint256 randomSeed);
 
     constructor(
-        address decentWords,
+        address decentWordsAddress,
+        address rendererAddress,
         address splitterAddress,
         uint256 maxVerses,
         address vrfCoordinatorAddress,
         uint64 vrfSubscriptionId,
         bytes32 vrfKeyHash
     ) ERC721("Decent Poems", "POEMS") VRFConsumerBaseV2(vrfCoordinatorAddress) {
-        _decentWords = DecentWords(decentWords);
+        _decentWords = DecentWords(decentWordsAddress);
+        _renderer = DecentPoemsRenderer(rendererAddress);
         _splitter = ISplitMain(splitterAddress);
         _maxVerses = maxVerses;
         _poems.push();
@@ -232,6 +235,14 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         _auctionEndPrice = auctionEndPrice;
     }
 
+    function setRenderer(address renderer) external onlyOwner {
+        _renderer = DecentPoemsRenderer(renderer);
+    }
+
+    function setWords(address decentWords) external onlyOwner {
+        _decentWords = DecentWords(decentWords);
+    }
+
     function safeMint(address to, uint256 poemIndex)
         public
         payable
@@ -351,14 +362,7 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         }
 
         return
-            string(
-                DecentPoemsRenderer.getJSON(
-                    poem.verses,
-                    poemWords,
-                    poem.authors,
-                    poem.split
-                )
-            );
+            _renderer.getJSON(poem.verses, poemWords, poem.authors, poem.split);
     }
 
     function _feeDenominator() internal pure virtual override returns (uint96) {

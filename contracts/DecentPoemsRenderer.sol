@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
 
-library DecentPoemsRenderer {
+contract DecentPoemsRenderer {
     using Strings for uint256;
 
     string constant svg =
@@ -29,7 +29,7 @@ library DecentPoemsRenderer {
         string[] memory verses,
         address[] memory authors,
         address split
-    ) public view returns (string memory) {
+    ) public pure returns (string memory) {
         bytes memory description = abi.encodePacked(
             getPoem(verses),
             "\\n\\n-------\\n\\n"
@@ -62,7 +62,7 @@ library DecentPoemsRenderer {
 
     function getPoem(string[] memory verses)
         public
-        view
+        pure
         returns (string memory)
     {
         bytes memory poem;
@@ -83,7 +83,7 @@ library DecentPoemsRenderer {
         string[] memory words,
         address[] memory authors,
         address split
-    ) public view returns (string memory) {
+    ) public pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
@@ -106,7 +106,7 @@ library DecentPoemsRenderer {
 
     function _escapeString(string memory text)
         internal
-        view
+        pure
         returns (bytes memory)
     {
         bytes memory bText = bytes(text);
