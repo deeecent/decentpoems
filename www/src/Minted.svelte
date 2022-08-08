@@ -35,6 +35,7 @@
   img {
     max-width: 100%;
     display: block;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
   }
 
   ul {
