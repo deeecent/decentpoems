@@ -45,9 +45,7 @@
       Every time a <em>Decent Poem</em> is completed, it is sold in a
       <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted and
       the <strong>preceedings are split to the authors</strong>, otherwise the
-      poem is
-      <strong>lost forever</strong>. (Authors will also get revenues on
-      secondary sales.)
+      poem is <strong>lost forever</strong>.
     </p>
   </section>
 
@@ -75,7 +73,7 @@
       <p>
         Below you find all <em>Decent Poems</em> minted. Every NFT is stored
         <strong>on–chain</strong> and will exist as long as the blockchain keeps
-        running.
+        running. Authors get revenues on secondary sales via 0xsplits.xyz.
       </p>
     </section>
     <MintedList poems={$minted} />
