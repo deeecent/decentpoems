@@ -74,6 +74,11 @@ describe("DecentPoems", () => {
     );
     await decentPoems.deployed();
     await decentPoems.useVRF(false);
+    await decentPoems.setAuctionParams(
+      3600 * 24,
+      parseEther("1"),
+      parseEther("0.001")
+    );
 
     mockDecentWords.total.returns(1);
     mockDecentWords.words.returns("test");
