@@ -11,21 +11,22 @@
   export let length: number;
   export let word: string;
   export let wordIndex: number;
+
   let text = "";
   let pending = false;
   let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   async function submitVerse() {
-    console.log("submit");
     status = "wait";
-    const pos = text.toLocaleLowerCase().indexOf(word);
-    if (!contract || pos < 0) {
+    if (!contract || position < 0) {
       status = null;
       throw new Error("Something bad happened");
     }
-    const prefix = text.slice(0, pos);
-    const suffix = text.slice(pos + word.length);
+
+    const prefix = text.slice(0, position);
+    const suffix = text.slice(position + word.length);
     let receipt: ContractTransaction;
+
     try {
       receipt = await contract.submitVerse(prefix, wordIndex, suffix);
     } catch (e) {
@@ -67,11 +68,13 @@
     }
   }
 
-  $: valid = text.toLocaleLowerCase().split(/\W/).includes(word);
+  $: position = text.search(new RegExp(`\\b${word}\\b`, "i"));
   $: disabled = status === "wait" || status === "sent";
 </script>
 
-{#if status === "sent"}
+{#if status === "wait"}
+  <Notification>Waiting for your signature.</Notification>
+{:else if status === "sent"}
   <Notification>Transaction sent, waiting for confirmation.</Notification>
 {:else if status === "confirmed"}
   <Notification timeout={5000}>Transaction confirmed!</Notification>
@@ -82,20 +85,21 @@
 {/if}
 
 <form on:submit={onSubmit}>
+  {#if isTitle && text.length > 80}
+    <p class="warning">
+      A small suggestion: you are writing the title of the poem, we suggest you
+      to keep it a bit shorter.
+    </p>
+  {/if}
+
   <textarea
     {disabled}
     bind:value={text}
     placeholder="Write here"
     rows={isTitle ? 1 : 3}
   />
-  {#if isTitle && text.length > 80}
-    <p>
-      Please note: you are writing the title of the poem, we suggest you to keep
-      it a bit shorter :)
-    </p>
-  {/if}
 
-  <button disabled={disabled || !valid} type="submit">
+  <button disabled={disabled || position < 0} type="submit">
     {#if isTitle}
       Submit title
     {:else}
@@ -129,5 +133,11 @@
     display: block;
     margin: 0 auto;
     padding: 1rem;
+  }
+
+  .warning {
+    background-color: gold;
+    padding: 1rem 2rem;
+    width: 100%;
   }
 </style>

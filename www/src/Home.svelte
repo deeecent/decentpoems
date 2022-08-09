@@ -14,7 +14,8 @@
 </script>
 
 <div class="main">
-  <section class="intro">
+  <section class="intro header">
+    <img class="logo" src="./logo.png" alt="Decent Poems logo" />
     <p>
       <strong>Decent Poems</strong> /ˈdē-sᵊnt ˈpō-əms/ <em>noun</em>
       <strong>1</strong> a protocol for collective writing
@@ -24,13 +25,15 @@
   </section>
 
   {#if $currentPoem && $currentWord}
-    <section class="poem">
-      <CurrentPoem
-        poem={$currentPoem}
-        word={$currentWord.word}
-        wordIndex={$currentWord.index}
-        contract={$decentPoems}
-      />
+    <section class="poem-wrapper">
+      <div class="poem">
+        <CurrentPoem
+          poem={$currentPoem}
+          word={$currentWord.word}
+          wordIndex={$currentWord.index}
+          contract={$decentPoems}
+        />
+      </div>
     </section>
   {/if}
 </div>
@@ -42,9 +45,7 @@
       Every time a <em>Decent Poem</em> is completed, it is sold in a
       <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted and
       the <strong>preceedings are split to the authors</strong>, otherwise the
-      poem is
-      <strong>lost forever</strong>. (Authors will also get revenues on
-      secondary sales.)
+      poem is <strong>lost forever</strong>.
     </p>
   </section>
 
@@ -56,25 +57,28 @@
       />
     {:else}
       <section class="empty">
-        <p>There are no auctions at the moment. Make a poem to see it here.</p>
+        <p>
+          There are no auctions at the moment. Make a poem to see a new auction
+          here.
+        </p>
       </section>
     {/if}
   {/if}
 </div>
 
-<div class="minted">
-  {#if $minted && $minted.length}
+{#if $minted && $minted.length}
+  <div class="minted">
     <section class="intro">
       <h2>Minted</h2>
       <p>
         Below you find all <em>Decent Poems</em> minted. Every NFT is stored
         <strong>on–chain</strong> and will exist as long as the blockchain keeps
-        running.
+        running. Authors get revenues on secondary sales via 0xsplits.xyz.
       </p>
     </section>
     <MintedList poems={$minted} />
-  {/if}
-</div>
+  </div>
+{/if}
 
 <style>
   .main {
@@ -91,6 +95,28 @@
     margin-bottom: 4rem;
     max-width: 35rem;
     align-self: flex-start;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: var(--max-width);
+  }
+
+  .logo {
+    width: 10rem;
+  }
+
+  @media (max-width: 900px) {
+    .logo {
+      width: 8rem;
+    }
+  }
+
+  .header p {
+    flex-grow: 1;
+    max-width: 30rem;
   }
 
   h2 {
@@ -132,12 +158,16 @@
     font-family: var(--sans-serif);
   }
 
+  .poem-wrapper {
+    padding: 1rem;
+  }
+
   /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
   .poem {
     background: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     min-height: 300px;
-    padding: 0;
+    padding: 0rem;
     position: relative;
   }
 

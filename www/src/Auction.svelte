@@ -2,12 +2,15 @@
   import { onMount } from "svelte";
   import type { DecentPoems } from "../../typechain";
   import type { PoemAuction } from "./types";
+  import Notification from "./Notification.svelte";
   import { address, connect } from "./stores/wallet";
   import { decentPoems } from "./stores/contract";
   import { formatEther, secondsToHms, shortAddress } from "./utils";
+  import type { BigNumber, ContractTransaction } from "ethers";
 
   export let auction: PoemAuction;
   export let decentPoemsReadOnly: DecentPoems;
+  let status: null | "wait" | "sent" | "confirmed" | "error" = null;
 
   const authors = Array.from(
     new Set([auction.title.author, ...auction.verses.map((v) => v.author)])
@@ -36,16 +39,39 @@
   });
 
   async function mint(decentPoems: DecentPoems, address: string, id: number) {
-    const price = await decentPoems.getCurrentPrice(id);
+    status = "wait";
+    let receipt: ContractTransaction;
+    let currentPrice: BigNumber;
     try {
-      await decentPoems.safeMint(address, id, { value: price });
+      currentPrice = await decentPoems.getCurrentPrice(id);
     } catch (e) {
       console.error(e);
+      status = "error";
+      return;
     }
-    return () =>
-      [priceTimerId, secondsTimerId].forEach((timerId) =>
-        window.clearInterval(timerId)
-      );
+    try {
+      receipt = await decentPoems.safeMint(address, id, {
+        value: currentPrice,
+      });
+      status = "sent";
+    } catch (e) {
+      console.error(e);
+      status = "error";
+      return;
+    }
+    try {
+      await receipt.wait();
+    } catch (e) {
+      console.error(e);
+      status = "error";
+      return;
+    }
+    status = "confirmed";
+
+    // Clear all timers
+    [priceTimerId, secondsTimerId].forEach((timerId) =>
+      window.clearInterval(timerId)
+    );
   }
 
   async function onMint() {
@@ -67,13 +93,26 @@
       mint($decentPoems, $address, auction.id);
     }
   }
+  $: disabled = status === "wait" || status === "sent";
 </script>
+
+{#if status === "wait"}
+  <Notification>Waiting for your signature.</Notification>
+{:else if status === "sent"}
+  <Notification>Transaction sent, waiting for confirmation.</Notification>
+{:else if status === "confirmed"}
+  <Notification timeout={5000}>Transaction confirmed!</Notification>
+{:else if status === "error"}
+  <Notification timeout={5000}>
+    There was an error sending your transaction, please try again.
+  </Notification>
+{/if}
 
 <div class="auction">
   <div class="panel">
     <div class="poem">
       <h1>{auction.title.text}</h1>
-      {#each auction.verses as { author, text }}
+      {#each auction.verses as { text }}
         <p>{text}</p>
       {/each}
       <div class="authors">
@@ -88,7 +127,7 @@
         src={auction.metadata.image}
         alt="A poem with title: {auction.title.text}"
       />
-      <button on:click={onMint}>Mint for {price} MATIC</button>
+      <button {disabled} on:click={onMint}>Mint for {price} MATIC</button>
     </div>
   </div>
 </div>
@@ -115,6 +154,7 @@
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
     box-shadow: 2rem 0 2rem rgba(0, 0, 0, 0.1);
+    height: 100%;
   }
 
   .panel {

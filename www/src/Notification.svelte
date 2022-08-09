@@ -36,5 +36,6 @@
     color: white;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
     padding: 1.5rem 2rem;
+    z-index: 100;
   }
 </style>
