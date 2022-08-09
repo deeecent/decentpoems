@@ -46,9 +46,9 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     uint256 public _currentRandomSeed;
     bool public _useVRF = false;
 
-    uint256 public _auctionDuration = 1 days;
-    uint256 public _auctionStartPrice = 1 ether;
-    uint256 public _auctionEndPrice = 0.001 ether;
+    uint256 public _auctionDuration = 7 days;
+    uint256 public _auctionStartPrice = 777 ether;
+    uint256 public _auctionEndPrice = 1 ether;
 
     uint32 public constant PERCENTAGE_SCALE = 1e6; // 100%
     uint32 public _creatorRoyalty = 5 * 1e4; // 5%
