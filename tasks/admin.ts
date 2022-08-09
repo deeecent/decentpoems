@@ -144,7 +144,7 @@ task("populate", "Populate Decent Words")
       return;
     }
 
-    const chunkSize = 834;
+    const chunkSize = 830;
     let lastIndex = (await decentWordsContract.total()).toNumber();
     if (lastIndex === words.length) {
       console.log("Already populated.");
@@ -158,7 +158,7 @@ task("populate", "Populate Decent Words")
       console.log(`Adding...`);
       const chunk = words.slice(lastIndex, lastIndex + nextChunk);
       const tx = await decentWordsContract.addWords(chunk);
-      await tx.wait();
+      await tx.wait(3);
       lastIndex += nextChunk;
       console.log(`Next index ${lastIndex}`);
     }
