@@ -1,5 +1,11 @@
 import { derived, writable, type Readable } from "svelte/store";
-import { chainId, networkError, providerReadOnly, signer } from "./wallet";
+import {
+  chainId,
+  networkError,
+  providerReadOnly,
+  signer,
+  signerChainId,
+} from "./wallet";
 import { DecentPoems__factory, type DecentPoems } from "../../../typechain";
 import { contractsAddresses, ethereumChainId } from "./config";
 import { BigNumber } from "ethers";
@@ -9,9 +15,10 @@ import { Buffer } from "buffer/";
 import popular from "../popular.json";
 
 export const decentPoems: Readable<DecentPoems | null> = derived(
-  [networkError, signer, chainId],
-  ([$networkError, $signer, $chainId], set) => {
-    if (!$networkError && $signer && $chainId) {
+  [networkError, signer, signerChainId],
+  ([$networkError, $signer, $signerChainId], set) => {
+    if (!$networkError && $signer && $signerChainId === ethereumChainId) {
+      console.log("setting decentpoems", $signerChainId);
       set(
         DecentPoems__factory.connect(contractsAddresses["DecentPoems"], $signer)
       );
