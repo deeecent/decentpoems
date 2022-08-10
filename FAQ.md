@@ -50,7 +50,7 @@ CC BY-NC-ND 4.0
 
 ## How are NFT sold? What is a "Dutch auction"?
 
-Every poem is sold in a so called *Dutch auction*. The auction starts right after the poem is completed. The initial price is set to 100 MATIC. In the next 4 days, the price slowly decreases reaching the value of 0 MATIC. The first person to bid will end the auction and get the NFT. If no one bids, the poem is lost forever.
+Every poem is sold in a so called *Dutch auction*. The auction starts right after the poem is completed. The initial price is set to 50 MATIC. In the next 2 days, the price slowly decreases reaching the value of 1 MATIC. The first person to bid will end the auction and get the NFT. If no one bids, the poem is lost forever.
 
 ## Do I get money if I participate? How?
 
