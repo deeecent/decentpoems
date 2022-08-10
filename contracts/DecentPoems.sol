@@ -214,6 +214,9 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     }
 
     // WRITE
+    function setCreator(address creatorAddress) public onlyOwner {
+        _creatorAddress = creatorAddress;
+    }
 
     function setFees(
         uint32 creatorRoyalty,
