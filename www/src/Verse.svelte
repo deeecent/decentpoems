@@ -6,13 +6,14 @@
 
   const position = text.search(new RegExp(`\\b${word}\\b`, "i"));
   const prefix = text.slice(0, position);
+  const originalWord = text.slice(position, word.length);
   const suffix = text.slice(position + word.length);
 </script>
 
 {#if title}
   <h1>{prefix}<mark>{word}</mark>{suffix}</h1>
 {:else}
-  <p class="verse">{prefix}<mark>{word}</mark>{suffix}</p>
+  <p class="verse">{prefix}<mark>{originalWord}</mark>{suffix}</p>
 {/if}
 <p class="author ellipsis">by {author}</p>
 
@@ -32,7 +33,13 @@
   }
 
   mark {
-    background-color: rgba(35, 38, 78, 0.219);
+    color: inherit;
+    background: linear-gradient(
+      0deg,
+      rgba(35, 38, 78, 0.2) 35%,
+      rgba(255, 255, 255, 0) 35%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
 
   .author {
