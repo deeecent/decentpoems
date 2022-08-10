@@ -27,12 +27,37 @@ export async function connect() {
             method: "wallet_switchEthereumChain",
             params: [{ chainId: "0x" + ethereumChainId.toString(16) }],
           });
-        } catch (e) {
-          networkError.set({
-            got: name,
-            want:
-              ethers.providers.getNetwork(ethereumChainId)?.name || "unknown",
-          });
+        } catch (e: any) {
+          console.error(e);
+          if (e.code === 4902) {
+            try {
+              await web3Provider.provider.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                  {
+                    chainId: "0x" + ethereumChainId.toString(16),
+                    chainName: "Polygon Mainnet",
+                    nativeCurrency: {
+                      name: "MATIC",
+                      symbol: "MATIC",
+                      decimals: 18,
+                    },
+                    rpcUrls: ["https://polygon-rpc.com"],
+                    blockExplorerUrls: ["https://www.polygonscan.com"],
+                  },
+                ],
+              });
+              console.log("Network added");
+            } catch (e) {
+              console.error(e);
+            }
+          } else {
+            networkError.set({
+              got: name,
+              want:
+                ethers.providers.getNetwork(ethereumChainId)?.name || "unknown",
+            });
+          }
         }
       } else {
         networkError.set({
