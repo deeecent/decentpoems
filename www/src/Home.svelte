@@ -115,11 +115,12 @@
 
   .logo {
     width: 10rem;
+    margin-right: 1rem;
   }
 
   @media (max-width: 900px) {
     .logo {
-      width: 8rem;
+      width: 6rem;
     }
   }
 
