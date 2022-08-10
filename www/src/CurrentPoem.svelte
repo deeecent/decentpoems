@@ -40,8 +40,10 @@
     {#if isTitle}
       <p class="small">
         How did you get here? We don't know. But we know that you should stop
-        hesitating and write the <strong>title</strong> of the greatest poem
-        ever written.
+        hesitating and write the <strong>title</strong> of the greatest<abbr
+          title="hopefully">*</abbr
+        >
+        poem ever written.
         <strong
           >It's your turn, but if you don't act fast enough someone else will
           write it.</strong

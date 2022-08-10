@@ -3,8 +3,7 @@
   import { init } from "./stores/wallet";
 
   import Home from "./Home.svelte";
-  import AuctionList from "./AuctionList.svelte";
-  import MintedList from "./MintedList.svelte";
+  import FAQ from "./FAQ.svelte";
   import Debug from "./Debug.svelte";
   import Header from "./Header.svelte";
   import Footer from "./Footer.svelte";
@@ -12,24 +11,25 @@
   const initializing = init();
 </script>
 
-{#await initializing}
-  <p>Loading please wait…</p>
-{:then}
-  <Header />
-  <Route path="/">
-    <Home />
-  </Route>
-  <Route path="/auctions">
-    <AuctionList />
-  </Route>
-  <Route path="/minted"><MintedList /></Route>
-  <Route path="/__debug">
-    <Debug />
-  </Route>
-  <Footer />
-{:catch}
-  <p>There was an error loading the page.</p>
-{/await}
+<Route>
+  {#await initializing}
+    <p>Loading please wait…</p>
+  {:then}
+    <Header />
+    <Route path="/">
+      <Home />
+    </Route>
+    <Route path="/faq">
+      <FAQ />
+    </Route>
+    <Route path="/__debug">
+      <Debug />
+    </Route>
+    <Footer />
+  {:catch}
+    <p>There was an error loading the page.</p>
+  {/await}
+</Route>
 
 <style>
   p {

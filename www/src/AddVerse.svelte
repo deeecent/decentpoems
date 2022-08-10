@@ -30,6 +30,7 @@
     try {
       receipt = await contract.submitVerse(prefix, wordIndex, suffix);
     } catch (e) {
+      console.error(e);
       status = "error";
       return;
     }
@@ -37,6 +38,7 @@
     try {
       await receipt.wait();
     } catch (e) {
+      console.error(e);
       status = "error";
       return;
     }
@@ -63,6 +65,7 @@
 
   $: {
     if (contract && pending) {
+      console.log("pending", contract);
       pending = false;
       submitVerse();
     }

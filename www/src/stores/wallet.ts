@@ -118,6 +118,17 @@ export const shortAddress = derived(address, ($address) =>
   $address ? $address.substring(0, 6) + "…" + $address.substring(38) : null
 );
 
+export const signerChainId: Readable<number | null> = derived(
+  provider,
+  ($provider, set) => {
+    if ($provider) {
+      $provider.getNetwork().then(({ chainId }) => set(chainId));
+    } else {
+      set(null);
+    }
+  }
+);
+
 export const chainId: Readable<number | null> = derived(
   providerReadOnly,
   ($provider, set) => {

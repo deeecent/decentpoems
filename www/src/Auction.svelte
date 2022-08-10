@@ -118,6 +118,7 @@
       <div class="authors">
         Authors: {authors.map(shortAddress).join(", ")}
       </div>
+      <p>License: CC BY-NC-ND 4.0</p>
     </div>
   </div>
   <div class="nft-container">

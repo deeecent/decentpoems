@@ -44,6 +44,10 @@ If multiple people submit a valid verse, only the first one is stored, the other
 
 Anyone on the internet (and with a wallet).
 
+## What is the license of the NFT?
+
+CC BY-NC-ND 4.0
+
 ## How are NFT sold? What is a "Dutch auction"?
 
 Every poem is sold in a so called *Dutch auction*. The auction starts right after the poem is completed. The initial price is set to 100 MATIC. In the next 4 days, the price slowly decreases reaching the value of 0 MATIC. The first person to bid will end the auction and get the NFT. If no one bids, the poem is lost forever.

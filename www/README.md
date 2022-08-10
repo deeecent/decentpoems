@@ -1,12 +1,6 @@
-# Dapp template
+# Decent Poems Dapp
 
-This template should help get you started developing a dapp with Svelte and TypeScript in Vite.
+Deploy to production:
 
-## Getting started
-
-Rename `.env-template` to `.env` and add the missing values.
-
-```
-pnpm i
-pnpm run dev
-```
+- Make sure you checked out https://github.com/deeecent/deeecent.github.io
+- `pnpm deploy-production`
