@@ -1,11 +1,16 @@
 <script lang="ts">
   import { signer, connect, disconnect, shortAddress } from "./stores/wallet";
-
   import { networkError } from "./stores/wallet";
+
+  import { meta } from "tinro";
+  const route = meta();
 </script>
 
 <header>
   <div class="wrapper">
+    {#if $route.url !== "/"}
+      <a class="small button" href="/">Home</a>
+    {/if}
     {#if $networkError}
       <p>
         Connect your wallet to "{$networkError.want}"

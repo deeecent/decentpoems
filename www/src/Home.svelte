@@ -20,7 +20,12 @@
       <strong>Decent Poems</strong> /ˈdē-sᵊnt ˈpō-əms/ <em>noun</em>
       <strong>1</strong> a protocol for collective writing
       <strong>2</strong>
-      a coordination experiment <strong>3</strong> a royalty distribution system.
+      a coordination experiment <strong>3</strong> a royalty distribution
+      system.
+      <br />
+      <em class="know-more">
+        Want to know more? Check our <a href="/faq">FAQs</a>
+      </em>
     </p>
   </section>
 
@@ -88,6 +93,10 @@
     justify-content: center;
     align-content: center;
     min-height: 80vh;
+  }
+
+  .know-more {
+    font-size: 1rem;
   }
 
   .intro {

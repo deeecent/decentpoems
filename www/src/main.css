@@ -73,6 +73,7 @@ button,
   cursor: pointer;
   background-color: rgb(203, 203, 231);
   color: rgb(36, 36, 36);
+  text-decoration: none;
 }
 
 button.secondary,
@@ -113,4 +114,8 @@ h1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+a, a:visited {
+  color: inherit;
 }

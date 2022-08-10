@@ -6,6 +6,7 @@ import inject from "@rollup/plugin-inject";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { readFileSync } from "fs";
+import { plugin as mdPlugin, Mode } from "vite-plugin-markdown";
 
 type ContractsAddresses = {
   [key: string]: string;
@@ -71,6 +72,7 @@ export default async ({ mode }) => {
           },
         },
       }),
+      mdPlugin({ mode: [Mode.HTML] }),
     ],
     build: {
       rollupOptions: {

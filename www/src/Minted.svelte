@@ -16,8 +16,10 @@
   );
 </script>
 
-<h3>{title}</h3>
-<img src={poem.metadata.image} alt="A poem with title: {poem.title.text}" />
+<h3><a href={linkToOpensea(poem.id)}>{title}</a></h3>
+<a href={linkToOpensea(poem.id)}>
+  <img src={poem.metadata.image} alt="A poem with title: {poem.title.text}" />
+</a>
 <div>
   <ul>
     <li>
@@ -36,6 +38,7 @@
     max-width: 100%;
     display: block;
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
   }
 
   ul {
