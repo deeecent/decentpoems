@@ -20,8 +20,7 @@
       <strong>Decent Poems</strong> /ˈdē-sᵊnt ˈpō-əms/ <em>noun</em>
       <strong>1</strong> a protocol for collective writing
       <strong>2</strong>
-      a coordination experiment <strong>3</strong> a royalty distribution
-      system.
+      a coordination experiment <strong>3</strong> on–chain NFT poems.
       <br />
       <em class="know-more">
         Want to know more? Check our <a href="/faq">FAQs</a>
