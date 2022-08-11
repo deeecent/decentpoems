@@ -8,9 +8,9 @@
 
 1. a protocol for collective writing
 2. a coordination experiment
-3. a royalty distribution system
+3. on-chain NFT poems
 
-# What is it?
+# What (is it)
 
 Decent Poems is a experiment for coordination and collective writing.
 
@@ -29,7 +29,30 @@ Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So
 
 Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 
-# Local Development
+## Technical Details
+
+In order to generate the random word, the contract interacts with the VRF from Chainlink.
+
+As a fallback, it's possible to switch to a blockhash based word generation.
+
+---
+
+Each minted poem has a 0xSplit address that the authors can use to distribute their revenue from the trades of the NFT.
+
+# Why (we did it)
+
+It all started when we wanted to join the [Polygon BUIDLIT Hackaton](https://buidlit.polygon.technology/).
+
+Given the great-many opportunities that Polygon offers given its low gas fees, we decided to build something a bit more visionary than we would do with our usual Ethereum NFTs.
+
+Also: there isn't much around the NFT world about text and literature, so why not taking the chance?
+
+# Who (we are)
+
+- [@vrde](https://github.com/vrde)
+- [@sirnicolaz](https://github.com/sirnicolaz)
+
+# How (to work on it)
 
 ## Smart Contract
 
@@ -42,7 +65,7 @@ Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 
 `npx hardhat compile`
 
-### Testt
+### Test
 
 `npx hardhat test`
 
@@ -75,3 +98,28 @@ There other commands you can use to interact with the contract
 Most of them are for testing purpose. Check `tasks/admin.ts` for details.
 
 ## Website
+
+### Tech stack
+
+- Svelte + Vite
+
+### Setup
+
+```
+cd www
+npm i
+```
+
+### Run local server
+
+```
+cd www
+npm dev
+```
+
+### Deploy
+
+```
+cd www
+npm deploy-production
+```
