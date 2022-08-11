@@ -8,4 +8,4 @@ The first testing session will be on Aug 11th at 18:00 (CEST).
 
 You can read more about the project here https://www.decentpoems.art/faq
 
-PS: do you have friends with a kink for writing? Feel free to invite them, we can give them a small amount of crypto so they can join the party.
+PS: Have friends with a fetish for writing verse? Feel free to invite them! We can even give them a small amount of crypto so they can join the party.
