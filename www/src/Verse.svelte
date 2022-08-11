@@ -6,7 +6,7 @@
 
   const position = text.search(new RegExp(`\\b${word}\\b`, "i"));
   const prefix = text.slice(0, position);
-  const originalWord = text.slice(position, word.length);
+  const originalWord = text.slice(position, position + word.length);
   const suffix = text.slice(position + word.length);
 </script>
 
