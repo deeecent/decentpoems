@@ -47,7 +47,7 @@
     <p>
       Every time a <em>Decent Poem</em> is completed, it is sold in a
       <em>Dutch auction</em>. If the auction succeedes, a new NFT is minted and
-      the <strong>preceedings are split to the authors</strong>, otherwise the
+      the <strong>preceedings are split among the authors</strong>. If not, the
       poem is <strong>lost forever</strong>.
     </p>
   </section>
