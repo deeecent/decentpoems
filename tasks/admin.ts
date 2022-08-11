@@ -21,12 +21,13 @@ task("create-poem", "Creates a test poem").setAction(async (_, hre) => {
       try {
         word = await decentPoemsContract.getCurrentWord();
         notGenerated = false;
-
+        const prefix =
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ";
         const tx = await decentPoemsContract.submitVerse(
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
-          word[0],
-          ", Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."
+          `${prefix}${word[0]}, Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.`,
+          prefix.length
         );
+
         await tx.wait(1);
       } catch (e) {}
     }

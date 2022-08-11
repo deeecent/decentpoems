@@ -86,7 +86,9 @@ describe("DecentPoems", () => {
 
   async function producePoem(prefix: string = "") {
     for (let i = 0; i < 7; i++) {
-      await decentPoems.connect(bob).submitVerse(prefix, 0, "");
+      await decentPoems
+        .connect(bob)
+        .submitVerse(prefix + "test", prefix.length);
     }
   }
 
@@ -135,9 +137,9 @@ describe("DecentPoems", () => {
   });
 
   describe("submitVerse", async () => {
-    it("should concatenate prefix, word and postfix", async () => {
+    it("should concat verse to poem", async () => {
       mockDecentWords.words.returns("2");
-      await decentPoems.submitVerse("1", 0, "3");
+      await decentPoems.submitVerse("123", 1);
 
       const result = await decentPoems.getPoem(0);
 
@@ -145,8 +147,8 @@ describe("DecentPoems", () => {
     });
 
     it("should add a verse to the next position if someone already submitted", async () => {
-      await decentPoems.submitVerse("test", 0, "test");
-      await decentPoems.submitVerse("test2", 0, "test2");
+      await decentPoems.submitVerse("testtesttest", 4);
+      await decentPoems.submitVerse("test2testtest2", 5);
 
       const result = await decentPoems.getPoem(0);
 
@@ -155,22 +157,34 @@ describe("DecentPoems", () => {
 
     it("should add a verse to a new poem if 7 people already submitted", async () => {
       for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse("test", 0, "test");
+        await decentPoems.submitVerse("testtesttest", 4);
       }
 
-      await decentPoems.submitVerse("test2", 0, "test2");
+      await decentPoems.submitVerse("test2testtest2", 5);
 
       const result = await decentPoems.getPoem(1);
 
       expect(result.verses[0]).equal("test2testtest2");
     });
 
+    it("should add a verse containing the current word, independent from the case", async () => {
+      await decentPoems.submitVerse("test", 0);
+      await decentPoems.submitVerse("Test", 0);
+      await decentPoems.submitVerse("TEST", 0);
+
+      const result = await decentPoems.getPoem(0);
+
+      expect(result.verses[0]).equal("test");
+      expect(result.verses[1]).equal("Test");
+      expect(result.verses[2]).equal("TEST");
+    });
+
     it("should add a verse to the position 0 if no one submitted to a new poem", async () => {
       for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse("test", 0, "test");
+        await decentPoems.submitVerse("testtesttest", 4);
       }
 
-      await decentPoems.submitVerse("test", 0, "test");
+      await decentPoems.submitVerse("testtesttest", 4);
 
       const result = await decentPoems.getPoem(1);
 
@@ -180,7 +194,7 @@ describe("DecentPoems", () => {
     it("should add all authors to a poem", async () => {
       const authors = [bob, deployer, bob, deployer, deployer, bob, bob];
       for (let i = 0; i < 7; i++) {
-        await decentPoems.connect(authors[i]).submitVerse("", 0, "");
+        await decentPoems.connect(authors[i]).submitVerse("test", 0);
       }
 
       const result = await decentPoems.getPoem(0);
@@ -191,7 +205,7 @@ describe("DecentPoems", () => {
     it("should add all verses to a poem", async () => {
       const verses = ["1", "2", "3", "4", "5", "6", "7"];
       for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse(verses[i], 0, "");
+        await decentPoems.submitVerse(verses[i] + "test", 1);
       }
 
       const result = await decentPoems.getPoem(0);
@@ -207,9 +221,9 @@ describe("DecentPoems", () => {
 
       let indices = [];
       for (let i = 0; i < 7; i++) {
-        const currentIndex = (await decentPoems.getCurrentWord())[0];
+        const [currentIndex, word] = await decentPoems.getCurrentWord();
         indices.push(currentIndex);
-        await decentPoems.submitVerse("", currentIndex, "");
+        await decentPoems.submitVerse(word, 0);
       }
 
       const result = await decentPoems.getPoem(0);
@@ -219,12 +233,12 @@ describe("DecentPoems", () => {
 
     it("should add up to 7 verses to the same poem", async () => {
       for (let i = 0; i < 7; i++) {
-        await decentPoems.submitVerse("", 0, "");
+        await decentPoems.submitVerse("test", 0);
       }
 
       const lengthBefore = (await decentPoems.getPoem(0)).verses.length;
 
-      await decentPoems.submitVerse("", 0, "");
+      await decentPoems.submitVerse("test", 0);
       const lengthAfter = (await decentPoems.getPoem(0)).verses.length;
 
       expect(lengthBefore).eql(lengthAfter);
@@ -232,19 +246,19 @@ describe("DecentPoems", () => {
 
     it("should change seed after each submission", async () => {
       const seedBefore = await decentPoems._currentRandomSeed();
-      await decentPoems.submitVerse("", 0, "");
+      await decentPoems.submitVerse("test", 0);
 
       const seedAfter = await decentPoems._currentRandomSeed();
 
       expect(seedBefore).not.equal(seedAfter);
     });
 
-    it("should fail if word index does not match", async () => {
-      const currentWordIndex = (await decentPoems.getCurrentWord())[0];
-
-      await expect(
-        decentPoems.submitVerse("", currentWordIndex.add(1), "")
-      ).revertedWith("Wrong word");
+    it("should fail if word does not match the current one", async () => {
+      let currentWord = (await decentPoems.getCurrentWord())[1];
+      const wrongWord = currentWord.replace("t", "g");
+      await expect(decentPoems.submitVerse(wrongWord, 0)).revertedWith(
+        "Wrong word"
+      );
     });
 
     it("should set createdAt once the 7th verse is submitted", async () => {
@@ -258,23 +272,23 @@ describe("DecentPoems", () => {
     });
 
     it("should emit VerseSubmitted", async () => {
-      await expect(decentPoems.connect(bob).submitVerse("1", 0, "3"))
+      await expect(decentPoems.connect(bob).submitVerse("1test3", 1))
         .to.emit(decentPoems, "VerseSubmitted")
         .withArgs(bob.address, 0);
     });
 
     it("should emit PoemCreated after submitting the last verse", async () => {
       for (let i = 0; i < 6; i++) {
-        await decentPoems.connect(bob).submitVerse("", 0, "");
+        await decentPoems.connect(bob).submitVerse("test", 0);
       }
 
-      await expect(decentPoems.connect(carl).submitVerse("", 0, ""))
+      await expect(decentPoems.connect(carl).submitVerse("test", 0))
         .to.emit(decentPoems, "PoemCreated")
         .withArgs(carl.address, 1);
     });
 
     it("should emit WordGenerated", async () => {
-      await expect(decentPoems.connect(bob).submitVerse("1", 0, "3")).to.emit(
+      await expect(decentPoems.connect(bob).submitVerse("1test3", 1)).to.emit(
         decentPoems,
         "WordGenerated"
       );
@@ -292,7 +306,7 @@ describe("DecentPoems", () => {
           bob.address,
           [],
         ]);
-        await decentPoems.submitVerse("1", 0, "3");
+        await decentPoems.submitVerse("1test3", 1);
 
         mockVrfCoordinator.requestRandomWords
           .atCall(0)
@@ -306,7 +320,7 @@ describe("DecentPoems", () => {
           bob.address,
           [],
         ]);
-        await decentPoems.submitVerse("1", 0, "3");
+        await decentPoems.submitVerse("1test3", 1);
 
         expect(mockVrfCoordinator.requestRandomWords.getCall(0)).be.undefined;
       });
@@ -318,7 +332,7 @@ describe("DecentPoems", () => {
           bob.address,
           [],
         ]);
-        await decentPoems.submitVerse("1", 0, "3");
+        await decentPoems.submitVerse("1test3", 1);
 
         expect(await decentPoems.getCurrentWord()).deep.equal([
           BigNumber.from(0),
@@ -333,9 +347,9 @@ describe("DecentPoems", () => {
           bob.address,
           [],
         ]);
-        await decentPoems.submitVerse("1", 0, "3");
+        await decentPoems.submitVerse("1test3", 1);
 
-        await expect(decentPoems.submitVerse("", 0, "")).revertedWith(
+        await expect(decentPoems.submitVerse("test", 0)).revertedWith(
           "Word not generated yet"
         );
       });
@@ -347,13 +361,13 @@ describe("DecentPoems", () => {
           bob.address,
           [],
         ]);
-        await decentPoems.submitVerse("1", 0, "3");
+        await decentPoems.submitVerse("1test3", 1);
         await mockVrfCoordinator.mock_fulfillRandomness(
           [42],
           decentPoems.address
         );
 
-        await decentPoems.submitVerse("", 0, "");
+        await decentPoems.submitVerse("test", 0);
       });
     });
   });
@@ -372,7 +386,7 @@ describe("DecentPoems", () => {
 
     it("should get current poem if less than 7 people submitted", async () => {
       for (let i = 0; i < 6; i++) {
-        await decentPoems.submitVerse("", 0, "");
+        await decentPoems.submitVerse("test", 0);
       }
 
       const result = await decentPoems.getCurrentPoem();
@@ -497,13 +511,12 @@ describe("DecentPoems", () => {
 
   describe("getPoemFromTokenId", async () => {
     it("should return first minted poem for token 1", async () => {
-      mockDecentWords.words.returns("");
       await producePoem("minted");
       await decentPoems.safeMint(bob.address, 0, { value: parseEther("1") });
 
       const result = await decentPoems.getPoemFromTokenId(1);
 
-      expect(result.verses[0]).equal("minted");
+      expect(result.verses[0]).equal("mintedtest");
     });
 
     it("should fail for token 0", async () => {
@@ -707,7 +720,7 @@ describe("DecentPoems", () => {
     it("should distribute the value after minting royalty equally among authors", async () => {
       const authors = [bob, abe, carl, ben, abe, carl, abe];
       for (let i = 0; i < 7; i++) {
-        await decentPoems.connect(authors[i]).submitVerse("", 0, "");
+        await decentPoems.connect(authors[i]).submitVerse("test", 0);
       }
 
       const price = parseEther("1");
@@ -746,7 +759,7 @@ describe("DecentPoems", () => {
       const authors = [bob, abe, carl, ben, abe, carl, abe];
 
       for (let i = 0; i < 7; i++) {
-        await decentPoems.connect(authors[i]).submitVerse("", 0, "");
+        await decentPoems.connect(authors[i]).submitVerse("test", 0);
       }
 
       const recipients = authors.concat(deployer);
