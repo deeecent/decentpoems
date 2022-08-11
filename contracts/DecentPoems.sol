@@ -13,8 +13,6 @@ import "./ISplitMain.sol";
 import "./DecentPoemsRenderer.sol";
 import "./DecentWords.sol";
 
-import "hardhat/console.sol";
-
 contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
     using Strings for uint256;
 
@@ -271,18 +269,25 @@ contract DecentPoems is ERC721Royalty, Ownable, VRFConsumerBaseV2 {
         );
     }
 
-    function submitVerse(
-        string memory prefix,
-        uint256 wordIndex,
-        string memory suffix
-    ) public {
+    function submitVerse(string memory verse, uint256 wordPosition) public {
         (uint256 currentIndex, string memory currentWord) = getCurrentWord();
-        require(wordIndex == currentIndex, "Wrong word");
+        bytes memory verseBytes = bytes(verse);
+        bytes memory currentWordBytes = bytes(currentWord);
+
+        for (
+            uint256 i = wordPosition;
+            i < wordPosition + currentWordBytes.length;
+            i++
+        ) {
+            uint8 want = uint8(currentWordBytes[i - wordPosition]);
+            uint8 got = uint8(verseBytes[i]);
+
+            if (want != got && want != got + 0x20) {
+                revert("Wrong word");
+            }
+        }
 
         Poem storage poem = _poems[_poems.length - 1];
-        string memory verse = string(
-            abi.encodePacked(prefix, currentWord, suffix)
-        );
 
         if (poem.verses.length == 0) {
             _contributions[_poems.length - 1][_creatorAddress]
