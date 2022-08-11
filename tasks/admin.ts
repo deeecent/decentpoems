@@ -165,44 +165,6 @@ task("populate", "Populate Decent Words")
     }
   });
 
-task("populate-localhost", "Populate Decent Words")
-  .addParam("wordsFile")
-  .setAction(async ({ wordsFile }, hre) => {
-    const words = readFileSync(wordsFile, "utf-8").split("\n");
-    const decentWordsContract = (await loadContract(
-      hre,
-      "DecentWords"
-    )) as DecentWords;
-
-    if (decentWordsContract === undefined) {
-      console.error("Contract not deployed yet.");
-      return;
-    }
-
-    const wordsPerChunk = 100;
-    let lastIndex = (await decentWordsContract.total()).toNumber();
-    if (lastIndex === words.length) {
-      console.log("Already populated.");
-      return;
-    }
-
-    console.log(`Populating from ${lastIndex}`);
-
-    while (lastIndex < words.length) {
-      const chunk = words.slice(lastIndex, lastIndex + wordsPerChunk);
-      const tx = await decentWordsContract.addWords(chunk);
-      //await tx.wait(1);
-
-      lastIndex = Math.min(lastIndex + wordsPerChunk, words.length);
-      console.log(`Next starting index ${lastIndex}`);
-    }
-  });
-
-task("deploy-split", "Deploy mock split").setAction(async (_, hre) => {
-  console.log("Deploy *mock* contract Split");
-  await deployContract(hre, "MockSplitMain");
-});
-
 task("deploy-words", "Deploy DecentWords").setAction(async (_, hre) => {
   console.log("Deploy contract DecentWords");
   await deployContract(hre, "DecentWords");

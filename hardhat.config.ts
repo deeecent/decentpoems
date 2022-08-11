@@ -69,7 +69,7 @@ const config: HardhatUserConfig = {
       accounts: [MUMBAI_PRIVATE_KEY],
     },
     polygon: {
-      url: "https://polygon-rpc.com/",
+      url: "https://polygon-mainnet.g.alchemy.com/v2/1_M-UkVadLKukeQppFiEpQ3IYjeRZBlZ",
       accounts: [POLYGON_PRIVATE_KEY],
     },
   },
