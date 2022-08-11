@@ -34,7 +34,6 @@
         <CurrentPoem
           poem={$currentPoem}
           word={$currentWord.word}
-          wordIndex={$currentWord.index}
           contract={$decentPoems}
         />
       </div>

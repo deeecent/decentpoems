@@ -117,7 +117,7 @@ export class EventDispatcher {
         this.callbacks.forEach(([, callback]) => callback());
       }
       lastBlock = currentBlock + 1;
-    }, 5000);
+    }, 10000);
   }
 
   stop() {

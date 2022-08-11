@@ -10,7 +10,6 @@
   export let number: number;
   export let length: number;
   export let word: string;
-  export let wordIndex: number;
 
   let text = "";
   let pending = false;
@@ -23,12 +22,10 @@
       throw new Error("Something bad happened");
     }
 
-    const prefix = text.slice(0, position);
-    const suffix = text.slice(position + word.length);
     let receipt: ContractTransaction;
 
     try {
-      receipt = await contract.submitVerse(prefix, wordIndex, suffix);
+      receipt = await contract.submitVerse(text, position);
     } catch (e) {
       console.error(e);
       status = "error";

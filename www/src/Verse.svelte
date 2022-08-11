@@ -11,7 +11,8 @@
 </script>
 
 {#if title}
-  <h1>{prefix}<mark>{word}</mark>{suffix}</h1>
+  <p><em>Poem title:</em></p>
+  <h1>{prefix}<mark>{originalWord}</mark>{suffix}</h1>
 {:else}
   <p class="verse">{prefix}<mark>{originalWord}</mark>{suffix}</p>
 {/if}
@@ -29,6 +30,7 @@
 
   h1,
   .verse {
+    margin-top: 0;
     margin-bottom: 0.1rem;
   }
 

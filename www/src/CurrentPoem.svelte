@@ -8,7 +8,6 @@
 
   export let poem: Poem;
   export let word: string;
-  export let wordIndex: number;
   export let contract: DecentPoems | null;
 
   $: isTitle = !poem.title.text;
@@ -18,7 +17,7 @@
 {#if !isTitle}
   <div class="poem">
     {#if poem.title.text}
-      <div transition:fade class="title">
+      <div in:fade class="title">
         <Verse
           title
           author={poem.title.author}
@@ -28,7 +27,7 @@
       </div>
     {/if}
     {#each poem.verses as { author, text, word }}
-      <div transition:fade class="verse">
+      <div in:fade class="verse">
         <Verse {author} {text} {word} />
       </div>
     {/each}
@@ -112,7 +111,6 @@
       number={poem.verses.length + 1}
       {length}
       {word}
-      {wordIndex}
     />
   {:else}
     <p class="small centered">

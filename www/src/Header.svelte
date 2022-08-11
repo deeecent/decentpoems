@@ -18,6 +18,7 @@
       </p>
     {/if}
     <div class="wallet">
+      <a class="small button" href="/faq">FAQ</a>
       {#if $signer}
         <button class="small" on:click={disconnect} href="#">
           Disconnect {$shortAddress}
