@@ -23,9 +23,9 @@ The rules are quite simple:
 The poem immediately goes into a Dutch Auction which will allow anyone who likes it to buy it.
 This will generate an NFT that can then be traded.
 
-Cherry on the cake: all the revenue (from minting and from the trades royalties) are equally split among the authors, by means o 0xSplit.
+Cherry on top: all the revenue (from minting and from the trades royalties) are equally split among the authors, by means o 0xSplit.
 
-Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So the system could in principle live forever.
+Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So the system could live *forever*.
 
 Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 

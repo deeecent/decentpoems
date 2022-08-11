@@ -8,7 +8,7 @@ Decent Poems is a website that allows people over the internet to write poems. I
 - The **current word** is updated every time someone submits a verse.
 - If multiple people submit a valid verse, only the first one is stored, the other ones are discarded.
 - After submitting the sixth verse, the poem is finalized and it is sold in a Dutch auction.
-- If the poem is sold, authors that contributed will receive a part of the preceedings (this is true for secondary sales as well).
+- When the poem is sold, it's minted as an NFT and authors that contributed will receive a part of the preceedings (this is true for secondary sales as well).
 - If the poem is not sold, it is lost forever.
 
 

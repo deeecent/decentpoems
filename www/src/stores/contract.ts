@@ -238,7 +238,7 @@ export const minted = derived(
 export function linkToOpensea(tokenId: number) {
   const address = contractsAddresses["DecentPoems"];
   if (ethereumChainId === 137) {
-    return `https://opensea.io/collection/assets/polygon/${address}/${tokenId}`;
+    return `https://opensea.io/assets/matic/${address}/${tokenId}`;
   }
   return `https://testnets.opensea.io/assets/mumbai/${address}/${tokenId}`;
 }
