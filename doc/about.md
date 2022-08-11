@@ -16,20 +16,7 @@ So, text + art = Decent Poems: why not storing the whole english dictionary on-c
 
 ### Poetic explanation
 
-> *The contract generates a word, just a word.<br/>*
-> *Anon sees it, writes a verse that on the ledger is stored.<br/><br/>*
-> *The contract generates a new word, not looking for sense.<br/>*
-> *Someone else takes it and writes another sentence.<br/><br/>*
-> *5 more times we go on this tone.<br/>*
-> *5 more sentences joins the poem.<br/><br/>*
-> *Will it be short or long, good or bad?<br/>*
-> *Only the harmony of the writers can tell.<br/><br/>*
-> *Now a poem has come to life. Where will it go? Who will see it?<br/>*
-> *A dutch auction is started. Will someone come and buy it?<br/><br/>*
-> *If a degen presses the button and signs the transaction,<br/>*
-> *A new NFT is added to the Decent Poems collection.<br/><br/>*
-> *A new piece of creativity flows in the OpenSeas<br/>*
-> *And all of its authors will enjoy its proceeds.*
+> _The contract generates a word, just a word.<br/>_ > _Anon sees it, writes a verse that on the ledger is stored.<br/><br/>_ > _The contract generates a new word, not looking for sense.<br/>_ > _Someone else takes it and writes another sentence.<br/><br/>_ > _5 more times we go on this tone.<br/>_ > _5 more sentences joins the poem.<br/><br/>_ > _Will it be short or long, good or bad?<br/>_ > _Only the harmony of the writers can tell.<br/><br/>_ > _Now a poem has come to life. Where will it go? Who will see it?<br/>_ > _A dutch auction is started. Will someone come and buy it?<br/><br/>_ > _If a degen presses the button and signs the transaction,<br/>_ > _A new NFT is added to the Decent Poems collection.<br/><br/>_ > _A new piece of creativity flows in the OpenSeas<br/>_ > _And all of its authors will enjoy its proceeds._
 
 ### Prosaic explanation
 
@@ -63,7 +50,8 @@ In a nutshell: OUR BACKEND IS POLYGON!
 1. Words. We needed to find a good dictionary of words that were not to specific, so to allow the authors to express their creativity with simplicity.
 2. Words, on-chain. We had to save the whole dictionary on Polygon. We have tried multiple optimization techniques (from storing uint rather than string to ad-hoc array storing procedures). You know what? On Polygon everything is so cheap that the difference was not really noticeable. So we decided to go for clarity rather than for extreme optimization.
 3. Chainlink VRF: the integration was a bit bumpy, as for some reason we were not receiving randomness from the VRF Coordinator. Everything was fixed after recreating the subscription.
-4. 0xSplit interaction: the integration was a bit more than bumpy. The 0xSplit `createSplit` function has quite some demands that required a bit of coding golf to fulfill (unique wallets, sorted by ascending orders, exact 100% sum etc)
+4. 0xSplit interaction: the integration was a bit bumpy. The 0xSplit `createSplit` function has requirements that demanded a bit of coding golf to fulfill (unique wallets, sorted by ascending orders, exact 100% sum etc)
+5. Mobile wallet integration: without manually setting a specific rpc endpoint on WalletConnect, mobile transactions would fail due to wrong gas estimates. We have encountered this problem only on Polygon so far.
 
 ## Accomplishments that we're proud of
 
