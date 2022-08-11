@@ -12,7 +12,7 @@
 
 # What (is it)
 
-Decent Poems is a experiment for coordination and collective writing.
+Decent Poems is an experiment for coordination and collective writing.
 
 The rules are quite simple:
 
