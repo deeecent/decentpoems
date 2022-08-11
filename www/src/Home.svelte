@@ -23,7 +23,7 @@
       a coordination experiment <strong>3</strong> on–chain NFT poems.
       <br />
       <em class="know-more">
-        Want to know more? Check our <a href="/faq">FAQs</a>
+        Want to know more? Check our <a href="/faq">FAQ</a>
       </em>
     </p>
   </section>
