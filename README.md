@@ -8,7 +8,7 @@
 
 1. a protocol for collective writing
 2. a coordination experiment
-3. a royalty distribution system
+3. on-chain NFT poems
 
 # What (is it)
 
