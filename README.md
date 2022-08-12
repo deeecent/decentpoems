@@ -34,7 +34,7 @@ Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 - In order to generate the random word, the contract interacts with the VRF from Chainlink. (As a fallback, it's possible to switch to a blockhash based word generation.)
 - The dapp supports the Sequence wallet.
 - The dapp on IPFS as well, using NFT Storage. This makes sure that our content is permanently pinned and available through the Filecoin network.
-- The dapp is accessible via IPNS. We set our DNS records according to the DNSLink specifications. 
+- The dapp is accessible via [IPNS](https://decentpoems-art.ipns.dweb.link/). We set our DNS records according to the DNSLink specifications.
 
 ---
 
@@ -50,8 +50,12 @@ Also: there isn't much around the NFT world about text and literature, so why no
 
 # Who (we are)
 
-- [@vrde](https://github.com/vrde)
-- [@sirnicolaz](https://github.com/sirnicolaz)
+- Alberto
+  - [Github](https://github.com/vrde)
+  - [Web](https://www.granzotto.net)
+- Nicola
+  - [Github](https://github.com/sirnicolaz)
+  - [Twitter (art & music)](https://twitter.com/the_innerspace)
 
 # How (to work on it)
 
