@@ -205,7 +205,7 @@
 
   img {
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
-    max-width: 30rem;
+    max-width: 20rem;
     border-radius: 0.25rem;
     width: 100%;
     display: block;
