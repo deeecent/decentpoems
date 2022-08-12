@@ -1,20 +1,18 @@
 import { ethers, type BigNumberish } from "ethers";
 
-// Thanks https://stackoverflow.com/a/71748235/597097
-export function secondsToHms(seconds: number) {
-  if (seconds <= 0) {
-    return "00:00:00";
-  } else {
-    let h = Math.floor(seconds / 3600);
-    let m = Math.floor((seconds % 3600) / 60);
-    let s = Math.floor((seconds % 3600) % 60);
-
-    let hDisplay = h <= 9 ? "0" + h + ":" : h + ":";
-    let mDisplay = m <= 9 ? "0" + m + ":" : m + ":";
-    let sDisplay = s <= 9 ? "0" + s : s;
-
-    return hDisplay + mDisplay + sDisplay;
-  }
+export function timeLeft(secondsLeft: number) {
+  let delta = Math.max(0, secondsLeft);
+  const days = Math.floor(delta / 86400);
+  delta -= days * 86400;
+  const hours = Math.floor(delta / 3600);
+  delta -= hours * 3600;
+  const minutes = Math.floor(delta / 60) % 60;
+  delta -= minutes * 60;
+  const seconds = Math.floor(delta);
+  const all = [days, hours, minutes, seconds].map((x) =>
+    x.toString().padStart(2, "0")
+  );
+  return `${all[0]}d ${all[1]}h ${all[2]}m ${all[3]}s`;
 }
 
 export function formatEther(value: BigNumberish, decimals = 4) {

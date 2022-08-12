@@ -82,12 +82,12 @@ export class EventDispatcher {
     }
 
     // Trigger all callbacks
-    this.callbacks.forEach(([, callback]) => callback());
+    // this.callbacks.forEach(([, callback]) => callback());
 
     this.timerId = window.setInterval(async () => {
       const currentBlock = (await this.provider.getBlock("latest")).number;
       const delta = currentBlock - lastBlock;
-      console.log("Check events", lastBlock, currentBlock, delta);
+      //console.log("Check events", lastBlock, currentBlock, delta);
 
       if (delta < 0) {
         return;
@@ -117,7 +117,7 @@ export class EventDispatcher {
         this.callbacks.forEach(([, callback]) => callback());
       }
       lastBlock = currentBlock + 1;
-    }, 10000);
+    }, 5000);
   }
 
   stop() {

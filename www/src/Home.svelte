@@ -11,6 +11,7 @@
   import AuctionList from "./AuctionList.svelte";
   import CurrentPoem from "./CurrentPoem.svelte";
   import MintedList from "./MintedList.svelte";
+  import Loading from "./Loading.svelte";
 </script>
 
 <div class="main">
@@ -38,6 +39,8 @@
         />
       </div>
     </section>
+  {:else}
+    <Loading />
   {/if}
 </div>
 
@@ -66,6 +69,8 @@
         </p>
       </section>
     {/if}
+  {:else}
+    <Loading />
   {/if}
 </div>
 

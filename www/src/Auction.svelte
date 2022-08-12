@@ -5,7 +5,7 @@
   import Notification from "./Notification.svelte";
   import { address, connect } from "./stores/wallet";
   import { decentPoems } from "./stores/contract";
-  import { formatEther, secondsToHms, shortAddress } from "./utils";
+  import { formatEther, shortAddress, timeLeft } from "./utils";
   import type { BigNumber, ContractTransaction } from "ethers";
 
   export let auction: PoemAuction;
@@ -108,30 +108,33 @@
   </Notification>
 {/if}
 
-<div class="auction">
-  <div class="panel">
-    <div class="poem">
-      <h1>{auction.title.text}</h1>
-      {#each auction.verses as { text }}
-        <p>{text}</p>
-      {/each}
-      <div class="authors">
-        Authors: {authors.map(shortAddress).join(", ")}
+{#if secondsLeft > 0}
+  <div class="auction">
+    <div class="panel">
+      <div class="poem-wrapper">
+        <div class="poem">
+          <h1>{auction.title.text}</h1>
+          {#each auction.verses as { text }}
+            <p>{text}</p>
+          {/each}
+          <div class="authors">
+            Authors: {authors.map(shortAddress).join(", ")}
+          </div>
+        </div>
       </div>
-      <p>License: CC BY-NC-ND 4.0</p>
+    </div>
+    <div class="nft-container">
+      <div class="nft">
+        <p class="time-left">Auction ends in {timeLeft(secondsLeft)}</p>
+        <img
+          src={auction.metadata.image}
+          alt="A poem with title: {auction.title.text}"
+        />
+        <button {disabled} on:click={onMint}>Mint for {price} MATIC</button>
+      </div>
     </div>
   </div>
-  <div class="nft-container">
-    <div class="nft">
-      <p class="time-left">Auction ends in {secondsToHms(secondsLeft)}</p>
-      <img
-        src={auction.metadata.image}
-        alt="A poem with title: {auction.title.text}"
-      />
-      <button {disabled} on:click={onMint}>Mint for {price} MATIC</button>
-    </div>
-  </div>
-</div>
+{/if}
 
 <style>
   .auction {
@@ -149,13 +152,20 @@
     flex: 1;
   }
 
-  .poem {
+  .poem-wrapper {
     padding: 2rem 2rem;
     background-color: #f3f3f3;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
     box-shadow: 2rem 0 2rem rgba(0, 0, 0, 0.1);
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .poem {
+    font-size: 1.3rem;
   }
 
   .panel {
