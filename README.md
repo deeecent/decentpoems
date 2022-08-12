@@ -31,9 +31,10 @@ Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 
 ## Technical Details
 
-In order to generate the random word, the contract interacts with the VRF from Chainlink.
-
-As a fallback, it's possible to switch to a blockhash based word generation.
+- In order to generate the random word, the contract interacts with the VRF from Chainlink. (As a fallback, it's possible to switch to a blockhash based word generation.)
+- The dapp supports the Sequence wallet.
+- The dapp on IPFS as well, using NFT Storage. This makes sure that our content is permanently pinned and available through the Filecoin network.
+- The dapp is accessible via IPNS. We set our DNS records according to the DNSLink specifications. 
 
 ---
 
