@@ -55,7 +55,7 @@ Also: there isn't much around the NFT world about text and literature, so why no
   - [Web](https://www.granzotto.net)
 - Nicola
   - [Github](https://github.com/sirnicolaz)
-  - [Twitter (art & music)](https://twitter.com/the_innerspace)
+  - [Linktree](https://linktr.ee/innrspce)
 
 # How (to work on it)
 
