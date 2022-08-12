@@ -17,7 +17,7 @@
 
 <style>
   section {
-    max-width: 100rem;
+    max-width: 75rem;
   }
 
   div:not(:last-child) {
