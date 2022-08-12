@@ -48,15 +48,6 @@ Given the great-many opportunities that Polygon offers given its low gas fees, w
 
 Also: there isn't much around the NFT world about text and literature, so why not taking the chance?
 
-# Who (we are)
-
-- Alberto
-  - [Github](https://github.com/vrde)
-  - [Web](https://www.granzotto.net)
-- Nicola
-  - [Github](https://github.com/sirnicolaz)
-  - [Linktree](https://linktr.ee/innrspce)
-
 # How (to work on it)
 
 ## Smart Contract
@@ -136,3 +127,12 @@ npm dev
 cd www
 npm deploy-production
 ```
+
+# Who (we are)
+
+- Alberto
+  - [Github](https://github.com/vrde)
+  - [Web](https://www.granzotto.net)
+- Nicola
+  - [Github](https://github.com/sirnicolaz)
+  - [Linktree](https://linktr.ee/innrspce)
