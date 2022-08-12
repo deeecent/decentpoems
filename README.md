@@ -25,7 +25,7 @@ This will generate an NFT that can then be traded.
 
 Cherry on top: all the revenue (from minting and from the trades royalties) are equally split among the authors, by means o 0xSplit.
 
-Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So the system could live *forever*.
+Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So the system could live _forever_.
 
 Try it out at [https://www.decentpoems.art](https://www.decentpoems.art) !
 
@@ -58,8 +58,16 @@ Also: there isn't much around the NFT world about text and literature, so why no
 
 ### Requirements
 
+- npm
+- npx
 - hardhat
-- .env file (look at `env_sample`)
+- .env file (look at [env_sample](https://github.com/deeecent/decentpoems/blob/main/env_sample))
+
+### Setup
+
+```
+npm i
+```
 
 ### Compile
 
