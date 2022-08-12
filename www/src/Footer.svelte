@@ -6,6 +6,7 @@
   <section>
     <p>
       <a href={linkToContract()}>Contract</a> ·
+      <a href="https://opensea.io/collection/decent-poems">OpenSea</a> ·
       <a href="https://github.com/deeecent/decentpoems/">Source code</a> ·
       <a href="https://github.com/deeecent/decentpoems/blob/main/README.md"
         >About</a
