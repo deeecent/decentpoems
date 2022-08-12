@@ -22,11 +22,11 @@ Decent Poems is a dapp that allows people over the internet to write poems. In D
 - Your verse must include what we call **current word**.
 - The **current word** is updated every time someone submits a verse.
 - If multiple people submit a valid verse, only the first one is stored, the other ones are discarded.
-- After submitting the sixth verse, the poem is finalised and it is sold in a Dutch auction.
-- When the poem is sold, it's minted as an NFT and authors that contributed will receive a part of the proceedings (this is true for secondary sales as well).
+- After submitting the 6th verse, the poem is finalised and it is sold in a Dutch auction.
+- When the poem is sold, it's minted as an NFT and authors that contributed will receive a part of the proceedings (this is true for secondary sales as well, as long as the marketplace implements the NFT Royalty Standard EIP-2981).
 - If the poem is not sold, it is lost forever.
 
-Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So the system could live *forever*.
+Everything is handled by our Smart Contracts, 100% on chain, based on Polygon. So the system could live *forever*.
 
 ### Poetic explanation
 
@@ -48,7 +48,7 @@ Everything is handled by our Smart Contract, 100% on chain, based on Polygon. So
 
 ## How we built it
 
-Thanks to Polygon, we managed to squeeze all features on-chain, effectively creating a fully decentralised application (including the SVG and metadata of the NFT-Poems :D).
+Thanks to Polygon, we managed to squeeze all the features on-chain, effectively creating a fully decentralised application (including the SVG and metadata of the NFT-Poems :D).
 
 We could then interact with some pretty cool components that came to the ecosystem:
 
@@ -81,7 +81,9 @@ We also are very proud of building a system that puts creators first, both in th
 
 ## What we learned
 
-We learned that the word "dilettante" is not only an Italian word, but also an english one with the exact same meaning (although we don't know exactly how to pronounce it). Apart from that by keeping things simple we can make our concept easier to understand and funnier to use.
+We learned that the word "dilettante" is not only an Italian word, but also an english one with the exact same meaning (although we don't know exactly how to pronounce it).
+
+Apart from that, we learned that, by keeping things simple, we can make our concept easier to understand and funnier to use.
 
 ## What's next for Decent Poems
 
