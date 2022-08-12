@@ -62,7 +62,6 @@
 
   $: {
     if (contract && pending) {
-      console.log("pending", contract);
       pending = false;
       submitVerse();
     }

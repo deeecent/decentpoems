@@ -5,6 +5,7 @@
   import Verse from "./Verse.svelte";
   import type { DecentPoems } from "../../typechain";
   import type { Poem } from "./types";
+  import Loading from "./Loading.svelte";
 
   export let poem: Poem;
   export let word: string;
@@ -113,9 +114,10 @@
       {word}
     />
   {:else}
-    <p class="small centered">
+    <p class="small centered new-word-loading">
       <em>A new word will pop up soon, give it some seconds!</em>
     </p>
+    <Loading />
   {/if}
 </div>
 
@@ -123,6 +125,7 @@
   .poem,
   .add-verse {
     padding: 4rem;
+    min-height: 300px;
   }
 
   .poem {

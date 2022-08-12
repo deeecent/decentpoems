@@ -7,6 +7,7 @@
   import Debug from "./Debug.svelte";
   import Header from "./Header.svelte";
   import Footer from "./Footer.svelte";
+  import Error from "./Error.svelte";
 
   const initializing = init();
 </script>
@@ -15,6 +16,7 @@
   {#await initializing}
     <p>Loading please wait…</p>
   {:then}
+    <Error />
     <Header />
     <Route path="/">
       <Home />

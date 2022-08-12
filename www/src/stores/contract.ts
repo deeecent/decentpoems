@@ -1,6 +1,5 @@
 import { derived, writable, type Readable } from "svelte/store";
 import {
-  chainId,
   networkError,
   providerReadOnly,
   signer,
@@ -13,6 +12,7 @@ import type { PoemAuction, Metadata, Poem } from "src/types";
 import { EventDispatcher } from "./events";
 import { Buffer } from "buffer/";
 import popular from "../popular.json";
+import { RecoverableError, retry } from "./retry";
 
 export const decentPoems: Readable<DecentPoems | null> = derived(
   [networkError, signer, signerChainId],
@@ -44,11 +44,26 @@ export const decentPoemsReadOnly: Readable<DecentPoems | null> = derived(
   }
 );
 
+export const auctionDuration = derived(
+  decentPoemsReadOnly,
+  ($decentPoemsReadOnly, set: (value: number | null) => void) => {
+    if ($decentPoemsReadOnly) {
+      const update = retry(async () => {
+        const duration = await $decentPoemsReadOnly._auctionDuration();
+        set(duration.toNumber());
+      });
+      update();
+    } else {
+      set(null);
+    }
+  },
+  null
+);
+
 const eventDispatcher = derived(
   decentPoemsReadOnly,
   ($decentPoemsReadOnly, set: (value: EventDispatcher | null) => void) => {
     if ($decentPoemsReadOnly) {
-      console.log("Create dispatcher");
       const d = new EventDispatcher(
         $decentPoemsReadOnly,
         $decentPoemsReadOnly.provider
@@ -60,9 +75,12 @@ const eventDispatcher = derived(
   }
 );
 
-function parsePoemStruct(poemStruct: DecentPoems.PoemStructOutput) {
+function parsePoemStruct(
+  poemStruct: DecentPoems.PoemStructOutput,
+  auctionDuration = 0
+) {
   const created = new Date(poemStruct.createdAt.toNumber() * 1000);
-  const validUntil = new Date(created.setDate(created.getDate() + 1));
+  const validUntil = new Date(created.getTime() + auctionDuration * 1000);
   const poem: Poem = {
     title: {
       text: poemStruct.verses[0],
@@ -92,19 +110,23 @@ export const currentPoem = derived(
   [decentPoemsReadOnly, eventDispatcher],
   ([$decentPoemsReadOnly, $eventDispatcher], set: (value: Poem) => void) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      let index = $eventDispatcher.add("VerseSubmitted", () =>
-        $decentPoemsReadOnly
-          .getCurrentPoem()
-          .then(parsePoemStruct)
-          .then(set)
-          .catch((e) => {
-            console.log("Error fetching current poem", e);
-          })
-      );
-      return () => {
-        if ($eventDispatcher) {
-          $eventDispatcher.remove(index);
+      const update = retry(async () => {
+        let current: DecentPoems.PoemStructOutput;
+        try {
+          current = await $decentPoemsReadOnly.getCurrentPoem();
+        } catch (e: unknown) {
+          throw new RecoverableError("Error fetching current poem", e);
         }
+        const parsed = parsePoemStruct(current);
+        set(parsed);
+      });
+
+      let index = $eventDispatcher.add("VerseSubmitted", update);
+
+      update();
+
+      return () => {
+        $eventDispatcher.remove(index);
       };
     }
   }
@@ -117,25 +139,32 @@ export const currentWord = derived(
     set: (value: { index: number; word: string }) => void
   ) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      const update = async () => {
+      const update = retry(async () => {
         try {
           const [index, word] = await $decentPoemsReadOnly.getCurrentWord();
-          set({ index: index.toNumber(), word: word });
-        } catch (e) {
-          console.log("Error fetching current word", e);
+          set({ index: index.toNumber(), word });
+        } catch (e: unknown) {
+          try {
+            const forgiveMeFather: string = (e as any).toString();
+            if (forgiveMeFather.indexOf("Word not generated yet") >= 0) {
+              return;
+            }
+          } catch (e) {}
           set({ index: -1, word: "" });
+          throw new RecoverableError("Error fetching current word", e);
         }
-      };
-      const indexVerseSubmitted = $eventDispatcher.add(
-        "VerseSubmitted",
-        update
-      );
+      });
+
+      const unset = () => set({ index: -1, word: "" });
+
+      const indexVerseSubmitted = $eventDispatcher.add("VerseSubmitted", unset);
       const indexWordGenerated = $eventDispatcher.add("WordGenerated", update);
+
+      update();
+
       return () => {
-        if ($eventDispatcher) {
-          $eventDispatcher.remove(indexVerseSubmitted);
-          $eventDispatcher.remove(indexWordGenerated);
-        }
+        $eventDispatcher.remove(indexVerseSubmitted);
+        $eventDispatcher.remove(indexWordGenerated);
       };
     } else {
       set({ index: -1, word: "" });
@@ -167,17 +196,17 @@ export function unpackString(s: string) {
 }
 
 export const auctions = derived(
-  [decentPoemsReadOnly, eventDispatcher],
+  [decentPoemsReadOnly, auctionDuration, eventDispatcher],
   (
-    [$decentPoemsReadOnly, $eventDispatcher],
+    [$decentPoemsReadOnly, $auctionDuration, $eventDispatcher],
     set: (value: PoemAuction[]) => void
   ) => {
-    if ($decentPoemsReadOnly && $eventDispatcher) {
-      const update = async () => {
+    if ($decentPoemsReadOnly && $auctionDuration && $eventDispatcher) {
+      const update = retry(async () => {
         const [ids, auctionsStruct] = await $decentPoemsReadOnly.getAuctions();
         let poems: PoemAuction[] = [];
         for (let i = 0; i < auctionsStruct.length; i++) {
-          const poem = parsePoemStruct(auctionsStruct[i]);
+          const poem = parsePoemStruct(auctionsStruct[i], $auctionDuration);
           const id = ids[i].toNumber();
           const raw = unpackString(await $decentPoemsReadOnly.poemURI(id));
           const price = await $decentPoemsReadOnly.getCurrentPrice(id);
@@ -189,9 +218,13 @@ export const auctions = derived(
           });
         }
         set(poems);
-      };
+      });
+
       let poemCreatedIndex = $eventDispatcher.add("PoemCreated", update);
       let transferIndex = $eventDispatcher.add("Transfer", update);
+
+      update();
+
       return () => {
         $eventDispatcher.remove(poemCreatedIndex);
         $eventDispatcher.remove(transferIndex);
@@ -207,7 +240,7 @@ export const minted = derived(
     set: (value: PoemAuction[]) => void
   ) => {
     if ($decentPoemsReadOnly && $eventDispatcher) {
-      const update = async () => {
+      const update = retry(async () => {
         const auctionsStruct = await $decentPoemsReadOnly.getMinted(0);
         let poems: PoemAuction[] = [];
         for (let i = 0; i < auctionsStruct.length; i++) {
@@ -226,8 +259,12 @@ export const minted = derived(
           });
         }
         set(poems);
-      };
+      });
+
       let index = $eventDispatcher.add("Transfer", update);
+
+      update();
+
       return () => {
         $eventDispatcher.remove(index);
       };
