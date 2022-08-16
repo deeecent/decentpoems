@@ -105,27 +105,31 @@ Most of them are for testing purpose. Check `tasks/admin.ts` for details.
 
 ### Tech stack
 
-- Svelte + Vite
+- Svelte
+- Vite
+- Ethers
+- 0xsequence
+- WalletConnect
 
 ### Setup
 
 ```
 cd www
-npm i
+pnpm i
 ```
 
 ### Run local server
 
 ```
 cd www
-npm dev
+pnpm dev
 ```
 
 ### Deploy
 
 ```
 cd www
-npm deploy-production
+pnpm deploy-production
 ```
 
 # Who (we are)
