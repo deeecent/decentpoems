@@ -147,7 +147,13 @@ export const signerChainId: Readable<number | null> = derived(
   provider,
   ($provider, set) => {
     if ($provider) {
-      $provider.getNetwork().then(({ chainId }) => set(chainId));
+      $provider
+        .getNetwork()
+        .then(({ chainId }) => set(chainId))
+        .catch((e) => {
+          console.error(e);
+          set(null);
+        });
     } else {
       set(null);
     }
