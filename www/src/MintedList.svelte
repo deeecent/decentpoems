@@ -21,6 +21,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap);
+    justify-content: space-between;
   }
 
   .item {
