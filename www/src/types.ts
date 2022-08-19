@@ -20,6 +20,7 @@ export type Poem = {
   created: Date;
   validUntil: Date;
   split: string;
+  tokenId: number;
 };
 
 export type PoemAuction = Poem & {
