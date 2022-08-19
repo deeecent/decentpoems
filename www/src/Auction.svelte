@@ -24,7 +24,13 @@
 
   onMount(() => {
     priceTimerId = window.setInterval(async () => {
-      const newPrice = await decentPoemsReadOnly.getCurrentPrice(auction.id);
+      let newPrice: BigNumber;
+      try {
+        newPrice = await decentPoemsReadOnly.getCurrentPrice(auction.id);
+      } catch (e) {
+        console.error("Unable to get current price", e);
+        return;
+      }
       console.log("check price", newPrice);
       price = formatEther(newPrice);
     }, 10000);
