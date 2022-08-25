@@ -49,8 +49,12 @@ export const auctionDuration = derived(
   ($decentPoemsReadOnly, set: (value: number | null) => void) => {
     if ($decentPoemsReadOnly) {
       const update = retry(async () => {
-        const duration = await $decentPoemsReadOnly._auctionDuration();
-        set(duration.toNumber());
+        try {
+          const duration = await $decentPoemsReadOnly._auctionDuration();
+          set(duration.toNumber());
+        } catch (e: unknown) {
+          throw new RecoverableError("Error fetching current poem", e);
+        }
       });
       update();
     } else {
