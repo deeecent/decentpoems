@@ -51,6 +51,21 @@ task("set-vrf", "Set VRF on/off")
     console.log(`VRF ${activate ? "activated" : "deactivated"}.`);
   });
 
+task("set-words", "Set Words")
+  .addPositionalParam("address", "Words Address")
+  .setAction(async ({ address }, hre) => {
+    console.log("Load contract DecentPoems");
+    const decentPoemsContract = (await loadContract(
+      hre,
+      "DecentPoems"
+    )) as DecentPoems;
+
+    console.log(`Contract ${decentPoemsContract.address} loaded.`);
+    console.log(`   Setting Words to ${address}`);
+    await decentPoemsContract.setWords(address);
+    console.log(`Words updated.`);
+  });
+
 task("set-auction", "Set Auction parameters")
   .addParam("duration", "Auction duration in seconds")
   .addParam("startPrice", "Start price in MATIC")
