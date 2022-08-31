@@ -49,8 +49,12 @@ export const auctionDuration = derived(
   ($decentPoemsReadOnly, set: (value: number | null) => void) => {
     if ($decentPoemsReadOnly) {
       const update = retry(async () => {
-        const duration = await $decentPoemsReadOnly._auctionDuration();
-        set(duration.toNumber());
+        try {
+          const duration = await $decentPoemsReadOnly._auctionDuration();
+          set(duration.toNumber());
+        } catch (e: unknown) {
+          throw new RecoverableError("Error fetching current poem", e);
+        }
       });
       update();
     } else {
@@ -99,6 +103,7 @@ function parsePoemStruct(
       });
       return prev;
     }, [] as { author: string; text: string; word: string }[]),
+    tokenId: poemStruct.tokenId.toNumber(),
     created,
     validUntil,
     split: poemStruct.split,
@@ -249,12 +254,13 @@ export const minted = derived(
           }
           const poem = parsePoemStruct(auctionsStruct[i]);
           // Minting starts with tokenId 1
-          const id = i + 1;
-          const raw = unpackString(await $decentPoemsReadOnly.tokenURI(id));
+          const raw = unpackString(
+            await $decentPoemsReadOnly.tokenURI(poem.tokenId)
+          );
           poems.push({
             ...poem,
             metadata: raw.json,
-            id,
+            id: poem.tokenId,
             price: BigNumber.from(0),
           });
         }

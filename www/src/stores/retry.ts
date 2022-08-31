@@ -30,13 +30,13 @@ function sleep(ms: number) {
   });
 }
 
-export function retry(f: () => Promise<void>) {
+export function retry(f: () => Promise<void>, catchAll = false) {
   return async () => {
     for (let i = 0; i < 3; i++) {
       try {
         return await f();
       } catch (e: any) {
-        if (e instanceof RecoverableError) {
+        if (catchAll || e instanceof RecoverableError) {
           console.error("Retry", i + 1, e);
           await sleep(1000);
         } else {

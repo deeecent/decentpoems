@@ -14,7 +14,14 @@ export async function init() {
 }
 
 export async function connect() {
-  const connection = await connectWeb3Modal();
+  let connection: any;
+  try {
+    connection = await connectWeb3Modal();
+  } catch (e) {
+    console.log("User closed modal");
+    return;
+  }
+
   async function resetProvider(promptNetwork = false) {
     const web3Provider = new ethers.providers.Web3Provider(connection);
 
@@ -147,7 +154,13 @@ export const signerChainId: Readable<number | null> = derived(
   provider,
   ($provider, set) => {
     if ($provider) {
-      $provider.getNetwork().then(({ chainId }) => set(chainId));
+      $provider
+        .getNetwork()
+        .then(({ chainId }) => set(chainId))
+        .catch((e) => {
+          console.error(e);
+          set(null);
+        });
     } else {
       set(null);
     }

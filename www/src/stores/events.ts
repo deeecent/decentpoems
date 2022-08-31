@@ -1,4 +1,5 @@
 import type { Contract, providers } from "ethers";
+import { retry } from "./retry";
 
 const MAX_BLOCK_DELTA = 128;
 
@@ -84,7 +85,7 @@ export class EventDispatcher {
     // Trigger all callbacks
     // this.callbacks.forEach(([, callback]) => callback());
 
-    this.timerId = window.setInterval(async () => {
+    const _update = async () => {
       const currentBlock = (await this.provider.getBlock("latest")).number;
       const delta = currentBlock - lastBlock;
       //console.log("Check events", lastBlock, currentBlock, delta);
@@ -117,7 +118,8 @@ export class EventDispatcher {
         this.callbacks.forEach(([, callback]) => callback());
       }
       lastBlock = currentBlock + 1;
-    }, 5000);
+    };
+    this.timerId = window.setInterval(retry(_update, true), 5000);
   }
 
   stop() {

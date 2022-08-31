@@ -23,7 +23,7 @@
 <div>
   <ul>
     <li>
-      <a class="button small" href={linkToOpensea(poem.id)}>View on OpenSea</a>
+      <a class="button small" href={linkToOpensea(poem.id)}>Read on OpenSea</a>
     </li>
     <li>
       <a class="button secondary small" href={linkToSplit(poem.split)}
