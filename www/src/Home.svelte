@@ -142,6 +142,8 @@
     padding: 0 0 5rem 0;
   }
 
+
+  
   .auctions {
     background: linear-gradient(
       180deg,
@@ -175,38 +177,73 @@
     padding: 1rem;
   }
 
-  /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
-  .poem {
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    min-height: 300px;
-    padding: 0rem;
-    position: relative;
+  @media (prefers-color-scheme: light) {
+      /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
+    .poem {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      min-height: 300px;
+      padding: 0rem;
+      position: relative;
+    }
+
+    .poem:before,
+    .poem:after {
+      content: "";
+      height: 98%;
+      position: absolute;
+      width: 100%;
+      z-index: -1;
+    }
+
+    .poem:before {
+      background: #fafafa;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+      left: -5px;
+      top: 4px;
+      transform: rotate(-2.5deg);
+    }
+
+    .poem:after {
+      background: #f6f6f6;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      right: -3px;
+      top: 1px;
+      transform: rotate(1.4deg);
+    }
   }
 
-  .poem:before,
-  .poem:after {
-    content: "";
-    height: 98%;
-    position: absolute;
-    width: 100%;
-    z-index: -1;
-  }
+  @media (prefers-color-scheme: dark) {
+      /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
+    .poem {
+      background: rgba(255, 255, 255, 0.46);
+      min-height: 300px;
+      padding: 0rem;
+      position: relative;
+    }
 
-  .poem:before {
-    background: #fafafa;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    left: -5px;
-    top: 4px;
-    transform: rotate(-2.5deg);
-  }
+    .poem:before,
+    .poem:after {
+      content: "";
+      height: 98%;
+      position: absolute;
+      width: 100%;
+      z-index: -1;
+    }
 
-  .poem:after {
-    background: #f6f6f6;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-    right: -3px;
-    top: 1px;
-    transform: rotate(1.4deg);
+    .poem:before {
+      background: #fafafa76;
+      left: -5px;
+      top: 4px;
+      transform: rotate(-2.5deg);
+    }
+
+    .poem:after {
+      background: #f6f6f624;
+      right: -3px;
+      top: 1px;
+      transform: rotate(1.4deg);
+    }
   }
 
   .empty {

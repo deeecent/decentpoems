@@ -33,17 +33,32 @@
 </header>
 
 <style>
-  header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    text-align: right;
-    z-index: 1;
-    backdrop-filter: blur(14px);
-    background: rgba(255, 255, 255, 0.9);
+  @media (prefers-color-scheme: light) {
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: right;
+      z-index: 1;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.9);
+    }
   }
 
+  @media (prefers-color-scheme: dark) {
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: right;
+      z-index: 1;
+      backdrop-filter: blur(14px);
+      background-color: #2a2b2d;
+    }
+  }
+  
   .wrapper {
     max-width: var(--max-width);
     margin: 0 auto;

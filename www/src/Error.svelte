@@ -11,6 +11,19 @@
 {/if}
 
 <style>
+
+@media (prefers-color-scheme: light) {
+    div {
+      background-color: rgba(255, 162, 162, 0.9);
+    }
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    div {
+      background-color: #502b33;
+    }
+  }
+
   div {
     position: fixed;
     bottom: 0;
@@ -21,7 +34,6 @@
     justify-content: center;
     align-items: center;
     font-size: 1.5rem;
-    background-color: rgba(255, 162, 162, 0.9);
     font-family: var(--sans-serif);
   }
 
