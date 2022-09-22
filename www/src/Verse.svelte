@@ -49,7 +49,7 @@
       font-size: 0.8rem;
       margin-top: 0;
       margin-bottom: 0.4rem;
-      color: rgb(110, 111, 128);
+      color: rgb(204, 204, 204);
       font-family: var(--monospace);
     }  
   }

@@ -216,7 +216,7 @@
   @media (prefers-color-scheme: dark) {
       /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
     .poem {
-      background: rgba(255, 255, 255, 0.46);
+      background: rgba(79, 79, 79, 0.177);
       min-height: 300px;
       padding: 0rem;
       position: relative;
@@ -232,14 +232,14 @@
     }
 
     .poem:before {
-      background: #fafafa76;
+      background: rgba(141, 141, 141, 0.177);
       left: -5px;
       top: 4px;
       transform: rotate(-2.5deg);
     }
 
     .poem:after {
-      background: #f6f6f624;
+      background: rgba(73, 73, 73, 0.141);
       right: -3px;
       top: 1px;
       transform: rotate(1.4deg);

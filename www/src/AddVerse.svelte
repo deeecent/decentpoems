@@ -117,6 +117,7 @@
     resize: none;
     padding: 1rem;
     margin-bottom: 1rem;
+    background: transparent;
   }
 
   @supports selector(:focus-visible) {
@@ -124,9 +125,10 @@
       /* Remove the focus indicator on mouse-focus for browsers
        that do support :focus-visible */
       outline: none;
-      background: transparent;
     }
   }
+
+  
 
   button {
     display: block;
