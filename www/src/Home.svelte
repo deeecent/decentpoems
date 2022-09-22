@@ -216,7 +216,7 @@
   @media (prefers-color-scheme: dark) {
       /* Inspired by https://codepen.io/dalper02/pen/VLeVjP */
     .poem {
-      background: rgba(79, 79, 79, 0.177);
+      background: #1e1e1e;
       min-height: 300px;
       padding: 0rem;
       position: relative;
