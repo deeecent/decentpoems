@@ -239,7 +239,7 @@
     }
 
     .poem:after {
-      background: rgba(73, 73, 73, 0.141);
+      background: rgba(21, 21, 21, 0.8);
       right: -3px;
       top: 1px;
       transform: rotate(1.4deg);
