@@ -232,7 +232,7 @@
     }
 
     .poem:before {
-      background: rgba(141, 141, 141, 0.177);
+      background: rgba(21, 21, 21, 0.8);
       left: -5px;
       top: 4px;
       transform: rotate(-2.5deg);
