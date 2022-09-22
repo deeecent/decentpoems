@@ -44,11 +44,23 @@
     );
   }
 
-  .author {
-    font-size: 0.8rem;
-    margin-top: 0;
-    margin-bottom: 0.4rem;
-    color: #ccc;
-    font-family: var(--monospace);
+  @media (prefers-color-scheme: dark) {
+    author {
+      font-size: 0.8rem;
+      margin-top: 0;
+      margin-bottom: 0.4rem;
+      color: rgb(204, 204, 204);
+      font-family: var(--monospace);
+    }  
   }
+  
+  @media (prefers-color-scheme: light) {
+    .author {
+      font-size: 0.8rem;
+      margin-top: 0;
+      margin-bottom: 0.4rem;
+      color: #ccc;
+      font-family: var(--monospace);
+    }
+    }
 </style>

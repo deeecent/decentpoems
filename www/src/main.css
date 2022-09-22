@@ -18,12 +18,10 @@ html {
   }
 }
 
-body {
-  color: rgb(35, 38, 78);
-  box-sizing: inherit;
-  margin: 0px;
-  font-family: var(--serif);
-  background-image: linear-gradient(
+@media (prefers-color-scheme: light) {
+  body {
+    color: rgb(35, 38, 78);
+    background-image: linear-gradient(
     to right bottom,
     #ffffff,
     #fcfafc,
@@ -31,6 +29,22 @@ body {
     #f8f1f3,
     #f6ecec
   );
+  }
+}
+
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: rgb(110, 111, 128);
+    background-color: #2d2729;
+  }
+}
+
+
+body {
+  box-sizing: inherit;
+  margin: 0px;
+  font-family: var(--serif);
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -62,7 +76,6 @@ p {
 button,
 .button {
   border-radius: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.171);
   display: block;
   margin: 3rem auto 0 auto;
   margin-top: 3rem;
@@ -71,9 +84,55 @@ button,
   font-size: 1.2rem;
   transition: all 400ms;
   cursor: pointer;
-  background-color: rgb(203, 203, 231);
-  color: rgb(36, 36, 36);
   text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  button,
+  .button {
+    border: 1px solid rgba(0, 0, 0, 0.171);
+    background-color: rgb(37, 37, 39);
+    color: rgb(203, 203, 203);
+  } 
+    
+  button:hover,
+  .button:hover {
+    background-color: rgb(71, 71, 71);
+    border-color: rgba(40, 40, 40, 0.3);
+  } 
+
+  button:disabled,
+  button:disabled:hover,
+  .button:disabled,
+  .button:disabled:hover {
+    background-color: rgb(145, 145, 145);
+    color: rgb(97, 97, 97);
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  button,
+  .button {
+    border: 1px solid rgba(0, 0, 0, 0.171);
+    background-color: rgb(203, 203, 231);
+    color: rgb(36, 36, 36);
+  } 
+  
+  button:hover,
+  .button:hover {
+  background-color: rgb(179, 179, 218);
+  border-color: rgba(0, 0, 0, 0.3);
+  }
+
+  button:disabled,
+  button:disabled:hover,
+  .button:disabled,
+  .button:disabled:hover {
+  background-color: rgb(216, 216, 216);
+  color: rgb(97, 97, 97);
+  cursor: not-allowed;
+  }
 }
 
 button.secondary,
@@ -89,21 +148,6 @@ button.small,
   margin: 0.5rem;
   display: inline;
   border: none;
-}
-
-button:hover,
-.button:hover {
-  background-color: rgb(179, 179, 218);
-  border-color: rgba(0, 0, 0, 0.3);
-}
-
-button:disabled,
-button:disabled:hover,
-.button:disabled,
-.button:disabled:hover {
-  background-color: rgb(216, 216, 216);
-  color: rgb(97, 97, 97);
-  cursor: not-allowed;
 }
 
 h1 {

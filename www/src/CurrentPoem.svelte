@@ -157,7 +157,21 @@
     margin: 0 0 0.8rem 0;
   }
 
-  .add-verse {
-    background-color: #f3f3f3;
+  
+
+
+  @media (prefers-color-scheme: dark) {
+    .add-verse {
+      background: rgba(36, 36, 36, 0.8);
+    } 
+    .word {
+      color: #6c6c6c;
+    }
   }
+  
+  @media (prefers-color-scheme: light) {
+    .add-verse {
+      background-color: #f3f3f3;
+      }
+    }
 </style>
