@@ -165,7 +165,7 @@
       background: rgba(36, 36, 36, 0.8);
     } 
     .word {
-      color: #000;
+      color: #6c6c6c;
     }
   }
   
