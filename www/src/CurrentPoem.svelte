@@ -162,7 +162,7 @@
 
   @media (prefers-color-scheme: dark) {
     .add-verse {
-      background: rgba(141, 141, 141, 0.177);
+      background: rgba(36, 36, 36, 0.8);
     } 
     .word {
       color: #000;
