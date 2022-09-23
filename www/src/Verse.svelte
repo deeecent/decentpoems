@@ -52,6 +52,15 @@
       color: rgb(87, 88, 110);
       font-family: var(--monospace);
     }
+    mark {
+      color: inherit;
+      background: linear-gradient(
+        0deg,
+        rgba(111, 116, 180, 0.2) 35%,
+        rgba(255, 255, 255, 0) 35%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    }
   }
 
   @media (prefers-color-scheme: light) {
