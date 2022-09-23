@@ -22,16 +22,15 @@ html {
   body {
     color: rgb(35, 38, 78);
     background-image: linear-gradient(
-    to right bottom,
-    #ffffff,
-    #fcfafc,
-    #f9f6f8,
-    #f8f1f3,
-    #f6ecec
-  );
+      to right bottom,
+      #ffffff,
+      #fcfafc,
+      #f9f6f8,
+      #f8f1f3,
+      #f6ecec
+    );
   }
 }
-
 
 @media (prefers-color-scheme: dark) {
   body {
@@ -39,7 +38,6 @@ html {
     background-color: #2d2729;
   }
 }
-
 
 body {
   box-sizing: inherit;
@@ -93,13 +91,13 @@ button,
     border: 1px solid rgba(0, 0, 0, 0.171);
     background-color: rgb(37, 37, 39);
     color: rgb(203, 203, 203);
-  } 
-    
+  }
+
   button:hover,
   .button:hover {
     background-color: rgb(71, 71, 71);
     border-color: rgba(40, 40, 40, 0.3);
-  } 
+  }
 
   button:disabled,
   button:disabled:hover,
@@ -109,6 +107,11 @@ button,
     color: rgb(97, 97, 97);
     cursor: not-allowed;
   }
+  button.secondary,
+  .button.secondary {
+    background-color: rgb(78, 74, 99);
+    border: 1px solid rgba(0, 0, 0, 0.171);
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -117,28 +120,28 @@ button,
     border: 1px solid rgba(0, 0, 0, 0.171);
     background-color: rgb(203, 203, 231);
     color: rgb(36, 36, 36);
-  } 
-  
+  }
+
   button:hover,
   .button:hover {
-  background-color: rgb(179, 179, 218);
-  border-color: rgba(0, 0, 0, 0.3);
+    background-color: rgb(179, 179, 218);
+    border-color: rgba(0, 0, 0, 0.3);
   }
 
   button:disabled,
   button:disabled:hover,
   .button:disabled,
   .button:disabled:hover {
-  background-color: rgb(216, 216, 216);
-  color: rgb(97, 97, 97);
-  cursor: not-allowed;
+    background-color: rgb(216, 216, 216);
+    color: rgb(97, 97, 97);
+    cursor: not-allowed;
   }
-}
 
-button.secondary,
-.button.secondary {
-  background-color: rgb(204, 204, 204);
-  border: 1px solid rgba(0, 0, 0, 0.171);
+  button.secondary,
+  .button.secondary {
+    background-color: rgb(204, 204, 204);
+    border: 1px solid rgba(0, 0, 0, 0.171);
+  }
 }
 
 button.small,
@@ -160,6 +163,7 @@ h1 {
   text-overflow: ellipsis;
 }
 
-a, a:visited {
+a,
+a:visited {
   color: inherit;
 }

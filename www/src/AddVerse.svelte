@@ -120,6 +120,12 @@
     background: transparent;
   }
 
+  @media (prefers-color-scheme: dark) {
+    textarea {
+      color: #aaa;
+    }
+  }
+
   @supports selector(:focus-visible) {
     textarea:focus {
       /* Remove the focus indicator on mouse-focus for browsers
@@ -127,8 +133,6 @@
       outline: none;
     }
   }
-
-  
 
   button {
     display: block;
